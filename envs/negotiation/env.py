@@ -53,6 +53,28 @@ class NegotiationEnv:
         self.rules_path = os.path.join(base_dir, "configs", "general_game_rules.yaml")
 
 
+    # ============================================================
+    # NEW: Archetype helper method
+    # ============================================================
+    def get_archetype_from_game(self, game: Game) -> str:
+        """
+        Determine the archetype of a game based on its issues and weights.
+        
+        For single-issue games, returns 'single-distributive', 'single-compatible', etc.
+        For multi-issue games, uses Game.get_game_type() which returns one of:
+            - 'non-integrative distributive'
+            - 'non-integrative compatible'
+            - 'integrative distributive'
+            - 'integrative compatible'
+        """
+        if len(game.issues) == 1:
+            issue_type = game.issues[0].issue_type
+            return f"single-{issue_type}"
+        else:
+            return game.get_game_type()
+    # ============================================================
+
+
     def get_prompts_from_game(self, game: Game, max_rounds: int = 5):
         prompts = game.get_system_game_msg(agent_id=0)["content"]
         prompts_2 = game.get_system_game_msg(agent_id=1)["content"]
@@ -87,6 +109,9 @@ class NegotiationEnv:
             
             prompts, prompts_2 = self.get_prompts_from_game(game)
 
+            # --- CHANGED: Added archetype field ---
+            archetype = self.get_archetype_from_game(game)
+
             # Create samples with the correct structure
             samples = []
             for i in range(size):
@@ -96,7 +121,8 @@ class NegotiationEnv:
                     "game_config": games_config,
                     "starting_agent": i % 2 == 0,
                     "game_type": self.game_type,
-                    "negotiation_role": 1
+                    "negotiation_role": 1,
+                    "archetype": archetype,  # Added archetype field
                 })
         
             # Create a Hugging Face Dataset
@@ -104,7 +130,7 @@ class NegotiationEnv:
                 ds = Dataset.from_list(samples)
                 _ = ds[0]  # force materialize
             except Exception:
-                ds = Dataset.from_dict({"text": [p1] * size})
+                ds = Dataset.from_dict({"text": [prompts] * size})
             return ds
             
 
@@ -179,13 +205,18 @@ class NegotiationEnv:
 
                 game = Game(**game_config)
                 prompt1, prompt2 = self.get_prompts_from_game(game)
+
+                # --- CHANGED: Compute archetype ---
+                archetype = self.get_archetype_from_game(game)
+
                 samples.append({
                     "prompt": prompt1,
                     "prompt_2": prompt2,
                     "game_config": game_config,
                     "starting_agent": (i // len(game_configs)) % 2 == 0,
                     "game_type": self.game_type,
-                    "negotiation_role": 1
+                    "negotiation_role": 1,
+                    "archetype": archetype,  # NEW
                 })
 
                 samples.append({
@@ -194,7 +225,8 @@ class NegotiationEnv:
                     "game_config": game_config,
                     "starting_agent": (i // len(game_configs)) % 2 == 0,
                     "game_type": self.game_type,
-                    "negotiation_role": 2
+                    "negotiation_role": 2,
+                    "archetype": archetype,  # NEW
                 })
 
 
