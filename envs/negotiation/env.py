@@ -33,46 +33,38 @@ class NegotiationEnv:
         self,
         game_type: str = "generic-rental-agreement",
         seed: int = 42,
+        # COOPERATIVE: Lambda parameters for R_coop
+        lambda_self: float = 1.0,
+        lambda_welfare: float = 0.0,
+        lambda_fair: float = 0.0,
         **kwargs
     ):
-        """
-        Environment for negotiation simulations between two agents.
-        
-        Args:
-            config: Optional configuration for the negotiation environment. If not provided, default values will be used.
-            **kwargs: Additional keyword arguments to override config values
-        """
-
         self.game_type = game_type
         self.seed = seed
         self.set_seed(self.seed)
 
-        # Use relative paths based on the location of this file
+        # COOPERATIVE: Store reward weights
+        self.lambda_self = lambda_self
+        self.lambda_welfare = lambda_welfare
+        self.lambda_fair = lambda_fair
+
         base_dir = os.path.dirname(__file__)
         self.games_path = os.path.join(base_dir, "configs", "games")
         self.rules_path = os.path.join(base_dir, "configs", "general_game_rules.yaml")
 
 
     # ============================================================
-    # NEW: Archetype helper method
+    # Archetype helper method
     # ============================================================
     def get_archetype_from_game(self, game: Game) -> str:
         """
         Determine the archetype of a game based on its issues and weights.
-        
-        For single-issue games, returns 'single-distributive', 'single-compatible', etc.
-        For multi-issue games, uses Game.get_game_type() which returns one of:
-            - 'non-integrative distributive'
-            - 'non-integrative compatible'
-            - 'integrative distributive'
-            - 'integrative compatible'
         """
         if len(game.issues) == 1:
             issue_type = game.issues[0].issue_type
             return f"single-{issue_type}"
         else:
             return game.get_game_type()
-    # ============================================================
 
 
     def get_prompts_from_game(self, game: Game, max_rounds: int = 5):
@@ -85,7 +77,6 @@ class NegotiationEnv:
 
 
     def create_dataset(self, size=2000) -> Dataset:
-        # For now, we will use the same prompt for all games
         with open(self.rules_path, "r") as f:
             rules = yaml.safe_load(f)
 
@@ -100,35 +91,30 @@ class NegotiationEnv:
             }
 
             games_config = self.add_game_info_to_game_config(games_config)
-            game_info = games_config.pop("game_info")  # Extract and remove game_info
-            
-            # Merge game_info back into games_config so it's saved with the sample
+            game_info = games_config.pop("game_info")
             games_config.update(game_info)
 
             game = Game(**games_config)
             
             prompts, prompts_2 = self.get_prompts_from_game(game)
 
-            # --- CHANGED: Added archetype field ---
             archetype = self.get_archetype_from_game(game)
 
-            # Create samples with the correct structure
             samples = []
             for i in range(size):
                 samples.append({
-                    "prompt": prompts,  # This should be a list of message dicts
+                    "prompt": prompts,
                     "prompt_2": prompts_2,
                     "game_config": games_config,
                     "starting_agent": i % 2 == 0,
                     "game_type": self.game_type,
                     "negotiation_role": 1,
-                    "archetype": archetype,  # Added archetype field
+                    "archetype": archetype,
                 })
         
-            # Create a Hugging Face Dataset
             try:
                 ds = Dataset.from_list(samples)
-                _ = ds[0]  # force materialize
+                _ = ds[0]
             except Exception:
                 ds = Dataset.from_dict({"text": [prompts] * size})
             return ds
@@ -150,20 +136,16 @@ class NegotiationEnv:
                     "issues": ["rp_contingent_liability.yaml","rp_family_employees.yaml","rp_financing.yaml","rp_non_compete_period.yaml"]},
                 ]
 
-            #Get additional game configs from their respective yaml files
             for gd in games_used:
-
                 gd = self.add_game_info_to_game_config(gd)
 
            
             issue_weights_multiple_possibilites = [90, 50, 10]
 
-            #Create the different game configs except for the issue weights distribution
             game_configs = []
             for gd in games_used:
                 issues = gd["issues"]
                 game_info = gd["game_info"]
-                #First add all single issue games
                 for issue in issues:
                     game_configs.append({
                         "name": issue,
@@ -173,11 +155,9 @@ class NegotiationEnv:
                         **game_info
                     })
 
-                #Then make all combinations of issues for the game
                 combos = list(itertools.combinations(issues, 2))
 
                 for combo in combos:
-                    #Sample a random issue weight from the list do it with numpy
                     game_configs.append({
                         "name": combo,
                         "issues": list(combo),
@@ -186,10 +166,7 @@ class NegotiationEnv:
                         **game_info
                     })
 
-                # distribute samples evenly across combos
-            
             print("Number of game configs: ", len(game_configs))
-            #Shuffle the game configs so that it doesnt optimize on the first few games or single-issue games
             game_configs = np.random.permutation(game_configs)
             
             samples = []
@@ -198,7 +175,6 @@ class NegotiationEnv:
                 if len(game_config["issues"]) == 1:
                     game_config["issue_weights"] = [[1], [1]]
                 else:
-                    #Sample a random issue weight from the list do it with numpy
                     iw_1 = np.random.choice(issue_weights_multiple_possibilites)
                     iw_2 = np.random.choice(issue_weights_multiple_possibilites)
                     game_config["issue_weights"] = [[iw_1, 100-iw_1], [iw_2, 100-iw_2]]
@@ -206,7 +182,6 @@ class NegotiationEnv:
                 game = Game(**game_config)
                 prompt1, prompt2 = self.get_prompts_from_game(game)
 
-                # --- CHANGED: Compute archetype ---
                 archetype = self.get_archetype_from_game(game)
 
                 samples.append({
@@ -216,7 +191,7 @@ class NegotiationEnv:
                     "starting_agent": (i // len(game_configs)) % 2 == 0,
                     "game_type": self.game_type,
                     "negotiation_role": 1,
-                    "archetype": archetype,  # NEW
+                    "archetype": archetype,
                 })
 
                 samples.append({
@@ -226,7 +201,7 @@ class NegotiationEnv:
                     "starting_agent": (i // len(game_configs)) % 2 == 0,
                     "game_type": self.game_type,
                     "negotiation_role": 2,
-                    "archetype": archetype,  # NEW
+                    "archetype": archetype,
                 })
 
 
@@ -239,31 +214,27 @@ class NegotiationEnv:
 
 
     def get_reward_functions(self):
-        """
-        Returns a list of reward functions to be used by the GRPO trainer
-        """
-        
+        # COOPERATIVE: Capture lambda parameters in closure
+        lambda_self = self.lambda_self
+        lambda_welfare = self.lambda_welfare
+        lambda_fair = self.lambda_fair
+
         def negotiation_payoff_reward(prompts, completions, get_full_info=False, game_config=None, negotiation_roles=None, **kwargs):
             rewards = []
             evaluations = [] if get_full_info else None
             
             for i, messages in enumerate(completions):
                 messages = messages[1:]
-                # try:
-                    # Determine starting agent
                 starting_agent = 0
                 if messages and messages[0]["role"] == "user":
                     starting_agent = 1
 
-                # Create a new game instance for each evaluation using the provided config
                 current_game_config = game_config[i] if isinstance(game_config, list) else game_config
                 game = Game(**current_game_config)
-
 
                 evaluation_model = OpenAIModel(model_provider="openai", model_name="gpt-4o-mini")
                 evaluator = Evaluator(model=evaluation_model, game=game, game_type=self.game_type)
 
-                # Use the environment's evaluator
                 evaluation = evaluator.evaluate(
                     messages, 
                     starting_agent=starting_agent, 
@@ -276,25 +247,50 @@ class NegotiationEnv:
                     if get_full_info:
                         evaluations.append(None)
                     continue
-                    
+                
+                # ============================================================
+                # COOPERATIVE REWARD: R_coop = λ_self × U_A + λ_welfare × (U_A + U_B) + λ_fair × (U_A × U_B)
+                # ============================================================
+                payoff_agent1 = evaluation["payoffs"]["Agent 1"]
+                payoff_agent2 = evaluation["payoffs"]["Agent 2"]
+
+                # Determine which payoff belongs to the learning agent
                 if negotiation_roles is None or not isinstance(negotiation_roles, list) or len(negotiation_roles) == 0:
                     negotiation_roles = [1] * len(completions)
-                # Get the payoff for the agent we're training (Agent 1)
-                if negotiation_roles[i] == 1 or negotiation_roles[i] == None:
-                    payoff = evaluation["payoffs"]["Agent 1"]
+                
+                if negotiation_roles[i] == 1 or negotiation_roles[i] is None:
+                    U_A = payoff_agent1  # Agent's own payoff
+                    U_B = payoff_agent2  # Opponent's payoff
                 else:
-                    payoff = evaluation["payoffs"]["Agent 2"]
+                    U_A = payoff_agent2
+                    U_B = payoff_agent1
 
-                rewards.append(payoff)
+                # Compute cooperative reward
+                self_utility = U_A
+                social_welfare = U_A + U_B
+                nash_product = U_A * U_B
+
+                # Normalize Nash product to be on similar scale as other terms
+                # U_A and U_B are 0-100, so Nash product is 0-10000
+                # Divide by 100 to bring to 0-100 range
+                nash_product_normalized = nash_product / 100.0
+
+                R_coop = (
+                    lambda_self * self_utility
+                    + lambda_welfare * social_welfare
+                    + lambda_fair * nash_product_normalized
+                )
+
+                rewards.append(R_coop)
                 
                 if get_full_info:
+                    # Store both payoffs for analysis
+                    evaluation["R_coop"] = R_coop
+                    evaluation["U_A"] = U_A
+                    evaluation["U_B"] = U_B
+                    evaluation["social_welfare"] = social_welfare
+                    evaluation["nash_product"] = nash_product
                     evaluations.append(evaluation)
-                    
-                # except Exception as e:
-                #     print(f"Error computing reward: {e}")
-                #     rewards.append(0.0)
-                #     if get_full_info:
-                #         evaluations.append(None)
             
             if get_full_info:
                 return rewards, evaluations
@@ -309,18 +305,15 @@ class NegotiationEnv:
         if game_filename:
             with open(os.path.join(self.games_path, game_filename), "r") as f:
                 game_dict = yaml.safe_load(f)
-            game_config["game_info"] = game_dict  # Create "game_info" key to match old behavior
+            game_config["game_info"] = game_dict
         return game_config
 
 
     def set_seed(self, seed: int):
-        """
-        Set the seed for reproducibility across random, numpy, and PyTorch.
-        """
-        random.seed(seed)  # Python built-in random
-        np.random.seed(seed)  # NumPy
-        torch.manual_seed(seed)  # PyTorch CPU
+        random.seed(seed)
+        np.random.seed(seed)
+        torch.manual_seed(seed)
         if torch.cuda.is_available():
-            torch.cuda.manual_seed_all(seed)  # PyTorch GPU
-        torch.backends.cudnn.deterministic = True  # Ensures deterministic behavior for CuDNN
+            torch.cuda.manual_seed_all(seed)
+        torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False

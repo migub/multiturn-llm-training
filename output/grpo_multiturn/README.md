@@ -5,8 +5,8 @@ model_name: grpo_multiturn
 tags:
 - generated_from_trainer
 - trl
-- unsloth
 - grpo
+- unsloth
 licence: license
 ---
 
@@ -28,7 +28,7 @@ print(output["generated_text"])
 
 ## Training procedure
 
- 
+[<img src="https://raw.githubusercontent.com/wandb/assets/main/wandb-github-badge-28.svg" alt="Visualize in Weights & Biases" width="150" height="24"/>](https://wandb.ai/michael-gubler-hochschule-luzern/huggingface/runs/rz2fyg16) 
 
 
 

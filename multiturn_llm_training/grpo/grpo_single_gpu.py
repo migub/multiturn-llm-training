@@ -67,7 +67,7 @@ def main(args):
 
     # ---- Setup Environment ----
     print(f"\nSetting up environment: {args.game_type}")
-    negotiation_env = NegotiationEnv(game_type=args.game_type, seed=42)
+    negotiation_env = NegotiationEnv(game_type=args.game_type, lambda_self=1.0, lambda_welfare=0.5, lambda_fair=0.3)
     train_dataset = negotiation_env.create_dataset(size=args.train_size)
     eval_dataset = negotiation_env.create_dataset(size=args.eval_size)
     reward_functions = negotiation_env.get_reward_functions()
@@ -154,6 +154,9 @@ if __name__ == "__main__":
     parser.add_argument("--game-type", type=str, default="generic-rental-agreement")
     parser.add_argument("--train-size", type=int, default=1000)
     parser.add_argument("--eval-size", type=int, default=10)
+    parser.add_argument("--lambda-self", type=float, default=1.0)
+    parser.add_argument("--lambda-welfare", type=float, default=0.5)
+    parser.add_argument("--lambda-fair", type=float, default=0.3)
 
     # Training
     parser.add_argument("--learning-rate", type=float, default=5e-5)
