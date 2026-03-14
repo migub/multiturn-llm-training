@@ -31,6 +31,9 @@ def main(args):
     print(f"Group size (G): {args.num_generations}")
     print(f"Max rounds: {args.max_rounds}")
     print(f"Train size: {args.train_size}")
+    print(f"Lambda self: {args.lambda_self}")
+    print(f"Lambda welfare: {args.lambda_welfare}")
+    print(f"Lambda fair: {args.lambda_fair}")
     print()
 
     # Ensure deterministic behaviour
@@ -67,7 +70,7 @@ def main(args):
 
     # ---- Setup Environment ----
     print(f"\nSetting up environment: {args.game_type}")
-    negotiation_env = NegotiationEnv(game_type=args.game_type, lambda_self=1.0, lambda_welfare=0.5, lambda_fair=0.3)
+    negotiation_env = NegotiationEnv(game_type=args.game_type, lambda_self=args.lambda_self, lambda_welfare=args.lambda_welfare, lambda_fair=args.lambda_fair)
     train_dataset = negotiation_env.create_dataset(size=args.train_size)
     eval_dataset = negotiation_env.create_dataset(size=args.eval_size)
     reward_functions = negotiation_env.get_reward_functions()
