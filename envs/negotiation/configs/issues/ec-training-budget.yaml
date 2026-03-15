@@ -1,0 +1,11 @@
+name: training budget
+issue_type: compatible
+descriptions:
+  - You have to negotiate the annual training and professional development budget. A well-trained engineer produces better results for the company.
+  - You have to negotiate the annual training and professional development budget. More training helps you grow your skills and advance your career.
+payoffs:
+  - [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  - [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+payoff_labels:
+  - ["$0", "$500", "$1000", "$1500", "$2000", "$2500", "$3000", "$3500", "$4000", "$4500", "$5000"]
+  - ["$0", "$500", "$1000", "$1500", "$2000", "$2500", "$3000", "$3500", "$4000", "$4500", "$5000"]

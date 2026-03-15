@@ -1,0 +1,11 @@
+name: project scope
+issue_type: compatible
+descriptions:
+  - You have to negotiate the scope and impact level of the initial project assignment. Assigning the engineer to a high-impact project benefits the company through faster delivery of key features.
+  - You have to negotiate the scope and impact level of the initial project assignment. Working on a high-impact project gives you more visibility and career growth opportunities.
+payoffs:
+  - [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  - [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+payoff_labels:
+  - ["minimal scope", "very small scope", "small scope", "limited scope", "moderate scope", "standard scope", "broad scope", "significant scope", "large scope", "very large scope", "full scope"]
+  - ["minimal scope", "very small scope", "small scope", "limited scope", "moderate scope", "standard scope", "broad scope", "significant scope", "large scope", "very large scope", "full scope"]

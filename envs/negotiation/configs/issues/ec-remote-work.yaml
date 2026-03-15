@@ -1,0 +1,11 @@
+name: remote work
+issue_type: integrative
+descriptions:
+  - You have to negotiate the number of remote work days per week. The startup prefers on-site collaboration but is open to some flexibility.
+  - You have to negotiate the number of remote work days per week. Working from home is very important to you for work-life balance.
+payoffs:
+  - [10, 8, 6, 4, 2, 0]
+  - [0, 2, 5, 8, 9, 10]
+payoff_labels:
+  - ["0 days", "1 day", "2 days", "3 days", "4 days", "5 days"]
+  - ["0 days", "1 day", "2 days", "3 days", "4 days", "5 days"]

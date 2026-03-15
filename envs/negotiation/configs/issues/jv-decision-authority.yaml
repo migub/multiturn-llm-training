@@ -1,0 +1,11 @@
+name: decision authority
+issue_type: integrative
+descriptions:
+  - You have to negotiate how many of the 10 key decision areas in the joint venture your company will control. Having more control allows you to steer the venture's strategic direction.
+  - You have to negotiate how many of the 10 key decision areas in the joint venture your company will control. You value operational independence but are flexible on strategic control.
+payoffs:
+  - [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  - [5, 5, 4, 4, 3, 3, 2, 2, 1, 1, 0]
+payoff_labels:
+  - ["0 areas", "1 area", "2 areas", "3 areas", "4 areas", "5 areas", "6 areas", "7 areas", "8 areas", "9 areas", "10 areas"]
+  - ["0 areas", "1 area", "2 areas", "3 areas", "4 areas", "5 areas", "6 areas", "7 areas", "8 areas", "9 areas", "10 areas"]

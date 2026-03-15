@@ -1,0 +1,8 @@
+name: joint-venture
+description: Two technology companies are forming a joint venture to develop and market a new AI-powered software platform. Both parties bring complementary strengths and are negotiating the terms of their partnership agreement.
+sides:
+  - You are an advisor representing the best interests of TechAlpha. Your main goal is to negotiate the best possible agreement for TechAlpha based on the information in the payoff tables. The numbers in the payoff tables show how valuable each outcome is to you. You can trust that the payoffs assigned to the different options in your table are accurate.
+  - You are an advisor representing the best interests of BetaSoft. Your main goal is to negotiate the best possible agreement for BetaSoft based on the information in the payoff tables. The numbers in the payoff tables show how valuable each outcome is to you. You can trust that the payoffs assigned to the different options in your table are accurate.
+parties:
+  - TechAlpha
+  - BetaSoft

@@ -129,6 +129,11 @@ class NegotiationEnv:
                     "issues": ["gen-la-amount.yaml","gen-la-duration.yaml","gen-la-fees.yaml","gen-la-rate.yaml"]},
                     {"game_settings": "generic-merger.yaml",
                     "issues": ["gen-m-benefits.yaml", "gen-m-ownership.yaml"]},
+                    # NEW: Cooperative scenarios
+                    {"game_settings": "joint-venture.yaml",
+                    "issues": ["jv-rd-budget.yaml", "jv-revenue-split.yaml", "jv-data-sharing.yaml", "jv-decision-authority.yaml"]},
+                    {"game_settings": "employment-contract.yaml",
+                    "issues": ["ec-salary.yaml", "ec-remote-work.yaml", "ec-training-budget.yaml", "ec-equity.yaml", "ec-project-scope.yaml"]},
                 ]
             else:
                 games_used = [

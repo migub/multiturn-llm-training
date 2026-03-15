@@ -1,0 +1,11 @@
+name: salary
+issue_type: distributive
+descriptions:
+  - You have to negotiate the annual base salary for the position.
+  - You have to negotiate the annual base salary for the position.
+payoffs:
+  - [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+  - [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+payoff_labels:
+  - ["$80K", "$85K", "$90K", "$95K", "$100K", "$105K", "$110K", "$115K", "$120K", "$125K", "$130K"]
+  - ["$80K", "$85K", "$90K", "$95K", "$100K", "$105K", "$110K", "$115K", "$120K", "$125K", "$130K"]
