@@ -134,7 +134,7 @@ def main(args):
     print("Starting training...")
     print("=" * 60)
 
-    trainer.train()
+    trainer.train(resume_from_checkpoint=args.resume_from_checkpoint)
 
     # ---- Save ----
     print("\nSaving final model...")
@@ -152,6 +152,7 @@ if __name__ == "__main__":
     parser.add_argument("--lora-r", type=int, default=8)
     parser.add_argument("--lora-alpha", type=int, default=16)
     parser.add_argument("--lora-dropout", type=float, default=0.1)  
+    parser.add_argument("--resume-from-checkpoint", type=str, default=None)
 
     # Environment
     parser.add_argument("--game-type", type=str, default="generic-rental-agreement")

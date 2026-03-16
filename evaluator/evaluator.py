@@ -97,26 +97,51 @@ class Evaluator:
                 payoff_labels = issue.payoff_labels[i]
                 payoff_values = issue.payoffs[i]
 
-                # Extract numeric value from agreement
-                numeric_value = self.extract_numeric_value(value)
-                if numeric_value is None:
-                    print(f"Could not extract numeric value from agreement value '{value}' for {agent}.")
-                    continue
-
-                # Calculate payoff using interpolation
-                payoff = self.interpolate_payoff(numeric_value, payoff_labels, payoff_values)
-                if payoff is None:
-                    print(f"Could not calculate payoff for value '{numeric_value}' in issue '{issue_name}' for {agent}.")
-                    continue
-
-                # Add to total payoff for the agent
-                payoffs[agent] += payoff
-
+                # CHANGED: First try exact label match, then fall back to numeric interpolation
+                payoff = self.lookup_payoff(value, payoff_labels, payoff_values)
                 
+                if payoff is not None:
+                    payoffs[agent] += payoff
+                else:
+                    # Fall back to numeric extraction + interpolation (original behavior)
+                    numeric_value = self.extract_numeric_value(value)
+                    if numeric_value is None:
+                        print(f"Could not extract numeric value from agreement value '{value}' for {agent}.")
+                        continue
+
+                    payoff = self.interpolate_payoff(numeric_value, payoff_labels, payoff_values)
+                    if payoff is None:
+                        print(f"Could not calculate payoff for value '{numeric_value}' in issue '{issue_name}' for {agent}.")
+                        continue
+
+                    payoffs[agent] += payoff
 
         return payoffs
-    
 
+
+    def lookup_payoff(self, value, payoff_labels, payoff_values):
+        """
+        Try to find the value directly in the payoff labels.
+        Handles text-based labels like 'full scope', 'significant scope', etc.
+        Uses case-insensitive matching and strips whitespace.
+        Returns the corresponding payoff value, or None if not found.
+        """
+        value_clean = str(value).strip().lower()
+        
+        for idx, label in enumerate(payoff_labels):
+            label_clean = str(label).strip().lower()
+            
+            # Exact match
+            if value_clean == label_clean:
+                return payoff_values[idx]
+            
+            # Check if value is contained in label or vice versa
+            # e.g. "full scope" matches "full scope" or "full" matches "full scope"
+            if value_clean in label_clean or label_clean in value_clean:
+                return payoff_values[idx]
+        
+        return None
+    
 
     def extract_numeric_value(self, label):
         """
@@ -132,6 +157,10 @@ class Evaluator:
         Interpolates the payoff for a given value between numeric labels.
         """
         numeric_labels = [self.extract_numeric_value(label) for label in labels]
+
+        # Skip if any labels couldn't be parsed as numbers
+        if any(nl is None for nl in numeric_labels):
+            return None
 
         for i in range(len(numeric_labels) - 1):
             if numeric_labels[i] <= value <= numeric_labels[i + 1]:
@@ -244,9 +273,3 @@ class Evaluator:
             except json.JSONDecodeError as e:
                 print(f"Error parsing JSON: {e}")
         return None
-
-
-
-
-
-

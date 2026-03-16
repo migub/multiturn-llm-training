@@ -256,6 +256,15 @@ class NegotiationEnv:
                 # ============================================================
                 # COOPERATIVE REWARD: R_coop = λ_self × U_A + λ_welfare × (U_A + U_B) + λ_fair × (U_A × U_B)
                 # ============================================================
+                if "payoffs" not in evaluation:
+                    print(f"Warning: No payoffs in evaluation for sample {i}, assigning reward 0.0")
+                    rewards.append(0.0)
+                    batch_U_A.append(0.0)
+                    batch_U_B.append(0.0)
+                    if get_full_info:
+                        evaluations.append(None)
+                        continue
+
                 payoff_agent1 = evaluation["payoffs"]["Agent 1"]
                 payoff_agent2 = evaluation["payoffs"]["Agent 2"]
 
