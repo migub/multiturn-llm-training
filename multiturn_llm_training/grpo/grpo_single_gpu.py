@@ -18,11 +18,12 @@ import torch
 # Add repo root to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
+# Unsloth FIRST — patches TRL before we import our trainer
+from unsloth import FastLanguageModel
+
 from envs.negotiation.env import NegotiationEnv
 from multiturn_llm_training.grpo.multiturn_grpo_trainer import MultiTurnGRPOTrainer
 from trl import GRPOConfig
-from unsloth import FastLanguageModel
-
 
 def main(args):
     print("=" * 60)
@@ -70,6 +71,9 @@ def main(args):
 
     print(f"Model loaded.")
     model.print_trainable_parameters()
+
+    # Prepare for inference (Unsloth needs this for generate())
+    FastLanguageModel.for_inference(model)
 
     # ---- Setup Environment ----
     print(f"\nSetting up environment: {args.game_type}")

@@ -1,8 +1,8 @@
 """
-2026.3.2
 2026.3.4
-5.2.0
-1.0.0.dev0
+2026.3.5
+5.3.0
+0.29.0
 __UNSLOTH_VERSIONING__
 """
 
@@ -28,7 +28,7 @@ import torch.nn as nn
 from torch.nn import functional as F
 from unsloth_zoo.temporary_patches.common import torch_compile
 from typing import Any, List, Optional, Tuple, Union, Dict, Set, Callable
-from trl.trainer.sft_trainer import (Any, AutoProcessor, Callable, DataCollator, DataCollatorForLanguageModeling, DataCollatorForVisionLanguageModeling, Dataset, EvalPrediction, FLASH_ATTENTION_VARIANTS, IterableDataset, Path, PeftConfig, PeftModel, PreTrainedModel, PreTrainedTokenizerBase, ProcessorMixin, SFTConfig, SFTTrainer, TrainerCallback, TrainingArguments, Version, _BaseTrainer, clone_chat_template, contextlib, create_model_from_path, dataclass, defaultdict, dft_loss, get_act_offloading_ctx_manager, get_config_model_id, get_peft_model, is_conversational, is_peft_available, is_peft_model, logger, nn, os, pack_dataset, pad, selective_log_softmax, torch, transformers, warnings, Any, AutoProcessor, Callable, DataCollator, DataCollatorForLanguageModeling, DataCollatorForVisionLanguageModeling, Dataset, EvalPrediction, FLASH_ATTENTION_VARIANTS, IterableDataset, PeftConfig, PeftModel, PreTrainedModel, PreTrainedTokenizerBase, ProcessorMixin, SFTConfig, SFTTrainer, TrainerCallback, TrainingArguments, Version, clone_chat_template, contextlib, create_model_from_path, defaultdict, dft_loss, get_act_offloading_ctx_manager, get_config_model_id, get_peft_model, is_conversational, is_peft_available, is_peft_model, logger, nn, os, pad, torch, transformers, Callable, DataCollator, DataCollatorForLanguageModeling, Dataset, IterableDataset, os, pack_dataset, pad, transformers, warnings, PeftModel, PreTrainedModel, is_peft_available, logger, os, torch, os)
+from trl.trainer.sft_trainer import (Any, AutoProcessor, BaseTrainer, Callable, DataCollator, DataCollatorForLanguageModeling, DataCollatorForVisionLanguageModeling, Dataset, EvalPrediction, FLASH_ATTENTION_VARIANTS, IterableDataset, Path, PeftConfig, PeftModel, PreTrainedModel, PreTrainedTokenizerBase, ProcessorMixin, SFTConfig, SFTTrainer, TrainerCallback, TrainingArguments, Version, clone_chat_template, contextlib, create_model_from_path, dataclass, defaultdict, dft_loss, get_act_offloading_ctx_manager, get_config_model_id, get_peft_model, is_conversational, is_peft_available, is_peft_model, logger, nn, os, pack_dataset, pad, selective_log_softmax, torch, transformers, warnings, Any, AutoProcessor, Callable, DataCollator, DataCollatorForLanguageModeling, DataCollatorForVisionLanguageModeling, Dataset, EvalPrediction, FLASH_ATTENTION_VARIANTS, IterableDataset, PeftConfig, PeftModel, PreTrainedModel, PreTrainedTokenizerBase, ProcessorMixin, SFTConfig, SFTTrainer, TrainerCallback, TrainingArguments, Version, clone_chat_template, contextlib, create_model_from_path, defaultdict, dft_loss, get_act_offloading_ctx_manager, get_config_model_id, get_peft_model, is_conversational, is_peft_available, is_peft_model, logger, nn, os, pad, torch, transformers, Callable, DataCollator, DataCollatorForLanguageModeling, Dataset, IterableDataset, os, pack_dataset, pad, transformers, warnings, PeftModel, PreTrainedModel, is_peft_available, logger, os, torch, os)
 
 
 import os
@@ -141,7 +141,7 @@ def chunked_hidden_states_selective_log_softmax(
     return all_per_token_logps
 
 @torch.compile(dynamic = True, fullgraph = True, options = torch_compile_options,)
-def chunked_selective_log_softmax(logits, index):
+def chunked_selective_log_softmax(logits, index, temperature: float = 1.0):
     # Split into 4 chunks only
     chunked_logits = torch.chunk(logits.reshape(-1, logits.shape[-1]), chunks = 4, dim = 0)
     chunked_index  = torch.chunk(index.reshape(-1), chunks = 4, dim = 0)
@@ -149,6 +149,8 @@ def chunked_selective_log_softmax(logits, index):
     # Below loop does the same as selective_log_softmax(chunk_logits, chunk_index)
     for chunk_logits, chunk_index in zip(chunked_logits, chunked_index):
         chunk_logits = chunk_logits.to(torch.float32)
+        if temperature != 1.0:
+            chunk_logits = chunk_logits / temperature
         selected_logits = torch.gather(chunk_logits, dim = -1, index = chunk_index.unsqueeze(-1)).squeeze(-1)
         logsumexp_values = torch.logsumexp(chunk_logits, dim = -1)
         per_token_logps = selected_logits - logsumexp_values
@@ -373,8 +375,8 @@ class UnslothSFTConfig(SFTConfig):
             Whether to group multiple sequences into fixed-length blocks to improve computational efficiency and reduce
             padding. Uses `max_length` to define sequence length.
         packing_strategy (`str`, *optional*, defaults to `"bfd"`):
-            Strategy for packing sequences. Can be `"bfd"` (best-fit decreasing, truncates overflow), `"bfd_split"`
-            (best-fit decreasing, splits overflow sequences), or `"wrapped"` (aggressive, cuts mid-sequence).
+            Strategy for packing sequences. Can be `"bfd"` (best-fit decreasing, truncates overflow), `"bfd-requeue"`
+            (best-fit decreasing, re-queues overflow tokens), or `"wrapped"` (aggressive, cuts mid-sequence).
         padding_free (`bool`, *optional*, defaults to `False`):
             Whether to perform forward passes without padding by flattening all sequences in the batch into a single
             continuous sequence. This reduces memory usage by eliminating padding overhead. Currently, this is only
@@ -403,13 +405,6 @@ class UnslothSFTConfig(SFTConfig):
             Fine-Tuning, as described in [this paper](https://huggingface.co/papers/2508.05629)).
         activation_offloading (`bool`, *optional*, defaults to `False`):
             Whether to offload the activations to the CPU.
-
-    > [!NOTE]
-    > These parameters have default values different from [`~transformers.TrainingArguments`]:
-    > - `logging_steps`: Defaults to `10` instead of `500`.
-    > - `gradient_checkpointing`: Defaults to `True` instead of `False`.
-    > - `bf16`: Defaults to `True` if `fp16` is not set, instead of `False`.
-    > - `learning_rate`: Defaults to `2e-5` instead of `5e-5`.
     
     """
     vllm_sampling_params: Optional[Any] = field(
@@ -562,8 +557,8 @@ class UnslothSFTConfig(SFTConfig):
         activation_offloading = False,
         vllm_sampling_params = None,
         unsloth_num_chunks = -1,
-        unsloth_logit_chunk_multiplier = None, 
-        unsloth_grpo_mini_batch = None, 
+        unsloth_logit_chunk_multiplier = None,
+        unsloth_grpo_mini_batch = None,
         max_seq_length = None,
         **kwargs,
     ):
@@ -575,14 +570,15 @@ class UnslothSFTConfig(SFTConfig):
             output_dir = 'unsloth_training_checkpoints'
             save_strategy = 'no'
         import multiprocessing as _mp
-        if _mp.get_start_method() != 'fork':
-            dataset_num_proc = None
-        elif dataset_num_proc is None:
-            import psutil
-            dataset_num_proc = min(max((psutil.cpu_count() or 1)+4, 2), 64)
-            memory_gb_left = psutil.virtual_memory().available / (1024**3)
-            if memory_gb_left <= 2: dataset_num_proc = 1
-            else: dataset_num_proc = min(dataset_num_proc, int(memory_gb_left))
+        if dataset_num_proc is None:
+            if _mp.get_start_method() != 'fork':
+                dataset_num_proc = None
+            else:
+                import psutil
+                dataset_num_proc = min(max((psutil.cpu_count() or 1)+4, 2), 64)
+                memory_gb_left = psutil.virtual_memory().available / (1024**3)
+                if memory_gb_left <= 2: dataset_num_proc = 1
+                else: dataset_num_proc = min(dataset_num_proc, int(memory_gb_left))
         if os.environ.get('UNSLOTH_ENABLE_FLEX_ATTENTION', '0') == '1':
             from unsloth_zoo.flex_attention import HAS_FLEX_ATTENTION
             if HAS_FLEX_ATTENTION and pad_to_multiple_of is None:
@@ -729,10 +725,14 @@ class UnslothSFTConfig(SFTConfig):
                 )
         self.unsloth_logit_chunk_multiplier = unsloth_logit_chunk_multiplier
         self.max_seq_length = max_seq_length
+        # Unsloth: Remove use_reentrant=False forced by TRL 0.27.0+
+        if getattr(self, 'gradient_checkpointing_kwargs', None) is not None:
+            if 'use_reentrant' in self.gradient_checkpointing_kwargs:
+                del self.gradient_checkpointing_kwargs['use_reentrant']
 
 pass
 
-class _UnslothSFTTrainer(_BaseTrainer):
+class _UnslothSFTTrainer(BaseTrainer):
     """"""
 
     _tag_names = ["trl", "sft"]
@@ -927,7 +927,7 @@ class _UnslothSFTTrainer(_BaseTrainer):
         # Data collator
         # BFD packing requires padding-free mode; otherwise, the collator outputs padded attention masks, causing
         # FlashAttention to ignore position_ids and recompute them incorrectly from the padded attention mask.
-        self.padding_free = args.padding_free or (args.packing and args.packing_strategy in {"bfd", "bfd_split"})
+        self.padding_free = args.padding_free or (args.packing and args.packing_strategy == "bfd")
         use_flash_attention = model.config._attn_implementation in FLASH_ATTENTION_VARIANTS
         if self.padding_free:
             if data_collator is not None:
@@ -995,7 +995,7 @@ class _UnslothSFTTrainer(_BaseTrainer):
                 dataset_text_field=args.dataset_text_field,
             )
 
-        if args.packing and args.packing_strategy in {"bfd", "bfd_split"} and not use_flash_attention:
+        if args.packing and args.packing_strategy == "bfd" and not use_flash_attention:
             logger.warning(
                 "You are using packing, but the attention implementation is not set to a supported flash attention "
                 "variant. Packing gathers multiple samples into a single sequence, and only the following "
@@ -1230,11 +1230,11 @@ class _UnslothSFTTrainer(_BaseTrainer):
     
             if not isinstance(dataset, IterableDataset):
                 import multiprocessing as _mp
-                if _mp.get_start_method() != 'fork':
-                    dataset_num_proc = None
-                else:
-                    dataset_num_proc = getattr(args, "dataset_num_proc", None)
-                    if dataset_num_proc is None:
+                dataset_num_proc = getattr(args, "dataset_num_proc", None)
+                if dataset_num_proc is None:
+                    if _mp.get_start_method() != 'fork':
+                        dataset_num_proc = None
+                    else:
                         import psutil
                         dataset_num_proc = min(max((psutil.cpu_count() or 1)+4, 2), 64)
                         memory_gb_left = psutil.virtual_memory().available / (1024**3)

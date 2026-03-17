@@ -1,8 +1,8 @@
 """
-2026.3.2
 2026.3.4
-5.2.0
-1.0.0.dev0
+2026.3.5
+5.3.0
+0.29.0
 __UNSLOTH_VERSIONING__
 """
 
@@ -28,7 +28,7 @@ import torch.nn as nn
 from torch.nn import functional as F
 from unsloth_zoo.temporary_patches.common import torch_compile
 from typing import Any, List, Optional, Tuple, Union, Dict, Set, Callable
-from trl.trainer.reward_trainer import (Any, AutoModelForSequenceClassification, AutoTokenizer, Callable, DataCollator, DataCollatorForPreference, Dataset, EvalPrediction, IterableDataset, PartialState, Path, PeftConfig, PeftModel, PreTrainedModel, PreTrainedTokenizerBase, RewardConfig, RewardTrainer, TrainerCallback, Version, _BaseTrainer, clone_chat_template, contextlib, create_model_from_path, dataclass, defaultdict, disable_dropout_in_model, get_act_offloading_ctx_manager, get_config_model_id, get_dataset_column_names, get_peft_model, is_conversational, is_peft_available, is_peft_model, json, logger, logging, nn, os, pad, re, remove_none_values, set_seed, suppress_seqcls_warning, torch, transformers, warnings, Any, AutoModelForSequenceClassification, AutoTokenizer, Callable, DataCollator, DataCollatorForPreference, Dataset, EvalPrediction, IterableDataset, PeftConfig, PeftModel, PreTrainedModel, PreTrainedTokenizerBase, RewardConfig, TrainerCallback, Version, clone_chat_template, contextlib, create_model_from_path, defaultdict, disable_dropout_in_model, get_act_offloading_ctx_manager, get_config_model_id, get_peft_model, is_peft_available, is_peft_model, logger, os, pad, re, set_seed, suppress_seqcls_warning, torch, transformers, PeftModel, PreTrainedModel, is_peft_available, logger, os, re, torch)
+from trl.trainer.reward_trainer import (Any, AutoModelForSequenceClassification, AutoTokenizer, BaseTrainer, Callable, DataCollator, DataCollatorForPreference, Dataset, EvalPrediction, IterableDataset, PartialState, Path, PeftConfig, PeftModel, PreTrainedModel, PreTrainedTokenizerBase, RewardConfig, RewardTrainer, TrainerCallback, Version, clone_chat_template, contextlib, create_model_from_path, dataclass, defaultdict, disable_dropout_in_model, get_act_offloading_ctx_manager, get_config_model_id, get_dataset_column_names, get_peft_model, is_conversational, is_peft_available, is_peft_model, json, logger, logging, nn, os, pad, re, remove_none_values, set_seed, suppress_seqcls_warning, torch, transformers, warnings, Any, AutoModelForSequenceClassification, AutoTokenizer, Callable, DataCollator, DataCollatorForPreference, Dataset, EvalPrediction, IterableDataset, PeftConfig, PeftModel, PreTrainedModel, PreTrainedTokenizerBase, RewardConfig, TrainerCallback, Version, clone_chat_template, contextlib, create_model_from_path, defaultdict, disable_dropout_in_model, get_act_offloading_ctx_manager, get_config_model_id, get_peft_model, is_peft_available, is_peft_model, logger, os, pad, re, set_seed, suppress_seqcls_warning, torch, transformers, PeftModel, PreTrainedModel, is_peft_available, logger, os, re, torch)
 
 
 import os
@@ -141,7 +141,7 @@ def chunked_hidden_states_selective_log_softmax(
     return all_per_token_logps
 
 @torch.compile(dynamic = True, fullgraph = True, options = torch_compile_options,)
-def chunked_selective_log_softmax(logits, index):
+def chunked_selective_log_softmax(logits, index, temperature: float = 1.0):
     # Split into 4 chunks only
     chunked_logits = torch.chunk(logits.reshape(-1, logits.shape[-1]), chunks = 4, dim = 0)
     chunked_index  = torch.chunk(index.reshape(-1), chunks = 4, dim = 0)
@@ -149,6 +149,8 @@ def chunked_selective_log_softmax(logits, index):
     # Below loop does the same as selective_log_softmax(chunk_logits, chunk_index)
     for chunk_logits, chunk_index in zip(chunked_logits, chunked_index):
         chunk_logits = chunk_logits.to(torch.float32)
+        if temperature != 1.0:
+            chunk_logits = chunk_logits / temperature
         selected_logits = torch.gather(chunk_logits, dim = -1, index = chunk_index.unsqueeze(-1)).squeeze(-1)
         logsumexp_values = torch.logsumexp(chunk_logits, dim = -1)
         per_token_logps = selected_logits - logsumexp_values
@@ -373,13 +375,6 @@ class UnslothRewardConfig(RewardConfig):
             https://huggingface.co/papers/2312.09244, Eq. 2). Recommended value: `0.01`.
         activation_offloading (`bool`, *optional*, defaults to `False`):
             Whether to offload the activations to the CPU.
-
-    > [!NOTE]
-    > These parameters have default values different from [`~transformers.TrainingArguments`]:
-    > - `logging_steps`: Defaults to `10` instead of `500`.
-    > - `gradient_checkpointing`: Defaults to `True` instead of `False`.
-    > - `bf16`: Defaults to `True` if `fp16` is not set, instead of `False`.
-    > - `learning_rate`: Defaults to `1e-4` instead of `5e-5`.
     
     """
     vllm_sampling_params: Optional[Any] = field(
@@ -524,8 +519,8 @@ class UnslothRewardConfig(RewardConfig):
         activation_offloading = False,
         vllm_sampling_params = None,
         unsloth_num_chunks = -1,
-        unsloth_logit_chunk_multiplier = None, 
-        unsloth_grpo_mini_batch = None, 
+        unsloth_logit_chunk_multiplier = None,
+        unsloth_grpo_mini_batch = None,
         max_seq_length = None,
         **kwargs,
     ):
@@ -537,14 +532,15 @@ class UnslothRewardConfig(RewardConfig):
             output_dir = 'unsloth_training_checkpoints'
             save_strategy = 'no'
         import multiprocessing as _mp
-        if _mp.get_start_method() != 'fork':
-            dataset_num_proc = None
-        elif dataset_num_proc is None:
-            import psutil
-            dataset_num_proc = min(max((psutil.cpu_count() or 1)+4, 2), 64)
-            memory_gb_left = psutil.virtual_memory().available / (1024**3)
-            if memory_gb_left <= 2: dataset_num_proc = 1
-            else: dataset_num_proc = min(dataset_num_proc, int(memory_gb_left))
+        if dataset_num_proc is None:
+            if _mp.get_start_method() != 'fork':
+                dataset_num_proc = None
+            else:
+                import psutil
+                dataset_num_proc = min(max((psutil.cpu_count() or 1)+4, 2), 64)
+                memory_gb_left = psutil.virtual_memory().available / (1024**3)
+                if memory_gb_left <= 2: dataset_num_proc = 1
+                else: dataset_num_proc = min(dataset_num_proc, int(memory_gb_left))
         if os.environ.get('UNSLOTH_ENABLE_FLEX_ATTENTION', '0') == '1':
             from unsloth_zoo.flex_attention import HAS_FLEX_ATTENTION
             if HAS_FLEX_ATTENTION and pad_to_multiple_of is None:
@@ -683,10 +679,14 @@ class UnslothRewardConfig(RewardConfig):
                 )
         self.unsloth_logit_chunk_multiplier = unsloth_logit_chunk_multiplier
         self.max_seq_length = max_seq_length
+        # Unsloth: Remove use_reentrant=False forced by TRL 0.27.0+
+        if getattr(self, 'gradient_checkpointing_kwargs', None) is not None:
+            if 'use_reentrant' in self.gradient_checkpointing_kwargs:
+                del self.gradient_checkpointing_kwargs['use_reentrant']
 
 pass
 
-class _UnslothRewardTrainer(_BaseTrainer):
+class _UnslothRewardTrainer(BaseTrainer):
     """"""
 
     _tag_names = ["trl", "reward-trainer"]

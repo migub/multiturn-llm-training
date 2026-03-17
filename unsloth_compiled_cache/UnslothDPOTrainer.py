@@ -1,8 +1,8 @@
 """
-2026.3.2
 2026.3.4
-5.2.0
-1.0.0.dev0
+2026.3.5
+5.3.0
+0.29.0
 __UNSLOTH_VERSIONING__
 """
 
@@ -28,7 +28,7 @@ import torch.nn as nn
 from torch.nn import functional as F
 from unsloth_zoo.temporary_patches.common import torch_compile
 from typing import Any, List, Optional, Tuple, Union, Dict, Set, Callable
-from trl.trainer.dpo_trainer import (Any, AutoProcessor, Callable, DPOConfig, DPOTrainer, DataCollator, DataCollatorForPreference, DataCollatorForVisionPreference, DataLoader, Dataset, EvalPrediction, F, Hasher, IterableDataset, IterableDatasetDict, PartialState, Path, PeftConfig, PeftModel, PreTrainedModel, PreTrainedTokenizerBase, ProcessorMixin, SyncRefModelCallback, TrainerCallback, Version, _BaseTrainer, apply_chat_template, contextlib, create_model_from_path, dataclass, defaultdict, disable_dropout_in_model, disable_gradient_checkpointing, entropy_from_logits, extract_prompt, flush_left, flush_right, get_act_offloading_ctx_manager, get_config_model_id, get_peft_model, hash_module, is_conversational, is_liger_kernel_available, is_peft_available, is_peft_model, json, logger, np, os, pad, prepare_deepspeed, prepare_fsdp, prepare_multimodal_messages, remove_none_values, selective_log_softmax, textwrap, torch, tqdm, transformers, use_adapter, AutoProcessor, Callable, DPOConfig, DPOTrainer, DataCollator, DataCollatorForPreference, DataCollatorForVisionPreference, Dataset, EvalPrediction, F, IterableDataset, IterableDatasetDict, PeftConfig, PeftModel, PreTrainedModel, PreTrainedTokenizerBase, ProcessorMixin, SyncRefModelCallback, TrainerCallback, Version, contextlib, create_model_from_path, defaultdict, disable_dropout_in_model, get_act_offloading_ctx_manager, get_config_model_id, get_peft_model, is_liger_kernel_available, is_peft_available, is_peft_model, logger, np, os, pad, prepare_deepspeed, prepare_fsdp, torch, transformers, F, PeftModel, PreTrainedModel, is_peft_available, logger, os, torch)
+from trl.trainer.dpo_trainer import (Any, AutoProcessor, BaseTrainer, Callable, DPOConfig, DPOTrainer, DataCollator, DataCollatorForPreference, DataCollatorForVisionPreference, DataLoader, Dataset, EvalPrediction, F, Hasher, IterableDataset, IterableDatasetDict, PartialState, Path, PeftConfig, PeftModel, PreTrainedModel, PreTrainedTokenizerBase, ProcessorMixin, SyncRefModelCallback, TrainerCallback, Version, apply_chat_template, contextlib, create_model_from_path, dataclass, defaultdict, disable_dropout_in_model, disable_gradient_checkpointing, entropy_from_logits, extract_prompt, flush_left, flush_right, get_act_offloading_ctx_manager, get_config_model_id, get_peft_model, hash_module, is_conversational, is_liger_kernel_available, is_peft_available, is_peft_model, json, logger, np, os, pad, prepare_deepspeed, prepare_fsdp, prepare_multimodal_messages, remove_none_values, selective_log_softmax, textwrap, torch, tqdm, transformers, use_adapter, AutoProcessor, Callable, DPOConfig, DPOTrainer, DataCollator, DataCollatorForPreference, DataCollatorForVisionPreference, Dataset, EvalPrediction, F, IterableDataset, IterableDatasetDict, PeftConfig, PeftModel, PreTrainedModel, PreTrainedTokenizerBase, ProcessorMixin, SyncRefModelCallback, TrainerCallback, Version, contextlib, create_model_from_path, defaultdict, disable_dropout_in_model, get_act_offloading_ctx_manager, get_config_model_id, get_peft_model, is_liger_kernel_available, is_peft_available, is_peft_model, logger, np, os, pad, prepare_deepspeed, prepare_fsdp, torch, transformers, F, PeftModel, PreTrainedModel, is_peft_available, logger, os, torch)
 
 
 import os
@@ -141,7 +141,7 @@ def chunked_hidden_states_selective_log_softmax(
     return all_per_token_logps
 
 @torch.compile(dynamic = True, fullgraph = True, options = torch_compile_options,)
-def chunked_selective_log_softmax(logits, index):
+def chunked_selective_log_softmax(logits, index, temperature: float = 1.0):
     # Split into 4 chunks only
     chunked_logits = torch.chunk(logits.reshape(-1, logits.shape[-1]), chunks = 4, dim = 0)
     chunked_index  = torch.chunk(index.reshape(-1), chunks = 4, dim = 0)
@@ -149,6 +149,8 @@ def chunked_selective_log_softmax(logits, index):
     # Below loop does the same as selective_log_softmax(chunk_logits, chunk_index)
     for chunk_logits, chunk_index in zip(chunked_logits, chunked_index):
         chunk_logits = chunk_logits.to(torch.float32)
+        if temperature != 1.0:
+            chunk_logits = chunk_logits / temperature
         selected_logits = torch.gather(chunk_logits, dim = -1, index = chunk_index.unsqueeze(-1)).squeeze(-1)
         logsumexp_values = torch.logsumexp(chunk_logits, dim = -1)
         per_token_logps = selected_logits - logsumexp_values
@@ -420,13 +422,6 @@ class UnslothDPOConfig(DPOConfig):
         ref_model_sync_steps (`int`, *optional*, defaults to `512`):
             τ parameter from the TR-DPO paper, which determines how frequently the current policy is synchronized with
             the reference policy. To use this parameter, you must set `sync_ref_model=True`.
-
-    > [!NOTE]
-    > These parameters have default values different from [`~transformers.TrainingArguments`]:
-    > - `logging_steps`: Defaults to `10` instead of `500`.
-    > - `gradient_checkpointing`: Defaults to `True` instead of `False`.
-    > - `bf16`: Defaults to `True` if `fp16` is not set, instead of `False`.
-    > - `learning_rate`: Defaults to `1e-6` instead of `5e-5`.
     
     """
     vllm_sampling_params: Optional[Any] = field(
@@ -583,8 +578,8 @@ class UnslothDPOConfig(DPOConfig):
         ref_model_sync_steps = 512,
         vllm_sampling_params = None,
         unsloth_num_chunks = -1,
-        unsloth_logit_chunk_multiplier = None, 
-        unsloth_grpo_mini_batch = None, 
+        unsloth_logit_chunk_multiplier = None,
+        unsloth_grpo_mini_batch = None,
         max_seq_length = None,
         **kwargs,
     ):
@@ -596,14 +591,15 @@ class UnslothDPOConfig(DPOConfig):
             output_dir = 'unsloth_training_checkpoints'
             save_strategy = 'no'
         import multiprocessing as _mp
-        if _mp.get_start_method() != 'fork':
-            dataset_num_proc = None
-        elif dataset_num_proc is None:
-            import psutil
-            dataset_num_proc = min(max((psutil.cpu_count() or 1)+4, 2), 64)
-            memory_gb_left = psutil.virtual_memory().available / (1024**3)
-            if memory_gb_left <= 2: dataset_num_proc = 1
-            else: dataset_num_proc = min(dataset_num_proc, int(memory_gb_left))
+        if dataset_num_proc is None:
+            if _mp.get_start_method() != 'fork':
+                dataset_num_proc = None
+            else:
+                import psutil
+                dataset_num_proc = min(max((psutil.cpu_count() or 1)+4, 2), 64)
+                memory_gb_left = psutil.virtual_memory().available / (1024**3)
+                if memory_gb_left <= 2: dataset_num_proc = 1
+                else: dataset_num_proc = min(dataset_num_proc, int(memory_gb_left))
         if os.environ.get('UNSLOTH_ENABLE_FLEX_ATTENTION', '0') == '1':
             from unsloth_zoo.flex_attention import HAS_FLEX_ATTENTION
             if HAS_FLEX_ATTENTION and pad_to_multiple_of is None:
@@ -754,10 +750,14 @@ class UnslothDPOConfig(DPOConfig):
                 )
         self.unsloth_logit_chunk_multiplier = unsloth_logit_chunk_multiplier
         self.max_seq_length = max_seq_length
+        # Unsloth: Remove use_reentrant=False forced by TRL 0.27.0+
+        if getattr(self, 'gradient_checkpointing_kwargs', None) is not None:
+            if 'use_reentrant' in self.gradient_checkpointing_kwargs:
+                del self.gradient_checkpointing_kwargs['use_reentrant']
 
 pass
 
-class _UnslothDPOTrainer(_BaseTrainer):
+class _UnslothDPOTrainer(BaseTrainer):
     """"""
 
     _tag_names = ["trl", "dpo"]
@@ -1319,14 +1319,7 @@ class _UnslothDPOTrainer(_BaseTrainer):
         shift_completion_mask = completion_mask[..., 1:].contiguous()
 
         model_kwargs = {"input_ids": input_ids, "attention_mask": attention_mask, "use_cache": False}
-        for key in (
-            "pixel_values",
-            "pixel_attention_mask",
-            "image_grid_thw",
-            "image_sizes",
-            "token_type_ids",
-            "mm_token_type_ids",
-        ):
+        for key in ("pixel_values", "pixel_attention_mask", "image_grid_thw", "image_sizes", "token_type_ids"):
             if key in inputs:
                 model_kwargs[key] = inputs[key]
 
@@ -1447,14 +1440,7 @@ class _UnslothDPOTrainer(_BaseTrainer):
         input_ids, attention_mask, completion_mask = self._truncate_inputs(input_ids, attention_mask, completion_mask)
 
         model_kwargs = {"input_ids": input_ids, "attention_mask": attention_mask, "use_cache": False}
-        for key in (
-            "pixel_values",
-            "pixel_attention_mask",
-            "image_grid_thw",
-            "image_sizes",
-            "token_type_ids",
-            "mm_token_type_ids",
-        ):
+        for key in ("pixel_values", "pixel_attention_mask", "image_grid_thw", "image_sizes", "token_type_ids"):
             if key in inputs:
                 model_kwargs[key] = inputs[key]
 

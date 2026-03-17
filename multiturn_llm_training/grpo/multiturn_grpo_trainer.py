@@ -85,6 +85,7 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
         # GenerationConfig for per-turn generation
         self.multiturn_generation_config = GenerationConfig(
             max_new_tokens=self.max_tokens_per_turn,
+            max_length=None,
             do_sample=True,
             pad_token_id=tokenizer.pad_token_id,
             bos_token_id=tokenizer.bos_token_id,
@@ -263,7 +264,6 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
 
     @torch.no_grad()
     def _generate_single_turn_response(self, messages: list) -> str:
-        """Generate a single response given a conversation history."""
         input_text = self.processing_class.apply_chat_template(
             messages, tokenize=False, add_generation_prompt=True
         )
@@ -271,10 +271,14 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
             input_text, return_tensors="pt", truncation=True, max_length=1800
         ).to(self.accelerator.device)
 
-        outputs = self.model.generate(
-            **inputs,
-            generation_config=self.multiturn_generation_config,
-        )
+        # Bypass Unsloth's fast path — use standard HF generate
+        with torch.backends.cuda.sdp_kernel(enable_flash=True, enable_math=True, enable_mem_efficient=True):
+            outputs = self.model.generate(
+                input_ids=inputs["input_ids"],
+                attention_mask=inputs["attention_mask"],
+                generation_config=self.multiturn_generation_config,
+                use_cache=False,  # Disables Unsloth's custom KV cache
+            )
         new_tokens = outputs[0][inputs["input_ids"].shape[1]:]
         return self.processing_class.decode(new_tokens, skip_special_tokens=True).strip()
 
