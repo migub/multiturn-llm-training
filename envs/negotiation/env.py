@@ -304,6 +304,8 @@ class NegotiationEnv:
             batch_ratio_welfare = []
             batch_ratio_nash = []
             batch_ratio_rcoop = []
+            batch_max_rcoop = []
+            batch_archetypes = []
             
             for i, messages in enumerate(completions):
                 messages = messages[1:]
@@ -313,6 +315,7 @@ class NegotiationEnv:
 
                 current_game_config = game_config[i] if isinstance(game_config, list) else game_config
                 game = Game(**current_game_config)
+                batch_archetypes.append(self.get_archetype_from_game(game))
 
                 # Determine negotiation role
                 if negotiation_roles is None or not isinstance(negotiation_roles, list) or len(negotiation_roles) == 0:
@@ -389,6 +392,7 @@ class NegotiationEnv:
                 batch_ratio_welfare.append(ratio_welfare)
                 batch_ratio_nash.append(ratio_nash)
                 batch_ratio_rcoop.append(ratio_rcoop)
+                batch_max_rcoop.append(max_metrics["max_r_coop"])
                 
                 if get_full_info:
                     evaluation["R_coop"] = R_coop
@@ -410,19 +414,45 @@ class NegotiationEnv:
                     sw = [a + b for a, b in zip(batch_U_A, batch_U_B)]
                     np_vals = [a * b for a, b in zip(batch_U_A, batch_U_B)]
                     agreements = sum(1 for a, b in zip(batch_U_A, batch_U_B) if a > 0 or b > 0)
-                    wandb.log({
-                        # Raw metrics
+                    metrics = {
+                        # Raw metrics (global)
                         "negotiation/U_A_mean": sum(batch_U_A) / n,
                         "negotiation/U_B_mean": sum(batch_U_B) / n,
                         "negotiation/social_welfare_mean": sum(sw) / n,
                         "negotiation/nash_product_mean": sum(np_vals) / n,
                         "negotiation/agreement_rate": agreements / n,
-                        # Normalized ratios (0 to 1, game-independent)
+                        # Normalized ratios (global)
                         "negotiation/ratio_self_mean": sum(batch_ratio_self) / n,
                         "negotiation/ratio_welfare_mean": sum(batch_ratio_welfare) / n,
                         "negotiation/ratio_nash_mean": sum(batch_ratio_nash) / n,
                         "negotiation/ratio_rcoop_mean": sum(batch_ratio_rcoop) / n,
-                    }, commit=False)
+                        # Max possible reward
+                        "negotiation/max_rcoop_mean": sum(batch_max_rcoop) / n,
+                        "negotiation/rcoop_mean": sum(rewards) / n,
+                    }
+
+                    # Per-archetype metrics
+                    from collections import defaultdict
+                    arch_data = defaultdict(lambda: {"U_A": [], "U_B": [], "ratio_self": [], "ratio_welfare": [], "ratio_nash": [], "ratio_rcoop": []})
+                    for idx, arch in enumerate(batch_archetypes):
+                        arch_data[arch]["U_A"].append(batch_U_A[idx])
+                        arch_data[arch]["U_B"].append(batch_U_B[idx])
+                        arch_data[arch]["ratio_self"].append(batch_ratio_self[idx])
+                        arch_data[arch]["ratio_welfare"].append(batch_ratio_welfare[idx])
+                        arch_data[arch]["ratio_nash"].append(batch_ratio_nash[idx])
+                        arch_data[arch]["ratio_rcoop"].append(batch_ratio_rcoop[idx])
+
+                    for arch, vals in arch_data.items():
+                        m = len(vals["U_A"])
+                        metrics[f"negotiation/{arch}/U_A_mean"] = sum(vals["U_A"]) / m
+                        metrics[f"negotiation/{arch}/U_B_mean"] = sum(vals["U_B"]) / m
+                        metrics[f"negotiation/{arch}/ratio_self_mean"] = sum(vals["ratio_self"]) / m
+                        metrics[f"negotiation/{arch}/ratio_welfare_mean"] = sum(vals["ratio_welfare"]) / m
+                        metrics[f"negotiation/{arch}/ratio_nash_mean"] = sum(vals["ratio_nash"]) / m
+                        metrics[f"negotiation/{arch}/ratio_rcoop_mean"] = sum(vals["ratio_rcoop"]) / m
+                        metrics[f"negotiation/{arch}/count"] = m
+
+                    wandb.log(metrics, commit=False)
             except Exception:
                 pass
             
