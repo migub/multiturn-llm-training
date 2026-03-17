@@ -293,7 +293,10 @@ class NegotiationEnv:
         lambda_welfare = self.lambda_welfare
         lambda_fair = self.lambda_fair
 
-        def negotiation_payoff_reward(prompts, completions, get_full_info=False, game_config=None, negotiation_roles=None, **kwargs):
+        def negotiation_payoff_reward(prompts, completions, get_full_info=False, game_config=None, negotiation_roles=None, negotiation_role=None, **kwargs):
+            # Support both singular (from dataset) and plural (legacy) parameter names
+            if negotiation_roles is None and negotiation_role is not None:
+                negotiation_roles = negotiation_role if isinstance(negotiation_role, list) else [negotiation_role] * len(completions)
             rewards = []
             evaluations = [] if get_full_info else None
 
@@ -315,7 +318,6 @@ class NegotiationEnv:
 
                 current_game_config = game_config[i] if isinstance(game_config, list) else game_config
                 game = Game(**current_game_config)
-                batch_archetypes.append(self.get_archetype_from_game(game))
 
                 # Determine negotiation role
                 if negotiation_roles is None or not isinstance(negotiation_roles, list) or len(negotiation_roles) == 0:
@@ -331,6 +333,9 @@ class NegotiationEnv:
                     get_payoffs=True
                 )
 
+                # Compute max metrics for this game (needed for both success and failure cases)
+                max_metrics = self.compute_max_metrics(game, current_role)
+
                 if evaluation is None:
                     print(f"Warning: Evaluation returned None for sample {i}, assigning reward 0.0")
                     rewards.append(0.0)
@@ -340,6 +345,8 @@ class NegotiationEnv:
                     batch_ratio_welfare.append(0.0)
                     batch_ratio_nash.append(0.0)
                     batch_ratio_rcoop.append(0.0)
+                    batch_max_rcoop.append(max_metrics["max_r_coop"])
+                    batch_archetypes.append(self.get_archetype_from_game(game))
                     if get_full_info:
                         evaluations.append(None)
                     continue
@@ -353,6 +360,8 @@ class NegotiationEnv:
                     batch_ratio_welfare.append(0.0)
                     batch_ratio_nash.append(0.0)
                     batch_ratio_rcoop.append(0.0)
+                    batch_max_rcoop.append(max_metrics["max_r_coop"])
+                    batch_archetypes.append(self.get_archetype_from_game(game))
                     if get_full_info:
                         evaluations.append(None)
                     continue
@@ -377,9 +386,6 @@ class NegotiationEnv:
                     + lambda_fair * nash_product_normalized
                 )
 
-                # Compute max possible values for each metric
-                max_metrics = self.compute_max_metrics(game, current_role)
-                
                 ratio_self = U_A / max_metrics["max_U_A"] if max_metrics["max_U_A"] > 0 else 0.0
                 ratio_welfare = social_welfare / max_metrics["max_social_welfare"] if max_metrics["max_social_welfare"] > 0 else 0.0
                 ratio_nash = nash_product / max_metrics["max_nash_product"] if max_metrics["max_nash_product"] > 0 else 0.0
@@ -393,7 +399,8 @@ class NegotiationEnv:
                 batch_ratio_nash.append(ratio_nash)
                 batch_ratio_rcoop.append(ratio_rcoop)
                 batch_max_rcoop.append(max_metrics["max_r_coop"])
-                
+                batch_archetypes.append(self.get_archetype_from_game(game))
+
                 if get_full_info:
                     evaluation["R_coop"] = R_coop
                     evaluation["U_A"] = U_A
