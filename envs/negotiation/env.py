@@ -83,19 +83,14 @@ class NegotiationEnv:
         issues = game.issues
         
         # For each issue, get all possible (payoff_agent1, payoff_agent2) pairs
+        # issue.payoffs are already rescaled by reweigh_issues(), so use them directly
+        # (same values the evaluator uses in get_payoffs())
         issue_payoff_pairs = []
         for issue_idx, issue in enumerate(issues):
             pairs = []
-            weight_0 = game.issue_weights[0][issue_idx] if len(issues) > 1 else 1
-            weight_1 = game.issue_weights[1][issue_idx] if len(issues) > 1 else 1
-            scale_0 = game.scale[0]
-            scale_1 = game.scale[1]
-            max_p0 = max(issue.payoffs[0]) if max(issue.payoffs[0]) > 0 else 1
-            max_p1 = max(issue.payoffs[1]) if max(issue.payoffs[1]) > 0 else 1
-            
             for val_idx in range(len(issue.payoffs[0])):
-                p0 = issue.payoffs[0][val_idx] / max_p0 * weight_0 * scale_0 / 100
-                p1 = issue.payoffs[1][val_idx] / max_p1 * weight_1 * scale_1 / 100
+                p0 = float(issue.payoffs[0][val_idx])
+                p1 = float(issue.payoffs[1][val_idx])
                 pairs.append((p0, p1))
             issue_payoff_pairs.append(pairs)
         

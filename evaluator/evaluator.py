@@ -167,9 +167,13 @@ class Evaluator:
                 # Linear interpolation formula
                 t = (value - numeric_labels[i]) / (numeric_labels[i + 1] - numeric_labels[i])
                 return payoffs[i] + t * (payoffs[i + 1] - payoffs[i])
-        
-        print(f"Value {value} is out of the range of provided labels.")
-        return None  # Return None if value is out of range
+
+        # Clamp to nearest boundary instead of returning None
+        if value < numeric_labels[0]:
+            return payoffs[0]
+        if value > numeric_labels[-1]:
+            return payoffs[-1]
+        return None
     
     def change_game(self):
         #Implement this function to change the game during evaluation
