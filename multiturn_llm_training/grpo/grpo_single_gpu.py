@@ -1,10 +1,13 @@
 """
 Single-GPU Multi-Turn GRPO Training for Negotiation.
 
+Uses MultiTurnGRPOTrainer (subclass of standard TRL GRPOTrainer).
+No TRL fork required — just `pip install trl`.
+
 Usage:
-    python multiturn_llm_training/grpo/train.py
-    python multiturn_llm_training/grpo/train.py --game-type multi-game --num-train-steps 400
-    python multiturn_llm_training/grpo/train.py --test  # Quick test with minimal settings
+    python multiturn_llm_training/grpo/grpo_single_gpu.py
+    python multiturn_llm_training/grpo/grpo_single_gpu.py --game-type multi-game --use-wandb
+    python multiturn_llm_training/grpo/grpo_single_gpu.py --test  # Quick test
 """
 
 import sys
@@ -16,9 +19,8 @@ import torch
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from envs.negotiation.env import NegotiationEnv
-from trl.trainer.grpo_trainer_multiturn import GRPOTrainer
+from multiturn_llm_training.grpo.multiturn_grpo_trainer import MultiTurnGRPOTrainer
 from trl import GRPOConfig
-from peft import LoraConfig
 from unsloth import FastLanguageModel
 
 
@@ -34,6 +36,7 @@ def main(args):
     print(f"Lambda self: {args.lambda_self}")
     print(f"Lambda welfare: {args.lambda_welfare}")
     print(f"Lambda fair: {args.lambda_fair}")
+    print(f"Opponent: {args.opponent_model or 'local (LoRA disabled)'}")
     print()
 
     # Ensure deterministic behaviour
@@ -70,7 +73,12 @@ def main(args):
 
     # ---- Setup Environment ----
     print(f"\nSetting up environment: {args.game_type}")
-    negotiation_env = NegotiationEnv(game_type=args.game_type, lambda_self=args.lambda_self, lambda_welfare=args.lambda_welfare, lambda_fair=args.lambda_fair)
+    negotiation_env = NegotiationEnv(
+        game_type=args.game_type,
+        lambda_self=args.lambda_self,
+        lambda_welfare=args.lambda_welfare,
+        lambda_fair=args.lambda_fair,
+    )
     train_dataset = negotiation_env.create_dataset(size=args.train_size)
     eval_dataset = negotiation_env.create_dataset(size=args.eval_size)
     reward_functions = negotiation_env.get_reward_functions()
@@ -117,16 +125,17 @@ def main(args):
     print(f"  Max tokens per turn: {args.max_tokens_per_turn}")
 
     # ---- Create Trainer ----
-    trainer = GRPOTrainer(
+    trainer = MultiTurnGRPOTrainer(
         model=model,
         reward_funcs=reward_functions,
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
         processing_class=tokenizer,
-        multiturn=True,
+        # Multi-turn specific
         max_negotiation_rounds=args.max_rounds,
         max_tokens_per_turn=args.max_tokens_per_turn,
+        opponent_model=args.opponent_model,
     )
 
     # ---- Train ----
@@ -151,7 +160,7 @@ if __name__ == "__main__":
     parser.add_argument("--model-name", type=str, default="unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit")
     parser.add_argument("--lora-r", type=int, default=8)
     parser.add_argument("--lora-alpha", type=int, default=16)
-    parser.add_argument("--lora-dropout", type=float, default=0.1)  
+    parser.add_argument("--lora-dropout", type=float, default=0.1)
     parser.add_argument("--resume-from-checkpoint", type=str, default=None)
 
     # Environment
@@ -169,6 +178,8 @@ if __name__ == "__main__":
     parser.add_argument("--max-rounds", type=int, default=5)
     parser.add_argument("--max-tokens-per-turn", type=int, default=200)
     parser.add_argument("--max-completion-length", type=int, default=2048)
+    parser.add_argument("--opponent-model", type=str, default=None,
+                        help="OpenAI model for opponent (e.g. gpt-4o-mini). None = local frozen model.")
 
     # Logging & Saving
     parser.add_argument("--output-dir", type=str, default="output/grpo_multiturn")
