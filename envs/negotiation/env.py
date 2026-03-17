@@ -67,6 +67,75 @@ class NegotiationEnv:
             return game.get_game_type()
 
 
+    def compute_max_metrics(self, game: Game, negotiation_role: int = 1) -> dict:
+        """
+        Compute the maximum possible values for all metrics by brute-forcing
+        all possible outcome combinations.
+        
+        For each issue there are ~11 discrete values. For 1 issue: 11 outcomes.
+        For 2 issues: 11×11 = 121 outcomes. Trivial to enumerate.
+        
+        Returns dict with max values for U_A, social_welfare, nash_product, and R_coop.
+        Each metric is maximized independently (different outcomes may maximize different metrics).
+        """
+        import itertools
+
+        issues = game.issues
+        
+        # For each issue, get all possible (payoff_agent1, payoff_agent2) pairs
+        issue_payoff_pairs = []
+        for issue_idx, issue in enumerate(issues):
+            pairs = []
+            weight_0 = game.issue_weights[0][issue_idx] if len(issues) > 1 else 1
+            weight_1 = game.issue_weights[1][issue_idx] if len(issues) > 1 else 1
+            scale_0 = game.scale[0]
+            scale_1 = game.scale[1]
+            max_p0 = max(issue.payoffs[0]) if max(issue.payoffs[0]) > 0 else 1
+            max_p1 = max(issue.payoffs[1]) if max(issue.payoffs[1]) > 0 else 1
+            
+            for val_idx in range(len(issue.payoffs[0])):
+                p0 = issue.payoffs[0][val_idx] / max_p0 * weight_0 * scale_0 / 100
+                p1 = issue.payoffs[1][val_idx] / max_p1 * weight_1 * scale_1 / 100
+                pairs.append((p0, p1))
+            issue_payoff_pairs.append(pairs)
+        
+        # Enumerate all combinations, track max for each metric independently
+        max_U_A = 0.0
+        max_social_welfare = 0.0
+        max_nash_product = 0.0
+        max_r_coop = 0.0
+        
+        for combo in itertools.product(*issue_payoff_pairs):
+            total_p0 = sum(p[0] for p in combo)
+            total_p1 = sum(p[1] for p in combo)
+            
+            if negotiation_role == 1:
+                U_A, U_B = total_p0, total_p1
+            else:
+                U_A, U_B = total_p1, total_p0
+            
+            social_welfare = U_A + U_B
+            nash_product = U_A * U_B
+            
+            r_coop = (
+                self.lambda_self * U_A
+                + self.lambda_welfare * social_welfare
+                + self.lambda_fair * nash_product / 100.0
+            )
+            
+            max_U_A = max(max_U_A, U_A)
+            max_social_welfare = max(max_social_welfare, social_welfare)
+            max_nash_product = max(max_nash_product, nash_product)
+            max_r_coop = max(max_r_coop, r_coop)
+        
+        return {
+            "max_U_A": max_U_A,
+            "max_social_welfare": max_social_welfare,
+            "max_nash_product": max_nash_product,
+            "max_r_coop": max_r_coop,
+        }
+
+
     def get_prompts_from_game(self, game: Game, max_rounds: int = 5):
         prompts = game.get_system_game_msg(agent_id=0)["content"]
         prompts_2 = game.get_system_game_msg(agent_id=1)["content"]
@@ -227,6 +296,14 @@ class NegotiationEnv:
         def negotiation_payoff_reward(prompts, completions, get_full_info=False, game_config=None, negotiation_roles=None, **kwargs):
             rewards = []
             evaluations = [] if get_full_info else None
+
+            # Collect metrics for wandb batch logging
+            batch_U_A = []
+            batch_U_B = []
+            batch_ratio_self = []
+            batch_ratio_welfare = []
+            batch_ratio_nash = []
+            batch_ratio_rcoop = []
             
             for i, messages in enumerate(completions):
                 messages = messages[1:]
@@ -236,6 +313,11 @@ class NegotiationEnv:
 
                 current_game_config = game_config[i] if isinstance(game_config, list) else game_config
                 game = Game(**current_game_config)
+
+                # Determine negotiation role
+                if negotiation_roles is None or not isinstance(negotiation_roles, list) or len(negotiation_roles) == 0:
+                    negotiation_roles = [1] * len(completions)
+                current_role = negotiation_roles[i] if negotiation_roles[i] is not None else 1
 
                 evaluation_model = OpenAIModel(model_provider="openai", model_name="gpt-4o-mini")
                 evaluator = Evaluator(model=evaluation_model, game=game, game_type=self.game_type)
@@ -249,62 +331,100 @@ class NegotiationEnv:
                 if evaluation is None:
                     print(f"Warning: Evaluation returned None for sample {i}, assigning reward 0.0")
                     rewards.append(0.0)
+                    batch_U_A.append(0.0)
+                    batch_U_B.append(0.0)
+                    batch_ratio_self.append(0.0)
+                    batch_ratio_welfare.append(0.0)
+                    batch_ratio_nash.append(0.0)
+                    batch_ratio_rcoop.append(0.0)
                     if get_full_info:
                         evaluations.append(None)
                     continue
-                
-                # ============================================================
-                # COOPERATIVE REWARD: R_coop = λ_self × U_A + λ_welfare × (U_A + U_B) + λ_fair × (U_A × U_B)
-                # ============================================================
+
                 if "payoffs" not in evaluation:
                     print(f"Warning: No payoffs in evaluation for sample {i}, assigning reward 0.0")
                     rewards.append(0.0)
                     batch_U_A.append(0.0)
                     batch_U_B.append(0.0)
+                    batch_ratio_self.append(0.0)
+                    batch_ratio_welfare.append(0.0)
+                    batch_ratio_nash.append(0.0)
+                    batch_ratio_rcoop.append(0.0)
                     if get_full_info:
                         evaluations.append(None)
-                        continue
-
+                    continue
+                
                 payoff_agent1 = evaluation["payoffs"]["Agent 1"]
                 payoff_agent2 = evaluation["payoffs"]["Agent 2"]
-
-                # Determine which payoff belongs to the learning agent
-                if negotiation_roles is None or not isinstance(negotiation_roles, list) or len(negotiation_roles) == 0:
-                    negotiation_roles = [1] * len(completions)
                 
-                if negotiation_roles[i] == 1 or negotiation_roles[i] is None:
-                    U_A = payoff_agent1  # Agent's own payoff
-                    U_B = payoff_agent2  # Opponent's payoff
+                if current_role == 1:
+                    U_A = payoff_agent1
+                    U_B = payoff_agent2
                 else:
                     U_A = payoff_agent2
                     U_B = payoff_agent1
 
-                # Compute cooperative reward
-                self_utility = U_A
                 social_welfare = U_A + U_B
                 nash_product = U_A * U_B
-
-                # Normalize Nash product to be on similar scale as other terms
-                # U_A and U_B are 0-100, so Nash product is 0-10000
-                # Divide by 100 to bring to 0-100 range
                 nash_product_normalized = nash_product / 100.0
 
                 R_coop = (
-                    lambda_self * self_utility
+                    lambda_self * U_A
                     + lambda_welfare * social_welfare
                     + lambda_fair * nash_product_normalized
                 )
 
+                # Compute max possible values for each metric
+                max_metrics = self.compute_max_metrics(game, current_role)
+                
+                ratio_self = U_A / max_metrics["max_U_A"] if max_metrics["max_U_A"] > 0 else 0.0
+                ratio_welfare = social_welfare / max_metrics["max_social_welfare"] if max_metrics["max_social_welfare"] > 0 else 0.0
+                ratio_nash = nash_product / max_metrics["max_nash_product"] if max_metrics["max_nash_product"] > 0 else 0.0
+                ratio_rcoop = R_coop / max_metrics["max_r_coop"] if max_metrics["max_r_coop"] > 0 else 0.0
+
                 rewards.append(R_coop)
+                batch_U_A.append(U_A)
+                batch_U_B.append(U_B)
+                batch_ratio_self.append(ratio_self)
+                batch_ratio_welfare.append(ratio_welfare)
+                batch_ratio_nash.append(ratio_nash)
+                batch_ratio_rcoop.append(ratio_rcoop)
                 
                 if get_full_info:
-                    # Store both payoffs for analysis
                     evaluation["R_coop"] = R_coop
                     evaluation["U_A"] = U_A
                     evaluation["U_B"] = U_B
                     evaluation["social_welfare"] = social_welfare
                     evaluation["nash_product"] = nash_product
+                    evaluation["ratio_self"] = ratio_self
+                    evaluation["ratio_welfare"] = ratio_welfare
+                    evaluation["ratio_nash"] = ratio_nash
+                    evaluation["ratio_rcoop"] = ratio_rcoop
                     evaluations.append(evaluation)
+
+            # Log metrics to wandb
+            try:
+                import wandb
+                if wandb.run is not None:
+                    n = len(batch_U_A) or 1
+                    sw = [a + b for a, b in zip(batch_U_A, batch_U_B)]
+                    np_vals = [a * b for a, b in zip(batch_U_A, batch_U_B)]
+                    agreements = sum(1 for a, b in zip(batch_U_A, batch_U_B) if a > 0 or b > 0)
+                    wandb.log({
+                        # Raw metrics
+                        "negotiation/U_A_mean": sum(batch_U_A) / n,
+                        "negotiation/U_B_mean": sum(batch_U_B) / n,
+                        "negotiation/social_welfare_mean": sum(sw) / n,
+                        "negotiation/nash_product_mean": sum(np_vals) / n,
+                        "negotiation/agreement_rate": agreements / n,
+                        # Normalized ratios (0 to 1, game-independent)
+                        "negotiation/ratio_self_mean": sum(batch_ratio_self) / n,
+                        "negotiation/ratio_welfare_mean": sum(batch_ratio_welfare) / n,
+                        "negotiation/ratio_nash_mean": sum(batch_ratio_nash) / n,
+                        "negotiation/ratio_rcoop_mean": sum(batch_ratio_rcoop) / n,
+                    }, commit=False)
+            except Exception:
+                pass
             
             if get_full_info:
                 return rewards, evaluations
