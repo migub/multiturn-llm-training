@@ -1,29 +1,34 @@
 """
 Single-GPU Multi-Turn GRPO Training for Negotiation.
 
-Uses MultiTurnGRPOTrainer (subclass of standard TRL GRPOTrainer).
-No TRL fork required — just `pip install trl`.
+No Unsloth — uses standard HuggingFace + BitsAndBytes + PEFT (like Luca).
+No TRL fork required.
 
 Usage:
     python multiturn_llm_training/grpo/grpo_single_gpu.py
     python multiturn_llm_training/grpo/grpo_single_gpu.py --game-type multi-game --use-wandb
-    python multiturn_llm_training/grpo/grpo_single_gpu.py --test  # Quick test
+    python multiturn_llm_training/grpo/grpo_single_gpu.py --test
 """
 
 import sys
 import os
 import argparse
-import torch
+import warnings
+
+warnings.filterwarnings("ignore", message=".*max_new_tokens.*max_length.*")
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 # Add repo root to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-# Unsloth FIRST — patches TRL before we import our trainer
-from unsloth import FastLanguageModel
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+from peft import LoraConfig, get_peft_model
+from trl import GRPOConfig
 
 from envs.negotiation.env import NegotiationEnv
 from multiturn_llm_training.grpo.multiturn_grpo_trainer import MultiTurnGRPOTrainer
-from trl import GRPOConfig
+
 
 def main(args):
     print("=" * 60)
@@ -46,34 +51,40 @@ def main(args):
 
     os.makedirs(args.output_dir, exist_ok=True)
 
-    # ---- Load Model with Unsloth ----
-    print("Loading model with Unsloth...")
-    model, tokenizer = FastLanguageModel.from_pretrained(
-        model_name=args.model_name,
-        max_seq_length=2048,
-        dtype=None,
+    # ---- Load Model (like Luca: BitsAndBytes 4-bit + PEFT) ----
+    print("Loading model...")
+    bnb_config = BitsAndBytesConfig(
         load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.bfloat16,
+        bnb_4bit_use_double_quant=True,
+        bnb_4bit_quant_storage=torch.bfloat16,
     )
 
-    model = FastLanguageModel.get_peft_model(
-        model,
-        r=args.lora_r,
-        lora_alpha=args.lora_alpha,
-        lora_dropout=args.lora_dropout,
-        target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
-                         "gate_proj", "up_proj", "down_proj"],
-        bias="none",
-        use_gradient_checkpointing="unsloth",
+    model = AutoModelForCausalLM.from_pretrained(
+        args.model_name,
+        quantization_config=bnb_config,
+        torch_dtype=torch.float16,
+        trust_remote_code=True,
     )
 
+    tokenizer = AutoTokenizer.from_pretrained(args.model_name)
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "left"  # Required for GRPO
 
-    print(f"Model loaded.")
-    model.print_trainable_parameters()
+    peft_config = LoraConfig(
+        lora_alpha=args.lora_alpha,
+        lora_dropout=args.lora_dropout,
+        r=args.lora_r,
+        bias="none",
+        task_type="CAUSAL_LM",
+        target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
+                         "gate_proj", "up_proj", "down_proj"],
+    )
 
-    # Prepare for inference (Unsloth needs this for generate())
-    FastLanguageModel.for_inference(model)
+    model = get_peft_model(model, peft_config)
+    model.print_trainable_parameters()
+    print(f"Model loaded: {args.model_name}")
 
     # ---- Setup Environment ----
     print(f"\nSetting up environment: {args.game_type}")
@@ -161,7 +172,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Multi-Turn GRPO Negotiation Training")
 
     # Model
-    parser.add_argument("--model-name", type=str, default="unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit")
+    parser.add_argument("--model-name", type=str, default="meta-llama/Llama-3.1-8B-Instruct")
     parser.add_argument("--lora-r", type=int, default=8)
     parser.add_argument("--lora-alpha", type=int, default=16)
     parser.add_argument("--lora-dropout", type=float, default=0.1)
@@ -199,7 +210,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    # Override for quick test
     if args.test:
         args.train_size = 100
         args.eval_size = 10

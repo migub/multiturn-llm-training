@@ -1,67 +1,85 @@
 """
-Multi-Turn GRPO Trainer for Negotiation.
+Multi-Turn GRPO Trainer for Single-GPU Negotiation Training.
 
-Subclasses the standard TRL GRPOTrainer — NO TRL fork required.
-Only overrides _generate() to play multi-turn negotiation dialogues.
-Uses TRL's built-in tool_mask mechanism (1 = train, 0 = ignore) as assistant_mask.
+Based directly on Luca's LAGRPOTrainer structure.
+No Unsloth — uses standard HuggingFace + BitsAndBytes + PEFT (like Luca).
 
-Everything else (loss, advantages, KL penalty, logging, checkpointing) comes from TRL.
+Changes from Luca's version:
+  - Removed: vLLM requirement, multi-GPU broadcasting
+  - Added: Local dialogue generation (LoRA on/off or OpenAI opponent)
+  - Added: Gradient checkpointing toggle (off during generation, on during training)
+  - Added: Chunked forward pass to avoid OOM
+  - Kept: _get_per_token_logps, compute_loss, rewards, advantages (identical logic)
 """
 
-import copy
-import torch
+import time
 import logging
-from typing import Any, Optional
-from collections.abc import Callable
+from typing import Any, Optional, Union
 
-from transformers import GenerationConfig, PreTrainedModel, PreTrainedTokenizerBase
+import torch
+import pandas as pd
+from accelerate.utils import gather, gather_object
 from datasets import Dataset, IterableDataset
+from transformers import (
+    GenerationConfig,
+    PreTrainedModel,
+    PreTrainedTokenizerBase,
+    TrainerCallback,
+    is_wandb_available,
+)
+
 from trl import GRPOTrainer, GRPOConfig
+from trl.trainer.utils import selective_log_softmax
 
 try:
     from peft import PeftConfig
 except ImportError:
     PeftConfig = None
 
+if is_wandb_available():
+    import wandb
+
 logger = logging.getLogger(__name__)
 
 
 class MultiTurnGRPOTrainer(GRPOTrainer):
     """
-    Extends TRL's GRPOTrainer with multi-turn negotiation dialogue generation.
-    
-    Instead of single-turn prompt→completion, this trainer:
-    1. Plays a full negotiation dialogue (Agent vs Opponent, multiple rounds)
-    2. Tokenizes the entire dialogue as one sequence
-    3. Uses tool_mask (= assistant_mask) to train ONLY on agent tokens
-    
-    The opponent can be:
-    - Local: same model with LoRA disabled (frozen base model)
-    - External: OpenAI API (e.g. gpt-4o-mini)
+    Single-GPU Multi-Turn GRPO Trainer for negotiation.
+
+    Based on Luca's LAGRPOTrainer. Overrides 3 methods:
+      - _generate_and_score_completions: dialogue generation + rewards + advantages
+      - _get_per_token_logps: with assistant_mask (chunked to avoid OOM)
+      - compute_loss: with assistant_mask
     """
 
     def __init__(
         self,
         model,
         reward_funcs,
-        args: GRPOConfig | None = None,
-        train_dataset: Dataset | IterableDataset | None = None,
+        args: Optional[GRPOConfig] = None,
+        train_dataset=None,
         eval_dataset=None,
-        processing_class: PreTrainedTokenizerBase | None = None,
+        processing_class=None,
         callbacks=None,
         optimizers=(None, None),
-        peft_config: "PeftConfig | None" = None,
+        peft_config=None,
         # Multi-turn specific
         max_negotiation_rounds: int = 5,
         max_tokens_per_turn: int = 200,
         opponent_model: str | None = None,
+        forward_batch_size: int = 2,
         **kwargs,
     ):
-        # Store multi-turn config BEFORE super().__init__ (which may access self)
+        if not isinstance(reward_funcs, list):
+            reward_funcs = [reward_funcs]
+        if not all(callable(f) for f in reward_funcs):
+            raise ValueError("reward_funcs must be callable functions.")
+
         self.max_negotiation_rounds = max_negotiation_rounds
         self.max_tokens_per_turn = max_tokens_per_turn
         self.opponent_model = opponent_model
-        self._current_inputs = None  # Will hold inputs during generation
+        self.forward_batch_size = forward_batch_size  # chunk size for forward pass
+        self._total_train_tokens = 0
 
         super().__init__(
             model=model,
@@ -76,155 +94,326 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
             **kwargs,
         )
 
-        # Get the tokenizer (processing_class might be a processor)
-        if hasattr(self.processing_class, 'tokenizer'):
-            tokenizer = self.processing_class.tokenizer
+        # Get tokenizer
+        if hasattr(self.processing_class, "tokenizer"):
+            self._tokenizer = self.processing_class.tokenizer
         else:
-            tokenizer = self.processing_class
+            self._tokenizer = self.processing_class
 
         # GenerationConfig for per-turn generation
-        self.multiturn_generation_config = GenerationConfig(
+        self.multiturn_gen_config = GenerationConfig(
             max_new_tokens=self.max_tokens_per_turn,
-            max_length=None,
             do_sample=True,
-            pad_token_id=tokenizer.pad_token_id,
-            bos_token_id=tokenizer.bos_token_id,
-            eos_token_id=tokenizer.eos_token_id,
+            pad_token_id=self._tokenizer.pad_token_id,
+            bos_token_id=self._tokenizer.bos_token_id,
+            eos_token_id=self._tokenizer.eos_token_id,
             temperature=self.temperature if self.temperature else 1.0,
             top_p=self.top_p if self.top_p else 1.0,
             top_k=self.top_k if self.top_k else 50,
         )
 
         logger.info(
-            f"MultiTurnGRPOTrainer initialized: {max_negotiation_rounds} rounds, "
+            f"MultiTurnGRPOTrainer: {max_negotiation_rounds} rounds, "
             f"{max_tokens_per_turn} tokens/turn, "
-            f"opponent={'OpenAI ' + opponent_model if opponent_model else 'local (LoRA disabled)'}"
+            f"opponent={'OpenAI ' + opponent_model if opponent_model else 'local (LoRA disabled)'}, "
+            f"forward_batch_size={forward_batch_size}"
         )
 
     # ----------------------------------------------------------------
-    # Override: Allow extra dataset columns (prompt_2, game_config, etc.)
+    # Allow extra dataset columns
     # ----------------------------------------------------------------
     def _set_signature_columns_if_needed(self):
         if self._signature_columns is None:
             self._signature_columns = [
                 "prompt", "prompt_2", "game_config", "starting_agent",
-                "negotiation_role", "archetype",
-                "image", "images",
+                "negotiation_role", "archetype", "image", "images",
             ]
 
     # ----------------------------------------------------------------
-    # Override: Store inputs so _generate() can access them
+    # _get_per_token_logps — chunked to avoid OOM (from Luca + chunking)
     # ----------------------------------------------------------------
-    def _generate_and_score_completions(self, inputs):
-        self._current_inputs = inputs
-        result = super()._generate_and_score_completions(inputs)
-        self._current_inputs = None
-        return result
+    def _get_per_token_logps(self, model, input_ids, attention_mask, assistant_mask):
+        """Compute log probabilities for assistant tokens only. Processes in chunks."""
+        shifted_assistant_mask = assistant_mask[:, 1:]
 
-    # ----------------------------------------------------------------
-    # Override: Multi-turn dialogue generation instead of single-turn
-    # ----------------------------------------------------------------
-    def _generate(self, prompts: list):
-        """
-        Override TRL's single-turn _generate with multi-turn negotiation.
-        
-        Returns the same tuple format as the parent:
-            (prompt_ids, completion_ids, tool_mask, completions,
-             total_completion_tokens, logprobs, extra_fields)
-        """
-        device = self.accelerator.device
-        mode = "train" if self.model.training else "eval"
-        inputs = self._current_inputs or []
-
-        all_prompt_ids = []
-        all_completion_ids = []
-        all_assistant_masks = []
-        all_completions = []  # For reward function
-
-        for i, prompt in enumerate(prompts):
-            inp = inputs[i] if i < len(inputs) else {}
-
-            # Extract agent prompt text
-            agent_prompt = prompt
-            if isinstance(agent_prompt, list):
-                agent_prompt = agent_prompt[-1]["content"] if agent_prompt else ""
-
-            # Extract opponent prompt
-            opponent_prompt = inp.get("prompt_2", agent_prompt)
-            if isinstance(opponent_prompt, list):
-                opponent_prompt = opponent_prompt[-1]["content"] if opponent_prompt else ""
-
-            agent_starts = inp.get("starting_agent", True)
-
-            # Play the negotiation
-            conversation, agent_indices = self._play_negotiation(
-                prompt_agent=agent_prompt,
-                prompt_opponent=opponent_prompt,
-                agent_starts=agent_starts,
+        if shifted_assistant_mask.sum().item() == 0:
+            return torch.zeros(
+                (input_ids.size(0), shifted_assistant_mask.size(1)),
+                device=input_ids.device,
             )
 
-            # Tokenize and get assistant mask
-            p_ids, c_ids, a_mask = self._tokenize_multiturn_conversation(
+        all_logps = []
+        for start in range(0, input_ids.size(0), self.forward_batch_size):
+            end = start + self.forward_batch_size
+
+            chunk_logits = model(
+                input_ids=input_ids[start:end],
+                attention_mask=attention_mask[start:end],
+            ).logits
+            chunk_logits = chunk_logits[:, :-1, :] / self.temperature
+
+            chunk_ids = input_ids[start:end, 1:]
+            chunk_logps = selective_log_softmax(chunk_logits, chunk_ids)
+
+            chunk_mask = shifted_assistant_mask[start:end]
+            all_logps.append(chunk_logps * chunk_mask)
+
+            del chunk_logits  # free VRAM immediately
+
+        return torch.cat(all_logps, dim=0)
+
+    # ----------------------------------------------------------------
+    # _generate_and_score_completions (replaces vLLM with local gen)
+    # ----------------------------------------------------------------
+    def _generate_and_score_completions(self, inputs):
+        device = self.accelerator.device
+        mode = "eval" if self.control.should_evaluate else "train"
+
+        prompts = [x["prompt"] for x in inputs]
+        prompts_2 = [x.get("prompt_2", x["prompt"]) for x in inputs]
+        negotiation_roles = [x.get("negotiation_role", None) for x in inputs]
+        game_configs = [x.get("game_config", None) for x in inputs]
+        starting_agents = [x.get("starting_agent", None) for x in inputs]
+        starting_agent = starting_agents[0] if starting_agents and starting_agents[0] is not None else None
+
+        # ---- Generate dialogues ----
+        all_conversations = []
+        all_token_ids = []
+        all_attention_masks = []
+        all_assistant_masks = []
+        generated_tokens_agent = []
+        generated_tokens_opp = []
+
+        print(f"Generating {len(prompts)} dialogues...")
+        gen_start = time.time()
+
+        # Disable gradient checkpointing during generation
+        unwrapped = self.accelerator.unwrap_model(self.model)
+        gc_was_enabled = unwrapped.is_gradient_checkpointing if hasattr(unwrapped, 'is_gradient_checkpointing') else False
+        if not gc_was_enabled:
+            gc_was_enabled = getattr(unwrapped.base_model, 'is_gradient_checkpointing', False) if hasattr(unwrapped, 'base_model') else False
+        
+        if gc_was_enabled:
+            unwrapped.base_model.model.gradient_checkpointing_disable()
+        self.model.config.use_cache = True
+
+        for i in range(len(prompts)):
+            print(f"  Dialogue {i+1}/{len(prompts)} starting...")
+
+            agent_prompt = prompts[i]
+            if isinstance(agent_prompt, list):
+                agent_prompt = agent_prompt[-1]["content"] if agent_prompt else ""
+            opp_prompt = prompts_2[i]
+            if isinstance(opp_prompt, list):
+                opp_prompt = opp_prompt[-1]["content"] if opp_prompt else ""
+
+            conversation, agent_indices = self._play_negotiation(
+                prompt_agent=agent_prompt,
+                prompt_opponent=opp_prompt,
+                agent_starts=(starting_agent is None or starting_agent == True),
+            )
+
+            tok_ids, att_mask, ass_mask, n_agent, n_opp = self._tokenize_conversation(
                 agent_prompt, conversation, agent_indices
             )
 
-            all_prompt_ids.append(p_ids)
-            all_completion_ids.append(c_ids)
-            all_assistant_masks.append(a_mask)
-            all_completions.append(conversation)
+            all_conversations.append(conversation)
+            all_token_ids.append(tok_ids)
+            all_attention_masks.append(att_mask)
+            all_assistant_masks.append(ass_mask)
+            generated_tokens_agent.append(n_agent)
+            generated_tokens_opp.append(n_opp)
 
-        # --- Metrics ---
-        prompt_lengths = torch.tensor([len(ids) for ids in all_prompt_ids], device=device)
-        completion_lengths = torch.tensor([sum(m) for m in all_assistant_masks], device=device)
-        agg_prompt_lengths = self.accelerator.gather(prompt_lengths)
-        agg_completion_lengths = self.accelerator.gather(completion_lengths)
-        total_completion_tokens = agg_completion_lengths.sum()
+            print(f"  Dialogue {i+1}/{len(prompts)} done — {len(conversation)} turns, {n_agent} agent tokens")
+
+        gen_time = time.time() - gen_start
+        print(f"Generation done in {gen_time:.1f}s")
+
+        # Re-enable for training
+        if gc_was_enabled:
+            unwrapped.base_model.model.gradient_checkpointing_enable()
+        self.model.config.use_cache = False
+
+        # Free generation VRAM before training
+        torch.cuda.empty_cache()
+
+        # ---- Pad and stack tensors ----
+        max_len = max(t.size(0) for t in all_token_ids)
+        token_ids = torch.zeros(len(all_token_ids), max_len, dtype=torch.long, device=device)
+        attention_mask = torch.zeros(len(all_token_ids), max_len, dtype=torch.long, device=device)
+        assistant_mask = torch.zeros(len(all_token_ids), max_len, dtype=torch.long, device=device)
+
+        for i, (t, a, m) in enumerate(zip(all_token_ids, all_attention_masks, all_assistant_masks)):
+            token_ids[i, : t.size(0)] = t
+            attention_mask[i, : a.size(0)] = a
+            assistant_mask[i, : m.size(0)] = m
+
+        # ---- Compute log probabilities (chunked) ----
+        with torch.no_grad():
+            if self.num_iterations > 1:
+                old_per_token_logps = self._get_per_token_logps(
+                    self.model, token_ids, attention_mask, assistant_mask
+                )
+            else:
+                old_per_token_logps = None
+
+            if self.beta == 0.0:
+                ref_per_token_logps = None
+            elif self.ref_model is not None:
+                ref_per_token_logps = self._get_per_token_logps(
+                    self.ref_model, token_ids, attention_mask, assistant_mask
+                )
+            else:
+                # PEFT: disable adapter = base model = reference
+                with self.accelerator.unwrap_model(self.model).disable_adapter():
+                    ref_per_token_logps = self._get_per_token_logps(
+                        self.model, token_ids, attention_mask, assistant_mask
+                    )
+
+        # ---- Compute rewards ----
+        print("Calculating rewards...")
+        rewards_per_func = torch.zeros(len(prompts), len(self.reward_funcs), device=device)
+        for i, reward_func in enumerate(self.reward_funcs):
+            keys = [key for key in inputs[0] if key not in ["prompt", "completion"]]
+            reward_kwargs = {key: [example[key] for example in inputs] for key in keys}
+
+            reward_result = reward_func(
+                prompts=prompts,
+                completions=all_conversations,
+                negotiation_roles=negotiation_roles,
+                game_configs=game_configs,
+                **reward_kwargs,
+            )
+            if isinstance(reward_result, tuple) and len(reward_result) == 2:
+                output_rewards, evaluations = reward_result
+            else:
+                output_rewards = reward_result
+
+            rewards_per_func[:, i] = torch.tensor(output_rewards, dtype=torch.float32, device=device)
+
+        rewards_per_func = gather(rewards_per_func)
+
+        # ---- Compute advantages (group-relative) ----
+        rewards = (rewards_per_func * self.reward_weights.to(device).unsqueeze(0)).sum(dim=1)
+        mean_grouped = rewards.view(-1, self.num_generations).mean(dim=1)
+        std_grouped = rewards.view(-1, self.num_generations).std(dim=1)
+        mean_grouped = mean_grouped.repeat_interleave(self.num_generations, dim=0)
+        std_grouped = std_grouped.repeat_interleave(self.num_generations, dim=0)
+        advantages = (rewards - mean_grouped) / (std_grouped + 1e-4)
+
+        process_slice = slice(
+            self.accelerator.process_index * len(prompts),
+            (self.accelerator.process_index + 1) * len(prompts),
+        )
+        advantages = advantages[process_slice]
+
+        # ---- Log metrics ----
+        completion_length = assistant_mask.sum(1).float().mean().item()
+        self._metrics[mode]["completion_length"].append(completion_length)
 
         if mode == "train":
-            self.state.num_input_tokens_seen += (agg_prompt_lengths.sum() + agg_completion_lengths.sum()).item()
-        self._metrics[mode]["num_tokens"] = [self.state.num_input_tokens_seen]
-        self._metrics[mode]["completions/mean_length"].append(agg_completion_lengths.float().mean().item())
-        self._metrics[mode]["completions/min_length"].append(agg_completion_lengths.float().min().item())
-        self._metrics[mode]["completions/max_length"].append(agg_completion_lengths.float().max().item())
+            total_agent = sum(generated_tokens_agent)
+            total_opp = sum(generated_tokens_opp)
+            self._total_train_tokens += total_agent + total_opp
+            self._metrics[mode]["train_tokens"].append(self._total_train_tokens)
+            self._metrics[mode]["agent_tokens"].append(total_agent)
+            self._metrics[mode]["opp_tokens"].append(total_opp)
 
-        # Agent token ratio
-        total_comp = sum(len(c) for c in all_completion_ids)
-        total_agent = sum(sum(m) for m in all_assistant_masks)
-        self._metrics[mode]["multiturn/agent_token_ratio"].append(total_agent / max(total_comp, 1))
-        self._metrics[mode]["multiturn/avg_dialogue_turns"].append(
-            sum(len(c) for c in all_completions) / max(len(all_completions), 1)
-        )
+        for i, reward_func in enumerate(self.reward_funcs):
+            name = reward_func.__name__ if hasattr(reward_func, "__name__") else f"reward_{i}"
+            self._metrics[mode][f"rewards/{name}"].append(rewards_per_func[:, i].mean().item())
 
-        # Return in TRL's expected format
-        # tool_mask = assistant_mask → TRL will use it in loss: mask = completion_mask * tool_mask
-        return (
-            all_prompt_ids,       # list of list[int]
-            all_completion_ids,   # list of list[int]
-            all_assistant_masks,  # list of list[int] — used as tool_mask!
-            all_completions,      # list of conversations — passed to reward functions
-            total_completion_tokens,
-            None,                 # logprobs (not used without vLLM)
-            {},                   # extra_fields
-        )
+        self._metrics[mode]["reward"].append(rewards.mean().item())
+        self._metrics[mode]["reward_std"].append(std_grouped.mean().item())
+
+        # Log completions to wandb
+        if self.log_completions and self.state.global_step % self.args.logging_steps == 0:
+            prompts_to_log = gather_object(prompts)
+            completions_to_log = gather_object(all_conversations)
+            rewards_to_log = rewards.tolist()
+
+            if self.accelerator.is_main_process:
+                if self.args.report_to and "wandb" in self.args.report_to and wandb.run is not None:
+                    table = {
+                        "step": [str(self.state.global_step)] * len(rewards_to_log),
+                        "prompt": [str(p)[:200] for p in prompts_to_log],
+                        "completion": [str(c)[:500] for c in completions_to_log],
+                        "reward": rewards_to_log,
+                    }
+                    df = pd.DataFrame(table)
+                    wandb.log({"completions": wandb.Table(dataframe=df)})
+
+        del all_conversations, rewards_per_func, rewards, mean_grouped, std_grouped
+        torch.cuda.empty_cache()
+
+        return {
+            "token_ids": token_ids,
+            "attention_mask": attention_mask,
+            "assistant_mask": assistant_mask,
+            "old_per_token_logps": old_per_token_logps,
+            "ref_per_token_logps": ref_per_token_logps,
+            "advantages": advantages,
+        }
 
     # ----------------------------------------------------------------
-    # Multi-turn helper methods
+    # compute_loss (from Luca's LAGRPOTrainer — identical logic)
+    # ----------------------------------------------------------------
+    def compute_loss(self, model, inputs, return_outputs=False, num_items_in_batch=None):
+        if return_outputs:
+            raise ValueError("GRPOTrainer does not support returning outputs")
+
+        input_ids = inputs["token_ids"]
+        attention_mask = inputs["attention_mask"]
+        assistant_mask = inputs["assistant_mask"]
+
+        per_token_logps = self._get_per_token_logps(model, input_ids, attention_mask, assistant_mask)
+
+        if self.beta != 0.0:
+            ref_per_token_logps = inputs["ref_per_token_logps"]
+            per_token_kl = (
+                torch.exp(ref_per_token_logps - per_token_logps)
+                - (ref_per_token_logps - per_token_logps)
+                - 1
+            )
+
+        advantages = inputs["advantages"]
+        if self.num_iterations > 1:
+            old_per_token_logps = inputs["old_per_token_logps"]
+        else:
+            old_per_token_logps = per_token_logps.detach()
+
+        coef_1 = torch.exp(per_token_logps - old_per_token_logps)
+        coef_2 = torch.clamp(coef_1, 1 - self.epsilon_low, 1 + self.epsilon_high)
+
+        per_token_loss1 = coef_1 * advantages.unsqueeze(1)
+        per_token_loss2 = coef_2 * advantages.unsqueeze(1)
+        per_token_loss = -torch.min(per_token_loss1, per_token_loss2)
+
+        if self.beta != 0.0:
+            per_token_loss = per_token_loss + self.beta * per_token_kl
+
+        shifted_assistant_mask = assistant_mask[:, 1:]
+        loss = (per_token_loss * shifted_assistant_mask).sum() / shifted_assistant_mask.sum()
+
+        mode = "eval" if self.control.should_evaluate else "train"
+
+        if self.beta != 0.0:
+            mean_kl = (per_token_kl * shifted_assistant_mask).sum() / shifted_assistant_mask.sum()
+            self._metrics[mode]["kl"].append(self.accelerator.gather_for_metrics(mean_kl).mean().item())
+
+        is_clipped = (coef_1 < (1 - self.epsilon_low)) | (coef_1 > (1 + self.epsilon_high))
+        clip_ratio = (is_clipped * shifted_assistant_mask).sum() / shifted_assistant_mask.sum()
+        self._metrics[mode]["clip_ratio"].append(self.accelerator.gather_for_metrics(clip_ratio).mean().item())
+
+        return loss
+
+    # ----------------------------------------------------------------
+    # Dialogue generation helpers
     # ----------------------------------------------------------------
 
     @torch.no_grad()
-    def _play_negotiation(
-        self, prompt_agent: str, prompt_opponent: str, agent_starts: bool = True,
-    ) -> tuple[list, list]:
-        """
-        Play a full multi-turn negotiation dialogue.
-        
-        Agent: model WITH LoRA adapters (trainable policy).
-        Opponent: local model (LoRA disabled) OR OpenAI API.
-
-        Returns:
-            conversation: List of message dicts [{role, content}, ...]
-            agent_turn_indices: Which indices in conversation are the agent's turns
-        """
+    def _play_negotiation(self, prompt_agent, prompt_opponent, agent_starts=True):
+        """Play a full multi-turn negotiation."""
         agent_history = [{"role": "system", "content": prompt_agent}]
         opponent_history = [{"role": "system", "content": prompt_opponent}]
         conversation = []
@@ -237,125 +426,109 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
 
             for speaker in speakers:
                 if speaker == "agent":
-                    # Agent: WITH LoRA (trainable policy)
                     unwrapped.enable_adapter_layers()
-                    response = self._generate_single_turn_response(agent_history)
+                    response = self._gen_response(agent_history)
                     agent_history.append({"role": "assistant", "content": response})
                     opponent_history.append({"role": "user", "content": response})
                     agent_turn_indices.append(len(conversation))
                     conversation.append({"role": "assistant", "content": response})
                 else:
                     if self.opponent_model is not None:
-                        # Opponent via OpenAI API
-                        response = self._openai_opponent_response(opponent_history)
+                        response = self._openai_response(opponent_history)
                     else:
-                        # Opponent: local model WITHOUT LoRA (frozen base model)
                         unwrapped.disable_adapter_layers()
-                        response = self._generate_single_turn_response(opponent_history)
+                        response = self._gen_response(opponent_history)
                         unwrapped.enable_adapter_layers()
-
                     opponent_history.append({"role": "assistant", "content": response})
                     agent_history.append({"role": "user", "content": response})
                     conversation.append({"role": "user", "content": response})
 
-        # Ensure LoRA is re-enabled
+          
         unwrapped.enable_adapter_layers()
         return conversation, agent_turn_indices
 
     @torch.no_grad()
-    def _generate_single_turn_response(self, messages: list) -> str:
-        input_text = self.processing_class.apply_chat_template(
+    def _gen_response(self, messages):
+        """Generate a single turn response."""
+        text = self._tokenizer.apply_chat_template(
             messages, tokenize=False, add_generation_prompt=True
         )
-        inputs = self.processing_class(
-            input_text, return_tensors="pt", truncation=True, max_length=1800
+        inputs = self._tokenizer(
+            text, return_tensors="pt", truncation=True, max_length=1800
         ).to(self.accelerator.device)
 
-        # Bypass Unsloth's fast path — use standard HF generate
-        with torch.backends.cuda.sdp_kernel(enable_flash=True, enable_math=True, enable_mem_efficient=True):
-            outputs = self.model.generate(
-                input_ids=inputs["input_ids"],
-                attention_mask=inputs["attention_mask"],
-                generation_config=self.multiturn_generation_config,
-                use_cache=False,  # Disables Unsloth's custom KV cache
-            )
+        outputs = self.model.generate(**inputs, generation_config=self.multiturn_gen_config)
         new_tokens = outputs[0][inputs["input_ids"].shape[1]:]
-        return self.processing_class.decode(new_tokens, skip_special_tokens=True).strip()
+        return self._tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
 
-    def _openai_opponent_response(self, messages: list) -> str:
-        """Generate opponent response using OpenAI API."""
+    def _openai_response(self, messages):
+        """Generate opponent response via OpenAI API."""
         import openai
+
         client = openai.OpenAI()
         try:
-            response = client.chat.completions.create(
+            resp = client.chat.completions.create(
                 model=self.opponent_model,
                 messages=messages,
                 max_tokens=self.max_tokens_per_turn,
                 temperature=self.temperature if self.temperature else 1.0,
             )
-            return response.choices[0].message.content.strip()
+            return resp.choices[0].message.content.strip()
         except Exception as e:
-            logger.warning(f"OpenAI opponent error: {e}. Returning fallback.")
+            logger.warning(f"OpenAI error: {e}")
             return "I accept your offer."
 
-    def _tokenize_multiturn_conversation(
-        self, system_prompt: str, conversation: list, agent_turn_indices: list
-    ) -> tuple[list[int], list[int], list[int]]:
-        """
-        Tokenize a full multi-turn conversation and create an assistant_mask.
+    def _tokenize_conversation(self, system_prompt, conversation, agent_turn_indices):
+        """Tokenize a full conversation and build assistant_mask."""
+        device = self.accelerator.device
 
-        Returns:
-            prompt_ids: Token IDs for the system prompt
-            completion_ids: Token IDs for the conversation (all turns)
-            assistant_mask: 1 = agent token (train), 0 = opponent token (ignore)
-        """
-        # System prompt tokens
-        system_messages = [{"role": "system", "content": system_prompt}]
-        system_text = self.processing_class.apply_chat_template(
-            system_messages, tokenize=False, add_generation_prompt=True
-        )
-        prompt_ids = self.processing_class(system_text, truncation=True, max_length=1800)["input_ids"]
-
-        # Full conversation tokens
         full_messages = [{"role": "system", "content": system_prompt}] + conversation
-        full_text = self.processing_class.apply_chat_template(
+        full_text = self._tokenizer.apply_chat_template(
             full_messages, tokenize=False, add_generation_prompt=False
         )
-        full_ids = self.processing_class(full_text, truncation=True, max_length=2048)["input_ids"]
+        full_ids = self._tokenizer(full_text, truncation=True, max_length=2048)["input_ids"]
 
-        # Completion = everything after system prompt
-        completion_ids = full_ids[len(prompt_ids):]
+        token_ids = torch.tensor(full_ids, dtype=torch.long, device=device)
+        attention_mask = torch.ones_like(token_ids)
+        assistant_mask = torch.zeros_like(token_ids)
 
-        # Build assistant_mask by incrementally tokenizing
-        assistant_mask = [0] * len(completion_ids)
+        # System prompt length
+        system_messages = [{"role": "system", "content": system_prompt}]
+        system_text = self._tokenizer.apply_chat_template(
+            system_messages, tokenize=False, add_generation_prompt=True
+        )
+        system_len = len(self._tokenizer(system_text, truncation=True, max_length=1800)["input_ids"])
 
+        # Mark agent tokens incrementally
         current_messages = [{"role": "system", "content": system_prompt}]
+        n_agent_tokens = 0
+        n_opp_tokens = 0
+
         for i, msg in enumerate(conversation):
-            current_messages.append(msg)
-            if i in agent_turn_indices:
-                text_with = self.processing_class.apply_chat_template(
-                    current_messages, tokenize=False, add_generation_prompt=False
-                )
-                text_without = self.processing_class.apply_chat_template(
-                    current_messages[:-1], tokenize=False, add_generation_prompt=True
-                )
-                tokens_with = self.processing_class(text_with, truncation=True, max_length=2048)["input_ids"]
-                tokens_without = self.processing_class(text_without, truncation=True, max_length=2048)["input_ids"]
-
-                start = len(tokens_without) - len(prompt_ids)
-                end = len(tokens_with) - len(prompt_ids)
-
-                if start >= 0 and end <= len(completion_ids):
-                    for j in range(start, end):
-                        assistant_mask[j] = 1
-
-        # Fallback: if no agent tokens found, mark ALL to prevent NaN loss
-        if sum(assistant_mask) == 0:
-            logger.warning(
-                f"No agent tokens detected in assistant_mask! "
-                f"Conversation: {len(conversation)} messages, agent_indices={agent_turn_indices}. "
-                f"Falling back to full mask."
+            prev_text = self._tokenizer.apply_chat_template(
+                current_messages, tokenize=False, add_generation_prompt=True
             )
-            assistant_mask = [1] * len(completion_ids)
+            current_messages.append(msg)
+            curr_text = self._tokenizer.apply_chat_template(
+                current_messages, tokenize=False, add_generation_prompt=False
+            )
 
-        return prompt_ids, completion_ids, assistant_mask
+            prev_len = len(self._tokenizer(prev_text, truncation=True, max_length=2048)["input_ids"])
+            curr_len = len(self._tokenizer(curr_text, truncation=True, max_length=2048)["input_ids"])
+            turn_tokens = curr_len - prev_len
+
+            if i in agent_turn_indices:
+                start = prev_len
+                end = min(curr_len, len(full_ids))
+                if start < end:
+                    assistant_mask[start:end] = 1
+                n_agent_tokens += turn_tokens
+            else:
+                n_opp_tokens += turn_tokens
+
+        if assistant_mask.sum().item() == 0:
+            logger.warning("No agent tokens detected — falling back to full mask")
+            assistant_mask[system_len:] = 1
+            n_agent_tokens = len(full_ids) - system_len
+
+        return token_ids, attention_mask, assistant_mask, n_agent_tokens, n_opp_tokens
