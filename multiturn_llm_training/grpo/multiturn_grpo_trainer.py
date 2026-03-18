@@ -12,6 +12,8 @@ Changes from Luca's version:
   - Kept: _get_per_token_logps, compute_loss, rewards, advantages (identical logic)
 """
 
+import json
+import os
 import time
 import logging
 from typing import Any, Optional, Union
@@ -326,13 +328,27 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
         self._metrics[mode]["reward"].append(rewards.mean().item())
         self._metrics[mode]["reward_std"].append(std_grouped.mean().item())
 
-        # Log completions to wandb
+        # Log completions to wandb + local JSONL
         if self.log_completions and self.state.global_step % self.args.logging_steps == 0:
             prompts_to_log = gather_object(prompts)
             completions_to_log = gather_object(all_conversations)
             rewards_to_log = rewards.tolist()
+            advantages_to_log = advantages.tolist()
 
             if self.accelerator.is_main_process:
+                # Append to local JSONL file
+                log_path = os.path.join(self.args.output_dir, "completions_log.jsonl")
+                os.makedirs(self.args.output_dir, exist_ok=True)
+                with open(log_path, "a", encoding="utf-8") as f:
+                    for p, c, r, a in zip(prompts_to_log, completions_to_log, rewards_to_log, advantages_to_log):
+                        f.write(json.dumps({
+                            "step": self.state.global_step,
+                            "prompt": str(p),
+                            "completion": str(c),
+                            "reward": r,
+                            "advantage": a,
+                        }, ensure_ascii=False) + "\n")
+
                 if self.args.report_to and "wandb" in self.args.report_to and wandb.run is not None:
                     table = {
                         "step": [str(self.state.global_step)] * len(rewards_to_log),
