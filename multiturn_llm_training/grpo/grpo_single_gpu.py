@@ -1,17 +1,5 @@
-"""
-Single-GPU Multi-Turn GRPO Training for Negotiation.
-
-No Unsloth — uses standard HuggingFace + BitsAndBytes + PEFT (like Luca).
-No TRL fork required.
-
-Usage:
-    python multiturn_llm_training/grpo/grpo_single_gpu.py
-    python multiturn_llm_training/grpo/grpo_single_gpu.py --game-type multi-game --use-wandb
-    python multiturn_llm_training/grpo/grpo_single_gpu.py --test
-"""
-
-import sys
-import os
+import sys 
+import os 
 import argparse
 import warnings
 
@@ -21,89 +9,41 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 # Add repo root to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
-from peft import LoraConfig, get_peft_model
-from trl import GRPOConfig
-
-from envs.negotiation.env import NegotiationEnv
+from envs.negotiation.env import NegotiationEnv 
 from multiturn_llm_training.grpo.multiturn_grpo_trainer import MultiTurnGRPOTrainer
+from trl import GRPOConfig
+import torch
+from transformers import BitsAndBytesConfig
+from peft import LoraConfig
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
 
 def main(args):
-    print("=" * 60)
-    print("Multi-Turn GRPO Negotiation Training (Single GPU)")
-    print("=" * 60)
-    print(f"Model: {args.model_name}")
-    print(f"Game type: {args.game_type}")
-    print(f"Group size (G): {args.num_generations}")
-    print(f"Max rounds: {args.max_rounds}")
-    print(f"Train size: {args.train_size}")
-    print(f"Lambda self: {args.lambda_self}")
-    print(f"Lambda welfare: {args.lambda_welfare}")
-    print(f"Lambda fair: {args.lambda_fair}")
-    print(f"Opponent: {args.opponent_model or 'local (LoRA disabled)'}")
-    print()
 
-    # Ensure deterministic behaviour
+    print("Training Args:\n", args)
+
+    # Ensure deterministic behaviour across runs
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
+    torch.use_deterministic_algorithms(True, warn_only=True)
 
-    os.makedirs(args.output_dir, exist_ok=True)
-
-    # ---- Load Model (like Luca: BitsAndBytes 4-bit + PEFT) ----
-    print("Loading model...")
-    bnb_config = BitsAndBytesConfig(
-        load_in_4bit=True,
-        bnb_4bit_quant_type="nf4",
-        bnb_4bit_compute_dtype=torch.bfloat16,
-        bnb_4bit_use_double_quant=True,
-        bnb_4bit_quant_storage=torch.bfloat16,
-    )
-
-    model = AutoModelForCausalLM.from_pretrained(
-        args.model_name,
-        quantization_config=bnb_config,
-        torch_dtype=torch.float16,
-        trust_remote_code=True,
-    )
-
-    tokenizer = AutoTokenizer.from_pretrained(args.model_name)
-    tokenizer.pad_token = tokenizer.eos_token
-    tokenizer.padding_side = "left"  # Required for GRPO
-
-    peft_config = LoraConfig(
-        lora_alpha=args.lora_alpha,
-        lora_dropout=args.lora_dropout,
-        r=args.lora_r,
-        bias="none",
-        task_type="CAUSAL_LM",
-        target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
-                         "gate_proj", "up_proj", "down_proj"],
-    )
-
-    model = get_peft_model(model, peft_config)
-    model.print_trainable_parameters()
-    print(f"Model loaded: {args.model_name}")
+    os.makedirs(f"{args.output_dir}/{args.run_name}", exist_ok=True)
 
     # ---- Setup Environment ----
-    print(f"\nSetting up environment: {args.game_type}")
     negotiation_env = NegotiationEnv(
         game_type=args.game_type,
         lambda_self=args.lambda_self,
         lambda_welfare=args.lambda_welfare,
         lambda_fair=args.lambda_fair,
     )
+    print("Negotiation Environment created")
     train_dataset = negotiation_env.create_dataset(size=args.train_size)
     eval_dataset = negotiation_env.create_dataset(size=args.eval_size)
     reward_functions = negotiation_env.get_reward_functions()
 
-    print(f"Train dataset: {len(train_dataset)} samples")
-    print(f"Eval dataset: {len(eval_dataset)} samples")
-
     # ---- Training Config ----
     training_args = GRPOConfig(
-        output_dir=args.output_dir,
+        output_dir=f"{args.output_dir}/{args.run_name}",
         run_name=args.run_name,
         learning_rate=args.learning_rate,
         lr_scheduler_type="constant_with_warmup",
@@ -111,7 +51,8 @@ def main(args):
         num_train_epochs=1,
         bf16=True,
         num_iterations=1,
-        max_completion_length=args.max_completion_length,
+        max_prompt_length=1600,
+        max_completion_length=200,
         per_device_train_batch_size=args.num_generations,
         per_device_eval_batch_size=args.num_generations,
         num_generations=args.num_generations,
@@ -128,85 +69,103 @@ def main(args):
         eval_steps=args.eval_steps,
         eval_on_start=False,
         beta=args.beta,
-        scale_rewards="group",
-        loss_type="grpo",
     )
 
-    print(f"\nTraining config:")
-    print(f"  Learning rate: {args.learning_rate}")
-    print(f"  Beta (KL): {args.beta}")
-    print(f"  Num generations (G): {args.num_generations}")
-    print(f"  Max negotiation rounds: {args.max_rounds}")
-    print(f"  Max tokens per turn: {args.max_tokens_per_turn}")
+    # ---- BitsAndBytes Config ----
+    if args.quantized:
+        bnb_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=torch.bfloat16,
+            bnb_4bit_use_double_quant=True,
+            bnb_4bit_quant_storage=torch.bfloat16,
+        )
+    else:
+        bnb_config = None
+
+    print("Training Args:\n", training_args)
+
+    # ---- Load Model ----
+    tokenizer = AutoTokenizer.from_pretrained(args.model_name)
+    tokenizer.pad_token = tokenizer.eos_token
+    tokenizer.padding_side = "left"  # Required for generation with GRPO
+
+    model = AutoModelForCausalLM.from_pretrained(
+        args.model_name,
+        quantization_config=bnb_config,
+        trust_remote_code=True,
+        torch_dtype=torch.float16,
+    )
+
+    # ---- PEFT Config ----
+    peft_config = LoraConfig(
+        lora_alpha=args.lora_alpha,
+        lora_dropout=args.lora_dropout,
+        r=args.lora_r,
+        bias="none",
+        task_type="CAUSAL_LM",
+        target_modules="all-linear"
+    )
 
     # ---- Create Trainer ----
     trainer = MultiTurnGRPOTrainer(
         model=model,
-        reward_funcs=reward_functions,
+        reward_funcs=reward_functions, 
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
         processing_class=tokenizer,
-        # Multi-turn specific
+        peft_config=peft_config,
+        # Multi-turn specific (not in Luca's original)
         max_negotiation_rounds=args.max_rounds,
         max_tokens_per_turn=args.max_tokens_per_turn,
         opponent_model=args.opponent_model,
     )
 
     # ---- Train ----
-    print("\n" + "=" * 60)
-    print("Starting training...")
-    print("=" * 60)
-
     trainer.train(resume_from_checkpoint=args.resume_from_checkpoint)
 
     # ---- Save ----
-    print("\nSaving final model...")
-    trainer.save_model(os.path.join(args.output_dir, "final"))
-    tokenizer.save_pretrained(os.path.join(args.output_dir, "final"))
-    print(f"Model saved to {args.output_dir}/final")
-    print("\nDone!")
+    trainer.save_model(os.path.join(args.output_dir, args.run_name, "final"))
+    tokenizer.save_pretrained(os.path.join(args.output_dir, args.run_name, "final"))
+    print("Done!")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Multi-Turn GRPO Negotiation Training")
+    parser = argparse.ArgumentParser()
 
-    # Model
+    # Same as Luca's args
+    parser.add_argument("--train-size", type=int, default=1000)
+    parser.add_argument("--eval-size", type=int, default=10)
     parser.add_argument("--model-name", type=str, default="meta-llama/Llama-3.1-8B-Instruct")
+    parser.add_argument("--run-name", type=str, default="grpo_multiturn_1")
+    parser.add_argument("--output-dir", type=str, default=os.path.join(os.path.dirname(__file__), "..", "..", "output"))
+    parser.add_argument("--quantized", action="store_true", default=False)
+
+    # Extended args for single-GPU multi-turn
+    parser.add_argument("--game-type", type=str, default="generic-rental-agreement")
+    parser.add_argument("--learning-rate", type=float, default=5e-5)
+    parser.add_argument("--beta", type=float, default=0.08)
     parser.add_argument("--lora-r", type=int, default=8)
     parser.add_argument("--lora-alpha", type=int, default=16)
     parser.add_argument("--lora-dropout", type=float, default=0.1)
-    parser.add_argument("--resume-from-checkpoint", type=str, default=None)
-
-    # Environment
-    parser.add_argument("--game-type", type=str, default="generic-rental-agreement")
-    parser.add_argument("--train-size", type=int, default=1000)
-    parser.add_argument("--eval-size", type=int, default=10)
-    parser.add_argument("--lambda-self", type=float, default=1.0)
-    parser.add_argument("--lambda-welfare", type=float, default=0.5)
-    parser.add_argument("--lambda-fair", type=float, default=0.3)
-
-    # Training
-    parser.add_argument("--learning-rate", type=float, default=5e-5)
-    parser.add_argument("--beta", type=float, default=0.08)
     parser.add_argument("--num-generations", type=int, default=8)
     parser.add_argument("--max-rounds", type=int, default=5)
     parser.add_argument("--max-tokens-per-turn", type=int, default=200)
-    parser.add_argument("--max-completion-length", type=int, default=2048)
-    parser.add_argument("--opponent-model", type=str, default=None,
-                        help="OpenAI model for opponent (e.g. gpt-4o-mini). None = local frozen model.")
+    parser.add_argument("--lambda-self", type=float, default=1.0)
+    parser.add_argument("--lambda-welfare", type=float, default=0.0)
+    parser.add_argument("--lambda-fair", type=float, default=0.0)
+    parser.add_argument("--opponent-model", type=str, default=None)
+    parser.add_argument("--resume-from-checkpoint", type=str, default=None)
 
     # Logging & Saving
-    parser.add_argument("--output-dir", type=str, default="output/grpo_multiturn")
-    parser.add_argument("--run-name", type=str, default="grpo_multiturn_rental")
-    parser.add_argument("--logging-steps", type=int, default=5)
-    parser.add_argument("--save-steps", type=int, default=50)
-    parser.add_argument("--eval-steps", type=int, default=25)
+    parser.add_argument("--logging-steps", type=int, default=20)
+    parser.add_argument("--save-steps", type=int, default=200)
+    parser.add_argument("--eval-steps", type=int, default=100)
     parser.add_argument("--use-wandb", action="store_true", default=False)
 
     # Quick test mode
-    parser.add_argument("--test", action="store_true", default=False,
-                        help="Quick test with minimal settings")
+    parser.add_argument("--test", action="store_true", default=False)
 
     args = parser.parse_args()
 
@@ -218,6 +177,7 @@ if __name__ == "__main__":
         args.save_steps = 999
         args.eval_steps = 999
         args.logging_steps = 1
-        print("*** TEST MODE: minimal settings ***\n")
+        args.quantized = True
+        print("*** TEST MODE ***\n")
 
     main(args)
