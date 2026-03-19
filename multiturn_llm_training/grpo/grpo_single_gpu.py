@@ -159,7 +159,7 @@ if __name__ == "__main__":
     parser.add_argument("--resume-from-checkpoint", type=str, default=None)
 
     # Logging & Saving
-    parser.add_argument("--logging-steps", type=int, default=20)
+    parser.add_argument("--logging-steps", type=int, default=5)
     parser.add_argument("--save-steps", type=int, default=200)
     parser.add_argument("--eval-steps", type=int, default=100)
     parser.add_argument("--use-wandb", action="store_true", default=False)

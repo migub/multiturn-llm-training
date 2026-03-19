@@ -184,8 +184,15 @@ class NegotiationEnv:
             return ds
             
 
-        elif self.game_type in {"multi-game", "out-of-domain"}:
-            if self.game_type == "multi-game":
+        elif self.game_type in {"multi-game", "cooperative-only", "out-of-domain"}:
+            if self.game_type == "cooperative-only":
+                games_used = [
+                    {"game_settings": "joint-venture.yaml",
+                    "issues": ["jv-rd-budget.yaml", "jv-revenue-split.yaml", "jv-data-sharing.yaml", "jv-decision-authority.yaml"]},
+                    {"game_settings": "employment-contract.yaml",
+                    "issues": ["ec-salary.yaml", "ec-remote-work.yaml", "ec-training-budget.yaml", "ec-equity.yaml", "ec-project-scope.yaml"]},
+                ]
+            elif self.game_type == "multi-game":
                 games_used = [
                     {"game_settings": "generic-rental-agreement.yaml",
                     "issues": ["gen-ra-deposit.yaml","gen-ra-duration-distributive.yaml","gen-ra-duration.yaml","gen-ra-rent.yaml"]},
