@@ -1,8 +1,8 @@
 """
-2026.3.2
 2026.3.4
-5.2.0
-1.0.0.dev0
+2026.3.5
+5.3.0
+0.29.0
 __UNSLOTH_VERSIONING__
 """
 
@@ -28,7 +28,7 @@ import torch.nn as nn
 from torch.nn import functional as F
 from unsloth_zoo.temporary_patches.common import torch_compile
 from typing import Any, List, Optional, Tuple, Union, Dict, Set, Callable
-from trl.trainer.rloo_trainer import (Any, AutoModelForSequenceClassification, AutoProcessor, AutoTokenizer, Dataset, FSDP, GenerationConfig, IterableDataset, Path, PeftConfig, PeftModel, PreTrainedModel, PreTrainedTokenizerBase, ProcessorMixin, RLOOConfig, RLOOTrainer, RepeatSampler, RewardFunc, Sampler, SyncRefModelCallback, TrainerCallback, VLLMGeneration, Version, _BaseTrainer, apply_chat_template, asyncio, atexit, copy, create_model_from_path, defaultdict, deque, disable_dropout_in_model, disable_gradient_checkpointing, entropy_from_logits, gather, gather_object, get_config_model_id, get_peft_model, identity, inspect, is_conversational, is_peft_available, is_peft_model, is_rich_available, logger, nanmax, nanmin, nanstd, nn, np, nullcontext, pad, pd, prepare_deepspeed, prepare_fsdp, prepare_multimodal_messages, print_prompt_completions_sample, profiling_context, profiling_decorator, selective_log_softmax, set_seed, shuffle_sequence_dict, shutdown_event_loop_in_daemon, split_pixel_values_by_grid, split_tensor_dict, start_event_loop_in_daemon, textwrap, time, torch, transformers, unsplit_pixel_values_by_grid, unwrap_model_for_generation, use_adapter, wandb, AutoModelForSequenceClassification, AutoProcessor, AutoTokenizer, Dataset, GenerationConfig, IterableDataset, PeftConfig, PeftModel, PreTrainedModel, PreTrainedTokenizerBase, ProcessorMixin, RLOOConfig, RLOOTrainer, RewardFunc, SyncRefModelCallback, TrainerCallback, VLLMGeneration, Version, atexit, copy, create_model_from_path, defaultdict, deque, disable_dropout_in_model, get_config_model_id, get_peft_model, identity, inspect, is_peft_available, is_peft_model, logger, nn, np, pad, pd, prepare_deepspeed, prepare_fsdp, set_seed, shutdown_event_loop_in_daemon, start_event_loop_in_daemon, time, torch, transformers, Any, np, profiling_decorator, shuffle_sequence_dict, split_pixel_values_by_grid, split_tensor_dict, torch, unsplit_pixel_values_by_grid, PeftModel, PreTrainedModel, is_peft_available, logger, torch)
+from trl.trainer.rloo_trainer import (Any, AutoModelForSequenceClassification, AutoProcessor, AutoTokenizer, BaseTrainer, DataLoader, Dataset, FSDP, GenerationConfig, IterableDataset, Path, PeftConfig, PeftModel, PreTrainedModel, PreTrainedTokenizerBase, ProcessorMixin, RLOOConfig, RLOOTrainer, RepeatSampler, RewardFunc, Sampler, SyncRefModelCallback, TrainerCallback, VLLMGeneration, Version, apply_chat_template, asyncio, atexit, copy, create_model_from_path, datasets, defaultdict, deque, disable_dropout_in_model, disable_gradient_checkpointing, entropy_from_logits, gather, gather_object, get_config_model_id, get_peft_model, identity, inspect, is_conversational, is_datasets_available, is_peft_available, is_peft_model, is_rich_available, logger, nanmax, nanmin, nanstd, nn, nullcontext, pad, partial, pd, prepare_deepspeed, prepare_fsdp, prepare_multimodal_messages, print_prompt_completions_sample, profiling_context, profiling_decorator, seed_worker, selective_log_softmax, set_seed, shuffle_sequence_dict, shutdown_event_loop_in_daemon, split_pixel_values_by_grid, split_tensor_dict, start_event_loop_in_daemon, textwrap, time, torch, transformers, unsplit_pixel_values_by_grid, unwrap_model_for_generation, use_adapter, wandb, AutoModelForSequenceClassification, AutoProcessor, AutoTokenizer, Dataset, GenerationConfig, IterableDataset, PeftConfig, PeftModel, PreTrainedModel, PreTrainedTokenizerBase, ProcessorMixin, RLOOConfig, RLOOTrainer, RewardFunc, SyncRefModelCallback, TrainerCallback, VLLMGeneration, Version, asyncio, atexit, copy, create_model_from_path, datasets, defaultdict, deque, disable_dropout_in_model, get_config_model_id, get_peft_model, identity, inspect, is_peft_available, is_peft_model, logger, nn, pad, pd, prepare_deepspeed, prepare_fsdp, set_seed, shutdown_event_loop_in_daemon, start_event_loop_in_daemon, time, torch, transformers, Any, profiling_decorator, shuffle_sequence_dict, split_pixel_values_by_grid, split_tensor_dict, torch, unsplit_pixel_values_by_grid, PeftModel, PreTrainedModel, is_peft_available, logger, torch)
 
 
 import os
@@ -141,7 +141,7 @@ def chunked_hidden_states_selective_log_softmax(
     return all_per_token_logps
 
 @torch.compile(dynamic = True, fullgraph = True, options = torch_compile_options,)
-def chunked_selective_log_softmax(logits, index):
+def chunked_selective_log_softmax(logits, index, temperature: float = 1.0):
     # Split into 4 chunks only
     chunked_logits = torch.chunk(logits.reshape(-1, logits.shape[-1]), chunks = 4, dim = 0)
     chunked_index  = torch.chunk(index.reshape(-1), chunks = 4, dim = 0)
@@ -149,6 +149,8 @@ def chunked_selective_log_softmax(logits, index):
     # Below loop does the same as selective_log_softmax(chunk_logits, chunk_index)
     for chunk_logits, chunk_index in zip(chunked_logits, chunked_index):
         chunk_logits = chunk_logits.to(torch.float32)
+        if temperature != 1.0:
+            chunk_logits = chunk_logits / temperature
         selected_logits = torch.gather(chunk_logits, dim = -1, index = chunk_index.unsqueeze(-1)).squeeze(-1)
         logsumexp_values = torch.logsumexp(chunk_logits, dim = -1)
         per_token_logps = selected_logits - logsumexp_values
@@ -364,8 +366,6 @@ class UnslothRLOOConfig(RLOOConfig):
             with vLLM generation.
         shuffle_dataset (`bool`, *optional*, defaults to `True`):
             Whether to shuffle the training dataset.
-        pad_to_multiple_of (`int`, *optional*):
-            If set, the prompts ids and completions ids will be padded to a multiple of this value.
 
         > Parameters that control generation
 
@@ -507,13 +507,6 @@ class UnslothRLOOConfig(RLOOConfig):
         log_unique_prompts (`bool`, *optional*, defaults to `False`):
             Whether to log unique prompts. If `True`, only unique prompts are logged. If `False`, all prompts are
             logged.
-
-    > [!NOTE]
-    > These parameters have default values different from [`~transformers.TrainingArguments`]:
-    > - `logging_steps`: Defaults to `10` instead of `500`.
-    > - `gradient_checkpointing`: Defaults to `True` instead of `False`.
-    > - `bf16`: Defaults to `True` if `fp16` is not set, instead of `False`.
-    > - `learning_rate`: Defaults to `1e-6` instead of `5e-5`.
     
     """
     vllm_sampling_params: Optional[Any] = field(
@@ -650,7 +643,6 @@ class UnslothRLOOConfig(RLOOConfig):
         max_completion_length = 256,
         ds3_gather_for_generation = True,
         shuffle_dataset = True,
-        pad_to_multiple_of = None,
         generation_batch_size = None,
         steps_per_generation = None,
         temperature = 1.0,
@@ -691,8 +683,8 @@ class UnslothRLOOConfig(RLOOConfig):
         log_unique_prompts = False,
         vllm_sampling_params = None,
         unsloth_num_chunks = -1,
-        unsloth_logit_chunk_multiplier = None, 
-        unsloth_grpo_mini_batch = None, 
+        unsloth_logit_chunk_multiplier = None,
+        unsloth_grpo_mini_batch = None,
         
         **kwargs,
     ):
@@ -703,12 +695,6 @@ class UnslothRLOOConfig(RLOOConfig):
         if output_dir is None and save_strategy == 'steps' and save_steps == 500:
             output_dir = 'unsloth_training_checkpoints'
             save_strategy = 'no'
-        if os.environ.get('UNSLOTH_ENABLE_FLEX_ATTENTION', '0') == '1':
-            from unsloth_zoo.flex_attention import HAS_FLEX_ATTENTION
-            if HAS_FLEX_ATTENTION and pad_to_multiple_of is None:
-                from unsloth_zoo.flex_attention import FLEX_ATTENTION_BLOCK_SIZE
-                pad_to_multiple_of = FLEX_ATTENTION_BLOCK_SIZE
-        
         if steps_per_generation is None and generation_batch_size is None:
             ga = gradient_accumulation_steps
             world_size = int(os.environ.get('WORLD_SIZE', '1'))
@@ -838,7 +824,6 @@ class UnslothRLOOConfig(RLOOConfig):
             max_completion_length = max_completion_length,
             ds3_gather_for_generation = ds3_gather_for_generation,
             shuffle_dataset = shuffle_dataset,
-            pad_to_multiple_of = pad_to_multiple_of,
             generation_batch_size = generation_batch_size,
             steps_per_generation = steps_per_generation,
             temperature = temperature,
@@ -889,10 +874,14 @@ class UnslothRLOOConfig(RLOOConfig):
                 )
         self.unsloth_logit_chunk_multiplier = unsloth_logit_chunk_multiplier
         
+        # Unsloth: Remove use_reentrant=False forced by TRL 0.27.0+
+        if getattr(self, 'gradient_checkpointing_kwargs', None) is not None:
+            if 'use_reentrant' in self.gradient_checkpointing_kwargs:
+                del self.gradient_checkpointing_kwargs['use_reentrant']
 
 pass
 
-class _UnslothRLOOTrainer(_BaseTrainer):
+class _UnslothRLOOTrainer(BaseTrainer):
     """"""
 
     _tag_names = ["trl", "rloo"]
@@ -1033,7 +1022,7 @@ class _UnslothRLOOTrainer(_BaseTrainer):
                 self.reward_func_names.append(reward_funcs[i].__name__)
         self.reward_funcs = reward_funcs
 
-        self._has_async_reward_funcs = any(inspect.iscoroutinefunction(func) for func in self.reward_funcs)
+        self._has_async_reward_funcs = any(asyncio.iscoroutinefunction(func) for func in self.reward_funcs)
         if self._has_async_reward_funcs:
             self.async_reward_loop_thread, self.async_reward_loop, self.async_reward_loop_ready_event = (
                 start_event_loop_in_daemon(name="RLOOTrainer-AsyncRewardLoop")
@@ -1090,7 +1079,6 @@ class _UnslothRLOOTrainer(_BaseTrainer):
         self.min_p = args.min_p
         self.repetition_penalty = args.repetition_penalty
         self.use_transformers_paged = args.use_transformers_paged
-        self.pad_to_multiple_of = args.pad_to_multiple_of
         self.use_vllm = args.use_vllm
         self.vllm_mode = args.vllm_mode
         self.vllm_gpu_memory_utilization = args.vllm_gpu_memory_utilization  # only applies to colocation mode
@@ -1218,6 +1206,7 @@ class _UnslothRLOOTrainer(_BaseTrainer):
                 max_completion_length=self.max_completion_length,
                 logprobs=None,
                 generation_kwargs=args.generation_kwargs,
+                chat_template_kwargs=self.chat_template_kwargs,
             )
             self._last_loaded_step = -1
         else:
@@ -1300,15 +1289,37 @@ class _UnslothRLOOTrainer(_BaseTrainer):
     # `steps_per_generation`. Thus, `_prepare_inputs` is called with this *generation* batch, and it handles the
     # splitting internally.
     # Maintenance note: This method is a copy-paste of the original `Trainer.get_train_dataloader` with only one line
-    # modification.
+    # modification. As a result, some parts of the method aren't relevant to RLOO, but we keep them to stay one line
+    # apart from the super method, ensuring easier maintenance in the future.
     def get_train_dataloader(self):
-        return self._get_dataloader(
-            dataset=self.train_dataset,
-            description="Training",
-            batch_size=self._train_batch_size * self.args.steps_per_generation,  # < this is the change
-            sampler_fn=self._get_train_sampler,
-            is_training=True,
-        )
+        if self.train_dataset is None:
+            raise ValueError("Trainer: training requires a train_dataset.")
+
+        train_dataset = self.train_dataset
+        data_collator = self.data_collator
+        if is_datasets_available() and isinstance(train_dataset, datasets.Dataset):
+            train_dataset = self._remove_unused_columns(train_dataset, description="training")
+        else:
+            data_collator = self._get_collator_with_removed_columns(data_collator, description="training")
+
+        dataloader_params = {
+            "batch_size": self._train_batch_size * self.args.steps_per_generation,  # < this is the change
+            "collate_fn": data_collator,
+            "num_workers": self.args.dataloader_num_workers,
+            "pin_memory": self.args.dataloader_pin_memory,
+            "persistent_workers": self.args.dataloader_persistent_workers,
+        }
+
+        if not isinstance(train_dataset, torch.utils.data.IterableDataset):
+            dataloader_params["sampler"] = self._get_train_sampler()
+            dataloader_params["drop_last"] = self.args.dataloader_drop_last
+            dataloader_params["worker_init_fn"] = partial(
+                seed_worker, num_workers=self.args.dataloader_num_workers, rank=self.args.process_index
+            )
+
+            dataloader_params["prefetch_factor"] = self.args.dataloader_prefetch_factor
+
+        return self.accelerator.prepare(DataLoader(train_dataset, **dataloader_params))
 
     def _get_train_sampler(self, dataset: Dataset | None = None) -> Sampler:
         # Returns a sampler that
@@ -1509,7 +1520,7 @@ class _UnslothRLOOTrainer(_BaseTrainer):
                     reward_inputs = super()._prepare_inputs(reward_inputs)
                     with torch.inference_mode():
                         rewards_per_func[:, i] = reward_func(**reward_inputs).logits[:, 0]  # Shape (B*G,)
-            elif inspect.iscoroutinefunction(reward_func):  # Separate async reward funcs to run them in parallel later
+            elif asyncio.iscoroutinefunction(reward_func):  # Separate async reward funcs to run them in parallel later
                 async_funcs_info.append((i, reward_func, reward_func_name))
             else:
                 # Run synchronous reward function
@@ -1558,48 +1569,7 @@ class _UnslothRLOOTrainer(_BaseTrainer):
         rewards_per_func = gather(rewards_per_func)
         return rewards_per_func
 
-    def _tokenize_prompts(self, prompts: list):
-        """Tokenize prompts and extract images/multimodal fields for generation."""
-        if is_conversational({"prompt": prompts[0]}):
-            # Extract images from messages for VLM support
-            images = []
-            has_images = False
-            for prompt in prompts:
-                prompt_images = []
-                for message in prompt:
-                    if isinstance(message["content"], list):
-                        for part in message["content"]:
-                            if part["type"] == "image":
-                                prompt_images.append(part["image"])
-                                has_images = True
-                images.append(prompt_images if prompt_images else None)
-            images = images if has_images else None
-
-            # We pass padding=True to work around a bug introduced in transformers 5.2.0 in some processors
-            # (e.g. Qwen2.5-VL) that crash on batched unpadded input. We then unpad input_ids using attention_mask.
-            # See: https://github.com/huggingface/transformers/issues/44514
-            tokenized = self.processing_class.apply_chat_template(
-                conversation=prompts,
-                add_generation_prompt=True,
-                tokenize=True,
-                return_dict=True,
-                padding=True,
-                **self.chat_template_kwargs,
-            )
-            # Unpad input_ids: remove padding tokens using attention_mask to get per-sequence lists
-            prompt_ids = [
-                [tok for tok, m in zip(ids, mask, strict=True) if m]
-                for ids, mask in zip(tokenized["input_ids"], tokenized["attention_mask"], strict=True)
-            ]
-            # For VLMs, the processor returns extra multimodal fields (pixel_values, image_grid_thw, etc.)
-            multimodal_fields = {k: v for k, v in tokenized.items() if k not in ("input_ids", "attention_mask")}
-        else:
-            prompt_ids = self.processing_class(text=prompts)["input_ids"]
-            images = None
-            multimodal_fields = {}
-        return prompt_ids, images, multimodal_fields
-
-    def _generate_single_turn(self, prompt_ids, images, multimodal_fields):
+    def _generate_single_turn(self, prompts: list):
         device = self.accelerator.device
         mode = "train" if self.model.training else "eval"
 
@@ -1613,14 +1583,22 @@ class _UnslothRLOOTrainer(_BaseTrainer):
 
             # Generate using vLLM (note: RLOO doesn't use logprobs from generation, so we ignore them)
             num_generations = self.num_generations if mode == "train" else self.num_generations_eval
-            prompt_ids, completion_ids, _, _ = self.vllm_generation.generate(
-                prompts=prompt_ids,
-                images=images,
-                num_generations=num_generations,
-                profiler=profiling_context(self, "vLLM.generate"),
+            prompt_ids, completion_ids, _, _, _ = self.vllm_generation.generate(
+                prompts=prompts, num_generations=num_generations, profiler=profiling_context(self, "vLLM.generate")
             )
 
         elif self.use_transformers_paged:
+            if is_conversational({"prompt": prompts[0]}):
+                processor_outputs = self.processing_class.apply_chat_template(
+                    conversation=prompts,
+                    add_generation_prompt=True,
+                    tokenize=True,
+                    return_dict=True,
+                    **self.chat_template_kwargs,
+                )
+            else:
+                processor_outputs = self.processing_class(text=prompts)
+
             with (
                 profiling_context(self, "transformers.generate_batch"),
                 unwrap_model_for_generation(
@@ -1637,26 +1615,29 @@ class _UnslothRLOOTrainer(_BaseTrainer):
                 with torch.inference_mode():
                     # Continuous batching API expects 'inputs' arg only
                     all_outputs = unwrapped_model.generate_batch(
-                        prompt_ids, generation_config=self.generation_config, progress_bar=False
+                        processor_outputs["input_ids"], generation_config=self.generation_config, progress_bar=False
                     )
                     unwrapped_model.train()  # restore training mode, as generate_batch forces eval mode
             completion_ids = [output.generated_tokens for output in all_outputs.values()]
+            prompt_ids = processor_outputs["input_ids"]
 
         else:
-            # Regular generation path: left-pad token IDs into tensors
-            prompt_tensors = [torch.tensor(ids) for ids in prompt_ids]
-            padded_ids = pad(prompt_tensors, padding_value=self.pad_token_id, padding_side="left")
-            attention_mask = pad([torch.ones_like(t) for t in prompt_tensors], padding_value=0, padding_side="left")
-            generate_inputs = {"input_ids": padded_ids, "attention_mask": attention_mask}
-            # For VLMs, include multimodal fields as tensors (pixel_values, image_grid_thw, etc.)
-            for k, v in multimodal_fields.items():
-                if isinstance(v, torch.Tensor):
-                    generate_inputs[k] = v
-                elif isinstance(v, list) and v and isinstance(v[0], list):
-                    # Per-token field (e.g., token_type_ids): left-pad like input_ids
-                    generate_inputs[k] = pad([torch.tensor(x) for x in v], padding_value=0, padding_side="left")
-                else:
-                    generate_inputs[k] = torch.tensor(np.array(v))
+            # Regular generation path
+            if is_conversational({"prompt": prompts[0]}):
+                generate_inputs = self.processing_class.apply_chat_template(
+                    conversation=prompts,
+                    add_generation_prompt=True,
+                    tokenize=True,
+                    padding=True,
+                    padding_side="left",
+                    return_tensors="pt",
+                    return_dict=True,
+                    **self.chat_template_kwargs,
+                )
+            else:
+                generate_inputs = self.processing_class(
+                    text=prompts, padding=True, padding_side="left", return_tensors="pt"
+                )
             generate_inputs = super()._prepare_inputs(generate_inputs)
 
             with (
@@ -1674,8 +1655,8 @@ class _UnslothRLOOTrainer(_BaseTrainer):
                     **generate_inputs, generation_config=self.generation_config, disable_compile=True
                 )
             # Compute prompt length and extract completion ids
-            prompt_ids_tensor, prompt_mask = generate_inputs["input_ids"], generate_inputs["attention_mask"]
-            prompt_length = prompt_ids_tensor.size(1)
+            prompt_ids, prompt_mask = generate_inputs["input_ids"], generate_inputs["attention_mask"]
+            prompt_length = prompt_ids.size(1)
             completion_ids = prompt_completion_ids[:, prompt_length:]
 
             # Mask everything after the first EOS token
@@ -1684,13 +1665,8 @@ class _UnslothRLOOTrainer(_BaseTrainer):
             eos_idx[is_eos.any(dim=1)] = is_eos.int().argmax(dim=1)[is_eos.any(dim=1)]
             sequence_indices = torch.arange(is_eos.size(1), device=device).expand(is_eos.size(0), -1)
             completion_mask = (sequence_indices <= eos_idx.unsqueeze(1)).int()
-            # Move tensors to CPU before per-sample to avoid many CUDA syncs/copies (costly at scale/contention).
-            prompt_ids = [
-                p[m].tolist() for p, m in zip(prompt_ids_tensor.cpu(), prompt_mask.bool().cpu(), strict=True)
-            ]
-            completion_ids = [
-                c[m].tolist() for c, m in zip(completion_ids.cpu(), completion_mask.bool().cpu(), strict=True)
-            ]
+            prompt_ids = [p[m].tolist() for p, m in zip(prompt_ids, prompt_mask.bool(), strict=True)]
+            completion_ids = [c[m].tolist() for c, m in zip(completion_ids, completion_mask.bool(), strict=True)]
 
         return prompt_ids, completion_ids
 
@@ -1701,8 +1677,7 @@ class _UnslothRLOOTrainer(_BaseTrainer):
         # Copy the prompts to avoid modifying the original list
         prompts = copy.deepcopy(prompts)
 
-        prompt_ids, images, multimodal_fields = self._tokenize_prompts(prompts)
-        prompt_ids, completion_ids = self._generate_single_turn(prompt_ids, images, multimodal_fields)
+        prompt_ids, completion_ids = self._generate_single_turn(prompts)
 
         # Decode completions. It's important to use `parse_response` when possible, because it handles tool calls.
         if is_conversational({"prompt": prompts[0]}):
@@ -1780,34 +1755,14 @@ class _UnslothRLOOTrainer(_BaseTrainer):
         prompt_ids_list, completion_ids_list, completions = self._generate(prompts)
 
         # Convert lists of token IDs to padded tensors
-        prompt_ids = [torch.tensor(ids) for ids in prompt_ids_list]
+        prompt_ids = [torch.tensor(ids, device=device) for ids in prompt_ids_list]
         prompt_mask = [torch.ones_like(ids, dtype=torch.long) for ids in prompt_ids]
-        prompt_ids = pad(
-            prompt_ids,
-            padding_value=self.pad_token_id,
-            padding_side="left",
-            pad_to_multiple_of=self.pad_to_multiple_of,
-        ).to(device=device)
-        prompt_mask = pad(
-            prompt_mask,
-            padding_value=0,
-            padding_side="left",
-            pad_to_multiple_of=self.pad_to_multiple_of,
-        ).to(device=device)
-        completion_ids = [torch.tensor(ids) for ids in completion_ids_list]
+        prompt_ids = pad(prompt_ids, padding_value=self.pad_token_id, padding_side="left")
+        prompt_mask = pad(prompt_mask, padding_value=0, padding_side="left")
+        completion_ids = [torch.tensor(ids, device=device) for ids in completion_ids_list]
         completion_mask = [torch.ones_like(ids, dtype=torch.long) for ids in completion_ids]
-        completion_ids = pad(
-            completion_ids,
-            padding_value=self.pad_token_id,
-            padding_side="right",
-            pad_to_multiple_of=self.pad_to_multiple_of,
-        ).to(device=device)
-        completion_mask = pad(
-            completion_mask,
-            padding_value=0,
-            padding_side="right",
-            pad_to_multiple_of=self.pad_to_multiple_of,
-        ).to(device=device)
+        completion_ids = pad(completion_ids, padding_value=self.pad_token_id, padding_side="right")
+        completion_mask = pad(completion_mask, padding_value=0, padding_side="right")
 
         # If mask_truncated_completions is enabled, zero out truncated completions in completion_mask
         if self.mask_truncated_completions:
@@ -1839,29 +1794,8 @@ class _UnslothRLOOTrainer(_BaseTrainer):
         # If token_type_ids are used, extend them with zeros for the completion part
         if "token_type_ids" in forward_kwargs:
             token_type_ids = forward_kwargs["token_type_ids"]
-            if self.pad_to_multiple_of is not None:
-                # Needed only with pad_to_multiple_of: otherwise prompt_ids and token_type_ids must have equal len
-                padding_size = prompt_ids.size(1) - token_type_ids.size(1)
-                if padding_size > 0:
-                    token_type_ids = torch.cat(
-                        [token_type_ids.new_zeros((token_type_ids.size(0), padding_size)), token_type_ids], dim=1
-                    )
             forward_kwargs["token_type_ids"] = torch.cat(
                 [token_type_ids, token_type_ids.new_zeros(completion_ids.shape)], dim=1
-            )
-        # If mm_token_type_ids are used, extend them with zeros for the completion part
-        if "mm_token_type_ids" in forward_kwargs:
-            mm_token_type_ids = forward_kwargs["mm_token_type_ids"]
-            if self.pad_to_multiple_of is not None:
-                # Needed only with pad_to_multiple_of: otherwise prompt_ids and mm_token_type_ids must have equal len
-                padding_size = prompt_ids.size(1) - mm_token_type_ids.size(1)
-                if padding_size > 0:
-                    mm_token_type_ids = torch.cat(
-                        [mm_token_type_ids.new_zeros((mm_token_type_ids.size(0), padding_size)), mm_token_type_ids],
-                        dim=1,
-                    )
-            forward_kwargs["mm_token_type_ids"] = torch.cat(
-                [mm_token_type_ids, mm_token_type_ids.new_zeros(completion_ids.shape)], dim=1
             )
 
         # When gradient checkpointing is enabled with use_reentrant=True (non default), calling the model inside a
@@ -2009,8 +1943,6 @@ class _UnslothRLOOTrainer(_BaseTrainer):
             output["image_sizes"] = forward_kwargs["image_sizes"]
         if "token_type_ids" in forward_kwargs:
             output["token_type_ids"] = forward_kwargs["token_type_ids"]
-        if "mm_token_type_ids" in forward_kwargs:
-            output["mm_token_type_ids"] = forward_kwargs["mm_token_type_ids"]
         if images is not None:
             output["num_images"] = num_images
         return output
@@ -2042,7 +1974,6 @@ class _UnslothRLOOTrainer(_BaseTrainer):
             pixel_attention_mask=inputs.get("pixel_attention_mask"),
             image_sizes=inputs.get("image_sizes"),
             token_type_ids=inputs.get("token_type_ids"),
-            mm_token_type_ids=inputs.get("mm_token_type_ids"),
         )
 
         logps = (per_token_logps * completion_mask).sum(1)  # mask out padding and tokens after EOS
