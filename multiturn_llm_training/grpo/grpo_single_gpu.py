@@ -51,7 +51,6 @@ def main(args):
         num_train_epochs=1,
         bf16=True,
         num_iterations=1,
-        max_prompt_length=1600,
         max_completion_length=200,
         per_device_train_batch_size=args.num_generations,
         per_device_eval_batch_size=args.num_generations,
