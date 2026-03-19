@@ -25,7 +25,7 @@ def main(args):
     # Ensure deterministic behaviour across runs
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
-    torch.use_deterministic_algorithms(True, warn_only=True)
+    # torch.use_deterministic_algorithms(True, warn_only=True)
 
     os.makedirs(f"{args.output_dir}/{args.run_name}", exist_ok=True)
 
@@ -103,7 +103,8 @@ def main(args):
         r=args.lora_r,
         bias="none",
         task_type="CAUSAL_LM",
-        target_modules="all-linear"
+        target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
+                         "gate_proj", "up_proj", "down_proj"],
     )
 
     # ---- Create Trainer ----

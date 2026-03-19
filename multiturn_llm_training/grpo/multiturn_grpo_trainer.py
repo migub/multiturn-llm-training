@@ -217,6 +217,8 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
             unwrapped.base_model.model.gradient_checkpointing_disable()
         self.model.config.use_cache = True
 
+        print(f"DEBUG: gc_was_enabled={gc_was_enabled}, use_cache={self.model.config.use_cache}")
+
         for i in range(len(prompts)):
             print(f"  Dialogue {i+1}/{len(prompts)} starting...")
 
@@ -370,8 +372,8 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
                 if self.args.report_to and "wandb" in self.args.report_to and wandb.run is not None:
                     table = {
                         "step": [str(self.state.global_step)] * len(rewards_to_log),
-                        "prompt": [str(p)[:200] for p in prompts_to_log],
-                        "completion": [str(c)[:500] for c in completions_to_log],
+                        "prompt": [str(p) for p in prompts_to_log],
+                        "completion": [str(c) for c in completions_to_log],
                         "reward": rewards_to_log,
                     }
                     df = pd.DataFrame(table)
