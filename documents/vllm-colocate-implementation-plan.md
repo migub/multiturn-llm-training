@@ -135,3 +135,42 @@ In colocate mode, `sync_weights()` merges LoRA into the base weights before push
 ## Expected Speedup
 
 The main gain is batching: instead of 80 sequential forward passes, we do ~10 batched `llm.chat()` calls (5 rounds × 2 speakers). vLLM's continuous batching and optimized kernels provide additional speedup on top of the batching itself.
+
+---
+
+## Addendum: Local Opponent IS Possible with vLLM Colocate
+
+The limitation described above (requiring OpenAI API opponent) can be avoided. In the `rollout_func`, we have access to `trainer.model` — the full PeftModel with LoRA adapters. We can use a hybrid approach:
+
+### Hybrid Generation Strategy
+
+- **Agent turns:** use vLLM (`trainer.vllm_generation.llm.chat()`) — fast, batched, LoRA merged
+- **Opponent turns:** use `trainer.model.generate()` with LoRA disabled — sequential, but the opponent only generates 1 response per dialogue (not 8), so speed is less critical
+
+```python
+# Agent turn — fast, batched via vLLM
+agent_outputs = trainer.vllm_generation.llm.chat(agent_prompts, sampling_params)
+
+# Opponent turn — regular model with LoRA off (base model = frozen opponent)
+trainer.model.disable_adapter_layers()
+opponent_outputs = trainer.model.generate(**opponent_inputs)
+trainer.model.enable_adapter_layers()
+```
+
+### Why This Works
+
+- The **agent's generation is the bottleneck** — GRPO samples 8 completions per prompt, each with ~5 turns = ~40 agent forward passes. vLLM batches these into ~5 calls.
+- The **opponent generates only 1 response** per dialogue per round. Sequential `model.generate()` is fine here since we don't backprop through the opponent anyway.
+- LoRA disable/enable is instant (no weight copying).
+
+### Requirement: Disable Sleep Mode
+
+This approach requires `vllm_enable_sleep_mode=False`, because sleep mode offloads the training model during generation — making `trainer.model.generate()` unavailable for opponent turns. Without sleep mode, both vLLM and the training model stay in VRAM simultaneously.
+
+**VRAM impact:** Both models share the same base weights (vLLM has a copy with LoRA merged, training model has base + LoRA adapters separately). On A100 80GB this should be fine. On RTX 5090 32GB it may be tight with a 14B model.
+
+### Updated Recommendation
+
+- **A100 80GB:** Use hybrid approach (vLLM agent + local opponent, sleep mode off)
+- **RTX 5090 32GB:** Either use sleep mode + OpenAI opponent, or test if memory fits without sleep mode
+- **OpenAI opponent** remains the simplest option regardless of GPU
