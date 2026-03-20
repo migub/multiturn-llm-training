@@ -35,10 +35,11 @@ def main(args):
         lambda_self=args.lambda_self,
         lambda_welfare=args.lambda_welfare,
         lambda_fair=args.lambda_fair,
+        logging_steps=args.logging_steps,
     )
     print("Negotiation Environment created")
     train_dataset = negotiation_env.create_dataset(size=args.train_size)
-    eval_dataset = negotiation_env.create_dataset(size=args.eval_size)
+    eval_dataset = negotiation_env.create_eval_dataset()
     reward_functions = negotiation_env.get_reward_functions()
 
     # ---- Training Config ----
@@ -68,6 +69,7 @@ def main(args):
         eval_steps=args.eval_steps,
         eval_on_start=False,
         beta=args.beta,
+        loss_type="grpo",
     )
 
     # ---- BitsAndBytes Config ----
@@ -161,14 +163,17 @@ if __name__ == "__main__":
 
     # Logging & Saving
     parser.add_argument("--logging-steps", type=int, default=5)
-    parser.add_argument("--save-steps", type=int, default=200)
-    parser.add_argument("--eval-steps", type=int, default=100)
+    parser.add_argument("--save-steps", type=int, default=None)
+    parser.add_argument("--eval-steps", type=int, default=20)
     parser.add_argument("--use-wandb", action="store_true", default=False)
 
     # Quick test mode
     parser.add_argument("--test", action="store_true", default=False)
 
     args = parser.parse_args()
+
+    if args.save_steps is None:
+        args.save_steps = args.eval_steps
 
     if args.test:
         args.train_size = 100

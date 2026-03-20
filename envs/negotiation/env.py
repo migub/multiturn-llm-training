@@ -37,6 +37,7 @@ class NegotiationEnv:
         lambda_self: float = 1.0,
         lambda_welfare: float = 0.0,
         lambda_fair: float = 0.0,
+        logging_steps: int = 5,
         **kwargs
     ):
         self.game_type = game_type
@@ -47,6 +48,11 @@ class NegotiationEnv:
         self.lambda_self = lambda_self
         self.lambda_welfare = lambda_welfare
         self.lambda_fair = lambda_fair
+
+        # Metrics accumulator for wandb logging
+        self.logging_steps = logging_steps
+        self._metrics_accumulator = []
+        self._reward_call_count = 0
 
         base_dir = os.path.dirname(__file__)
         self.games_path = os.path.join(base_dir, "configs", "games")
@@ -233,7 +239,14 @@ class NegotiationEnv:
 
                 combos = list(itertools.combinations(issues, 2))
 
+                # Filter out conflicting issue combinations
+                excluded_combos = {
+                    frozenset(("gen-ra-duration-distributive.yaml", "gen-ra-duration.yaml")),
+                }
+
                 for combo in combos:
+                    if frozenset(combo) in excluded_combos:
+                        continue
                     game_configs.append({
                         "name": combo,
                         "issues": list(combo),
@@ -288,12 +301,104 @@ class NegotiationEnv:
             raise ValueError(f"Game type {self.game_type} not supported")
 
 
+    def create_eval_dataset(self) -> Dataset:
+        """Fixed, curated eval dataset — 10 samples per game type, deterministic."""
+        with open(self.rules_path, "r") as f:
+            rules = yaml.safe_load(f)
+
+        eval_configs = {
+            "multi-game": [
+                # 1. Single distributive (rental)
+                {"game_settings": "generic-rental-agreement.yaml",
+                 "issues": ["gen-ra-rent.yaml"], "issue_weights": [[1], [1]]},
+                # 2. Two distributive issues (loan)
+                {"game_settings": "generic-loan-agreement.yaml",
+                 "issues": ["gen-la-amount.yaml", "gen-la-rate.yaml"], "issue_weights": [[70, 30], [30, 70]]},
+                # 3. Merger (distributive combo)
+                {"game_settings": "generic-merger.yaml",
+                 "issues": ["gen-m-benefits.yaml", "gen-m-ownership.yaml"], "issue_weights": [[50, 50], [50, 50]]},
+                # 4. JV compatible + distributive
+                {"game_settings": "joint-venture.yaml",
+                 "issues": ["jv-rd-budget.yaml", "jv-revenue-split.yaml"], "issue_weights": [[50, 50], [50, 50]]},
+                # 5. EC integrative + compatible
+                {"game_settings": "employment-contract.yaml",
+                 "issues": ["ec-remote-work.yaml", "ec-training-budget.yaml"], "issue_weights": [[50, 50], [50, 50]]},
+            ],
+            "cooperative-only": [
+                # 1. JV single distributive
+                {"game_settings": "joint-venture.yaml",
+                 "issues": ["jv-revenue-split.yaml"], "issue_weights": [[1], [1]]},
+                # 2. JV compatible + distributive
+                {"game_settings": "joint-venture.yaml",
+                 "issues": ["jv-rd-budget.yaml", "jv-revenue-split.yaml"], "issue_weights": [[50, 50], [50, 50]]},
+                # 3. JV compatible + integrative
+                {"game_settings": "joint-venture.yaml",
+                 "issues": ["jv-data-sharing.yaml", "jv-decision-authority.yaml"], "issue_weights": [[70, 30], [30, 70]]},
+                # 4. EC single distributive
+                {"game_settings": "employment-contract.yaml",
+                 "issues": ["ec-salary.yaml"], "issue_weights": [[1], [1]]},
+                # 5. EC integrative + compatible
+                {"game_settings": "employment-contract.yaml",
+                 "issues": ["ec-remote-work.yaml", "ec-training-budget.yaml"], "issue_weights": [[50, 50], [50, 50]]},
+            ],
+            "out-of-domain": [
+                # 1. Single compatible
+                {"game_settings": "rio_copa.yaml",
+                 "issues": ["rp_contingent_liability.yaml"], "issue_weights": [[1], [1]]},
+                # 2. Single integrative
+                {"game_settings": "rio_copa.yaml",
+                 "issues": ["rp_family_employees.yaml"], "issue_weights": [[1], [1]]},
+                # 3. Integrative + distributive
+                {"game_settings": "rio_copa.yaml",
+                 "issues": ["rp_financing.yaml", "rp_non_compete_period.yaml"], "issue_weights": [[50, 50], [50, 50]]},
+                # 4. Compatible + integrative
+                {"game_settings": "rio_copa.yaml",
+                 "issues": ["rp_contingent_liability.yaml", "rp_family_employees.yaml"], "issue_weights": [[70, 30], [30, 70]]},
+                # 5. Integrative + integrative
+                {"game_settings": "rio_copa.yaml",
+                 "issues": ["rp_financing.yaml", "rp_family_employees.yaml"], "issue_weights": [[50, 50], [50, 50]]},
+            ],
+        }
+
+        if self.game_type not in eval_configs:
+            # Fallback: use the same game type as key, or default to multi-game
+            configs = eval_configs.get("multi-game")
+        else:
+            configs = eval_configs[self.game_type]
+
+        samples = []
+        for gc in configs:
+            gc = {**gc, "scale": SCALE, **rules}
+            gc = self.add_game_info_to_game_config(gc)
+            game_info = gc.pop("game_info")
+            gc.update(game_info)
+
+            game = Game(**gc)
+            prompt1, prompt2 = self.get_prompts_from_game(game)
+            archetype = self.get_archetype_from_game(game)
+
+            samples.append({
+                "prompt": prompt1, "prompt_2": prompt2,
+                "game_config": gc, "starting_agent": True,
+                "game_type": self.game_type, "negotiation_role": 1,
+                "archetype": archetype,
+            })
+            samples.append({
+                "prompt": prompt2, "prompt_2": prompt1,
+                "game_config": gc, "starting_agent": False,
+                "game_type": self.game_type, "negotiation_role": 2,
+                "archetype": archetype,
+            })
+
+        return Dataset.from_list(samples)
+
 
     def get_reward_functions(self):
         # COOPERATIVE: Capture lambda parameters in closure
         lambda_self = self.lambda_self
         lambda_welfare = self.lambda_welfare
         lambda_fair = self.lambda_fair
+        env_self = self  # capture for accumulator access in closure
 
         def negotiation_payoff_reward(prompts, completions, get_full_info=False, game_config=None, negotiation_roles=None, negotiation_role=None, **kwargs):
             # Support both singular (from dataset) and plural (legacy) parameter names
@@ -311,6 +416,7 @@ class NegotiationEnv:
             batch_ratio_rcoop = []
             batch_max_rcoop = []
             batch_archetypes = []
+            batch_agreed = []
             
             for i, messages in enumerate(completions):
                 messages = messages[1:]
@@ -349,6 +455,7 @@ class NegotiationEnv:
                     batch_ratio_rcoop.append(0.0)
                     batch_max_rcoop.append(max_metrics["max_r_coop"])
                     batch_archetypes.append(self.get_archetype_from_game(game))
+                    batch_agreed.append(False)
                     if get_full_info:
                         evaluations.append(None)
                     continue
@@ -364,6 +471,7 @@ class NegotiationEnv:
                     batch_ratio_rcoop.append(0.0)
                     batch_max_rcoop.append(max_metrics["max_r_coop"])
                     batch_archetypes.append(self.get_archetype_from_game(game))
+                    batch_agreed.append(False)
                     if get_full_info:
                         evaluations.append(None)
                     continue
@@ -402,6 +510,7 @@ class NegotiationEnv:
                 batch_ratio_rcoop.append(ratio_rcoop)
                 batch_max_rcoop.append(max_metrics["max_r_coop"])
                 batch_archetypes.append(self.get_archetype_from_game(game))
+                batch_agreed.append(U_A > 0 or U_B > 0)
 
                 if get_full_info:
                     evaluation["R_coop"] = R_coop
@@ -415,53 +524,100 @@ class NegotiationEnv:
                     evaluation["ratio_rcoop"] = ratio_rcoop
                     evaluations.append(evaluation)
 
-            # Log metrics to wandb
+            # Accumulate metrics for averaged wandb logging
             try:
                 import wandb
                 if wandb.run is not None:
-                    n = len(batch_U_A) or 1
-                    sw = [a + b for a, b in zip(batch_U_A, batch_U_B)]
-                    np_vals = [a * b for a, b in zip(batch_U_A, batch_U_B)]
-                    agreements = sum(1 for a, b in zip(batch_U_A, batch_U_B) if a > 0 or b > 0)
-                    metrics = {
-                        # Raw metrics (global)
-                        "negotiation/U_A_mean": sum(batch_U_A) / n,
-                        "negotiation/U_B_mean": sum(batch_U_B) / n,
-                        "negotiation/social_welfare_mean": sum(sw) / n,
-                        "negotiation/nash_product_mean": sum(np_vals) / n,
-                        "negotiation/agreement_rate": agreements / n,
-                        # Normalized ratios (global)
-                        "negotiation/ratio_self_mean": sum(batch_ratio_self) / n,
-                        "negotiation/ratio_welfare_mean": sum(batch_ratio_welfare) / n,
-                        "negotiation/ratio_nash_mean": sum(batch_ratio_nash) / n,
-                        "negotiation/ratio_rcoop_mean": sum(batch_ratio_rcoop) / n,
-                        # Max possible reward
-                        "negotiation/max_rcoop_mean": sum(batch_max_rcoop) / n,
-                        "negotiation/rcoop_mean": sum(rewards) / n,
+                    step_metrics = {
+                        "U_A": list(batch_U_A),
+                        "U_B": list(batch_U_B),
+                        "ratio_self": list(batch_ratio_self),
+                        "ratio_welfare": list(batch_ratio_welfare),
+                        "ratio_nash": list(batch_ratio_nash),
+                        "ratio_rcoop": list(batch_ratio_rcoop),
+                        "max_rcoop": list(batch_max_rcoop),
+                        "rewards": list(rewards),
+                        "archetypes": list(batch_archetypes),
+                        "agreed": list(batch_agreed),
                     }
+                    env_self._metrics_accumulator.append(step_metrics)
+                    env_self._reward_call_count += 1
 
-                    # Per-archetype metrics
-                    from collections import defaultdict
-                    arch_data = defaultdict(lambda: {"U_A": [], "U_B": [], "ratio_self": [], "ratio_welfare": [], "ratio_nash": [], "ratio_rcoop": []})
-                    for idx, arch in enumerate(batch_archetypes):
-                        arch_data[arch]["U_A"].append(batch_U_A[idx])
-                        arch_data[arch]["U_B"].append(batch_U_B[idx])
-                        arch_data[arch]["ratio_self"].append(batch_ratio_self[idx])
-                        arch_data[arch]["ratio_welfare"].append(batch_ratio_welfare[idx])
-                        arch_data[arch]["ratio_nash"].append(batch_ratio_nash[idx])
-                        arch_data[arch]["ratio_rcoop"].append(batch_ratio_rcoop[idx])
+                    if env_self._reward_call_count >= env_self.logging_steps:
+                        # Flatten all accumulated batches
+                        all_U_A = [v for s in env_self._metrics_accumulator for v in s["U_A"]]
+                        all_U_B = [v for s in env_self._metrics_accumulator for v in s["U_B"]]
+                        all_ratio_self = [v for s in env_self._metrics_accumulator for v in s["ratio_self"]]
+                        all_ratio_welfare = [v for s in env_self._metrics_accumulator for v in s["ratio_welfare"]]
+                        all_ratio_nash = [v for s in env_self._metrics_accumulator for v in s["ratio_nash"]]
+                        all_ratio_rcoop = [v for s in env_self._metrics_accumulator for v in s["ratio_rcoop"]]
+                        all_max_rcoop = [v for s in env_self._metrics_accumulator for v in s["max_rcoop"]]
+                        all_rewards = [v for s in env_self._metrics_accumulator for v in s["rewards"]]
+                        all_archetypes = [v for s in env_self._metrics_accumulator for v in s["archetypes"]]
+                        all_agreed = [v for s in env_self._metrics_accumulator for v in s["agreed"]]
 
-                    for arch, vals in arch_data.items():
-                        m = len(vals["U_A"])
-                        metrics[f"negotiation/{arch}/U_A_mean"] = sum(vals["U_A"]) / m
-                        metrics[f"negotiation/{arch}/U_B_mean"] = sum(vals["U_B"]) / m
-                        metrics[f"negotiation/{arch}/ratio_self_mean"] = sum(vals["ratio_self"]) / m
-                        metrics[f"negotiation/{arch}/ratio_welfare_mean"] = sum(vals["ratio_welfare"]) / m
-                        metrics[f"negotiation/{arch}/ratio_nash_mean"] = sum(vals["ratio_nash"]) / m
-                        metrics[f"negotiation/{arch}/ratio_rcoop_mean"] = sum(vals["ratio_rcoop"]) / m
-                        metrics[f"negotiation/{arch}/count"] = m
+                        n = len(all_U_A) or 1
+                        sw = [a + b for a, b in zip(all_U_A, all_U_B)]
+                        np_vals = [a * b for a, b in zip(all_U_A, all_U_B)]
+                        agreements = sum(all_agreed)
 
-                    wandb.log(metrics, commit=False)
+                        metrics = {
+                            "negotiation/U_A_mean": sum(all_U_A) / n,
+                            "negotiation/U_B_mean": sum(all_U_B) / n,
+                            "negotiation/social_welfare_mean": sum(sw) / n,
+                            "negotiation/nash_product_mean": sum(np_vals) / n,
+                            "negotiation/agreement_rate": agreements / n,
+                            "negotiation/ratio_self_mean": sum(all_ratio_self) / n,
+                            "negotiation/ratio_welfare_mean": sum(all_ratio_welfare) / n,
+                            "negotiation/ratio_nash_mean": sum(all_ratio_nash) / n,
+                            "negotiation/ratio_rcoop_mean": sum(all_ratio_rcoop) / n,
+                            "negotiation/max_rcoop_mean": sum(all_max_rcoop) / n,
+                            "negotiation/rcoop_mean": sum(all_rewards) / n,
+                        }
+
+                        # Agreed-only metrics (quality of successful negotiations)
+                        if agreements > 0:
+                            agreed_U_A = [v for v, a in zip(all_U_A, all_agreed) if a]
+                            agreed_U_B = [v for v, a in zip(all_U_B, all_agreed) if a]
+                            agreed_ratio_self = [v for v, a in zip(all_ratio_self, all_agreed) if a]
+                            agreed_ratio_welfare = [v for v, a in zip(all_ratio_welfare, all_agreed) if a]
+                            agreed_ratio_nash = [v for v, a in zip(all_ratio_nash, all_agreed) if a]
+                            agreed_ratio_rcoop = [v for v, a in zip(all_ratio_rcoop, all_agreed) if a]
+                            m_a = len(agreed_U_A)
+                            metrics["negotiation/agreed/U_A_mean"] = sum(agreed_U_A) / m_a
+                            metrics["negotiation/agreed/U_B_mean"] = sum(agreed_U_B) / m_a
+                            metrics["negotiation/agreed/social_welfare_mean"] = sum(a + b for a, b in zip(agreed_U_A, agreed_U_B)) / m_a
+                            metrics["negotiation/agreed/ratio_self_mean"] = sum(agreed_ratio_self) / m_a
+                            metrics["negotiation/agreed/ratio_welfare_mean"] = sum(agreed_ratio_welfare) / m_a
+                            metrics["negotiation/agreed/ratio_nash_mean"] = sum(agreed_ratio_nash) / m_a
+                            metrics["negotiation/agreed/ratio_rcoop_mean"] = sum(agreed_ratio_rcoop) / m_a
+
+                        # Per-archetype metrics
+                        from collections import defaultdict
+                        arch_data = defaultdict(lambda: {"U_A": [], "U_B": [], "ratio_self": [], "ratio_welfare": [], "ratio_nash": [], "ratio_rcoop": []})
+                        for idx, arch in enumerate(all_archetypes):
+                            arch_data[arch]["U_A"].append(all_U_A[idx])
+                            arch_data[arch]["U_B"].append(all_U_B[idx])
+                            arch_data[arch]["ratio_self"].append(all_ratio_self[idx])
+                            arch_data[arch]["ratio_welfare"].append(all_ratio_welfare[idx])
+                            arch_data[arch]["ratio_nash"].append(all_ratio_nash[idx])
+                            arch_data[arch]["ratio_rcoop"].append(all_ratio_rcoop[idx])
+
+                        for arch, vals in arch_data.items():
+                            m = len(vals["U_A"])
+                            metrics[f"negotiation/{arch}/U_A_mean"] = sum(vals["U_A"]) / m
+                            metrics[f"negotiation/{arch}/U_B_mean"] = sum(vals["U_B"]) / m
+                            metrics[f"negotiation/{arch}/ratio_self_mean"] = sum(vals["ratio_self"]) / m
+                            metrics[f"negotiation/{arch}/ratio_welfare_mean"] = sum(vals["ratio_welfare"]) / m
+                            metrics[f"negotiation/{arch}/ratio_nash_mean"] = sum(vals["ratio_nash"]) / m
+                            metrics[f"negotiation/{arch}/ratio_rcoop_mean"] = sum(vals["ratio_rcoop"]) / m
+                            metrics[f"negotiation/{arch}/count"] = m
+
+                        wandb.log(metrics, commit=False)
+
+                        # Reset accumulator
+                        env_self._metrics_accumulator = []
+                        env_self._reward_call_count = 0
             except Exception:
                 pass
             

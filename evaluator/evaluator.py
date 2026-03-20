@@ -127,19 +127,27 @@ class Evaluator:
         Returns the corresponding payoff value, or None if not found.
         """
         value_clean = str(value).strip().lower()
-        
+
+        # Pass 1: exact match (highest priority)
         for idx, label in enumerate(payoff_labels):
             label_clean = str(label).strip().lower()
-            
-            # Exact match
             if value_clean == label_clean:
                 return payoff_values[idx]
-            
-            # Check if value is contained in label or vice versa
-            # e.g. "full scope" matches "full scope" or "full" matches "full scope"
+
+        # Pass 2: partial match — value contains label or vice versa
+        # Find the longest matching label to avoid e.g. "0%" matching "70%"
+        best_match_idx = None
+        best_match_len = 0
+        for idx, label in enumerate(payoff_labels):
+            label_clean = str(label).strip().lower()
             if value_clean in label_clean or label_clean in value_clean:
-                return payoff_values[idx]
-        
+                if len(label_clean) > best_match_len:
+                    best_match_len = len(label_clean)
+                    best_match_idx = idx
+
+        if best_match_idx is not None:
+            return payoff_values[best_match_idx]
+
         return None
     
 
