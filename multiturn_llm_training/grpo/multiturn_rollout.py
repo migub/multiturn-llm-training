@@ -122,6 +122,14 @@ def create_multiturn_rollout(
                     conversations[i].append({"role": "user", "content": response})
             else:
                 # Local opponent: model.generate() with LoRA disabled
+                # Disable gradient checkpointing to allow KV caching during generation
+                gc_was_enabled = getattr(unwrapped_model, 'is_gradient_checkpointing', False)
+                if not gc_was_enabled:
+                    gc_was_enabled = getattr(getattr(unwrapped_model, 'base_model', None), 'is_gradient_checkpointing', False)
+                if gc_was_enabled:
+                    unwrapped_model.base_model.model.gradient_checkpointing_disable()
+                unwrapped_model.config.use_cache = True
+
                 unwrapped_model.disable_adapter_layers()
                 for i in range(batch_size):
                     response = _local_generate(
@@ -132,6 +140,11 @@ def create_multiturn_rollout(
                     agent_histories[i].append({"role": "user", "content": response})
                     conversations[i].append({"role": "user", "content": response})
                 unwrapped_model.enable_adapter_layers()
+
+                # Re-enable gradient checkpointing for training
+                if gc_was_enabled:
+                    unwrapped_model.base_model.model.gradient_checkpointing_enable()
+                unwrapped_model.config.use_cache = False
 
         gen_time = time.time() - gen_start
         logger.info(f"Rollout: generation done in {gen_time:.1f}s")
