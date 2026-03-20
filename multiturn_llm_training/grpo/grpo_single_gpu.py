@@ -86,9 +86,11 @@ def main(args):
 
     # ---- Load Model ----
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
-    tokenizer.pad_token = tokenizer.eos_token
-    tokenizer.padding_side = "left"  # Required for generation with GRPO
-
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+   
+    tokenizer.padding_side = "left"
+   
     model = AutoModelForCausalLM.from_pretrained(
         args.model_name,
         quantization_config=bnb_config,
@@ -103,8 +105,7 @@ def main(args):
         r=args.lora_r,
         bias="none",
         task_type="CAUSAL_LM",
-        target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
-                         "gate_proj", "up_proj", "down_proj"],
+        target_modules="all-linear",
     )
 
     # ---- Create Trainer ----
