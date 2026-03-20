@@ -400,7 +400,11 @@ class NegotiationEnv:
         lambda_fair = self.lambda_fair
         env_self = self  # capture for accumulator access in closure
 
-        def negotiation_payoff_reward(prompts, completions, get_full_info=False, game_config=None, negotiation_roles=None, negotiation_role=None, **kwargs):
+        def negotiation_payoff_reward(prompts, completions, get_full_info=False, game_config=None, negotiation_roles=None, negotiation_role=None, conversations=None, **kwargs):
+            # If conversations provided (from vLLM rollout_func), use those instead of completions
+            if conversations is not None:
+                completions = conversations
+
             # Support both singular (from dataset) and plural (legacy) parameter names
             if negotiation_roles is None and negotiation_role is not None:
                 negotiation_roles = negotiation_role if isinstance(negotiation_role, list) else [negotiation_role] * len(completions)

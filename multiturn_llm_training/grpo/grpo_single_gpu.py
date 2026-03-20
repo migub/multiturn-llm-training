@@ -9,9 +9,9 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 # Add repo root to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from envs.negotiation.env import NegotiationEnv 
+from envs.negotiation.env import NegotiationEnv
 from multiturn_llm_training.grpo.multiturn_grpo_trainer import MultiTurnGRPOTrainer
-from trl import GRPOConfig
+from trl import GRPOConfig, GRPOTrainer
 import torch
 from transformers import BitsAndBytesConfig
 from peft import LoraConfig
@@ -43,7 +43,7 @@ def main(args):
     reward_functions = negotiation_env.get_reward_functions()
 
     # ---- Training Config ----
-    training_args = GRPOConfig(
+    grpo_config_kwargs = dict(
         output_dir=f"{args.output_dir}/{args.run_name}",
         run_name=args.run_name,
         learning_rate=args.learning_rate,
@@ -61,7 +61,6 @@ def main(args):
         save_strategy="steps",
         save_steps=args.save_steps,
         save_only_model=True,
-        use_vllm=False,
         logging_steps=args.logging_steps,
         log_completions=True,
         report_to="wandb" if args.use_wandb else "none",
@@ -71,6 +70,18 @@ def main(args):
         beta=args.beta,
         loss_type="grpo",
     )
+
+    if args.use_vllm:
+        grpo_config_kwargs.update(
+            use_vllm=True,
+            vllm_mode="colocate",
+            vllm_gpu_memory_utilization=args.vllm_gpu_memory,
+            vllm_enable_sleep_mode=False,  # keep training model in memory for local opponent
+        )
+    else:
+        grpo_config_kwargs["use_vllm"] = False
+
+    training_args = GRPOConfig(**grpo_config_kwargs)
 
     # ---- BitsAndBytes Config ----
     if args.quantized:
@@ -111,19 +122,50 @@ def main(args):
     )
 
     # ---- Create Trainer ----
-    trainer = MultiTurnGRPOTrainer(
-        model=model,
-        reward_funcs=reward_functions, 
-        args=training_args,
-        train_dataset=train_dataset,
-        eval_dataset=eval_dataset,
-        processing_class=tokenizer,
-        peft_config=peft_config,
-        # Multi-turn specific (not in Luca's original)
-        max_negotiation_rounds=args.max_rounds,
-        max_tokens_per_turn=args.max_tokens_per_turn,
-        opponent_model=args.opponent_model,
-    )
+    if args.use_vllm:
+        from multiturn_llm_training.grpo.multiturn_rollout import create_multiturn_rollout
+
+        rollout_func = create_multiturn_rollout(
+            max_negotiation_rounds=args.max_rounds,
+            max_tokens_per_turn=args.max_tokens_per_turn,
+            opponent_model=args.opponent_model,
+        )
+
+        trainer = GRPOTrainer(
+            model=model,
+            reward_funcs=reward_functions,
+            args=training_args,
+            train_dataset=train_dataset,
+            eval_dataset=eval_dataset,
+            processing_class=tokenizer,
+            peft_config=peft_config,
+            rollout_func=rollout_func,
+        )
+
+        # Build prompt -> prompt_2 mapping for the rollout function
+        # so the opponent gets the correct system prompt
+        prompt_2_map = {}
+        for sample in train_dataset:
+            if "prompt" in sample and "prompt_2" in sample:
+                prompt_2_map[sample["prompt"]] = sample["prompt_2"]
+        for sample in eval_dataset:
+            if "prompt" in sample and "prompt_2" in sample:
+                prompt_2_map[sample["prompt"]] = sample["prompt_2"]
+        trainer._prompt_2_map = prompt_2_map
+        print(f"Built prompt_2 mapping with {len(prompt_2_map)} entries")
+    else:
+        trainer = MultiTurnGRPOTrainer(
+            model=model,
+            reward_funcs=reward_functions,
+            args=training_args,
+            train_dataset=train_dataset,
+            eval_dataset=eval_dataset,
+            processing_class=tokenizer,
+            peft_config=peft_config,
+            max_negotiation_rounds=args.max_rounds,
+            max_tokens_per_turn=args.max_tokens_per_turn,
+            opponent_model=args.opponent_model,
+        )
 
     # ---- Train ----
     trainer.train(resume_from_checkpoint=args.resume_from_checkpoint)
@@ -160,6 +202,8 @@ if __name__ == "__main__":
     parser.add_argument("--lambda-fair", type=float, default=0.0)
     parser.add_argument("--opponent-model", type=str, default=None)
     parser.add_argument("--resume-from-checkpoint", type=str, default=None)
+    parser.add_argument("--use-vllm", action="store_true", default=False)
+    parser.add_argument("--vllm-gpu-memory", type=float, default=0.3)
 
     # Logging & Saving
     parser.add_argument("--logging-steps", type=int, default=5)
