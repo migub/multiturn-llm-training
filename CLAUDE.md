@@ -43,7 +43,11 @@ multiturn-llm-training/
 │       │   ├── generic-loan-agreement.yaml     (Luca)
 │       │   ├── generic-merger.yaml             (Luca)
 │       │   ├── joint-venture.yaml              ← NEW (Michael)
-│       │   └── employment-contract.yaml        ← NEW (Michael)
+│       │   ├── employment-contract.yaml        ← NEW (Michael)
+│       │   ├── car_dealership.yaml             ← NEW (not in multi-game yet)
+│       │   ├── hotel.yaml                      ← NEW (not in multi-game yet)
+│       │   ├── rio_copa.yaml                   ← NEW (out-of-domain eval)
+│       │   └── generic.yaml                    ← NEW (not in multi-game yet)
 │       ├── issues/
 │       │   ├── gen-ra-*.yaml, gen-la-*.yaml, gen-m-*.yaml  (Luca's 10 issues)
 │       │   ├── jv-rd-budget.yaml               ← NEW compatible
@@ -66,22 +70,17 @@ multiturn-llm-training/
 │   ├── train.py                  ← Luca's DPO/REFUEL entry point
 │   └── grpo/
 │       ├── grpo_single_gpu.py    ← Michael's training script (entry point)
+│       ├── multiturn_grpo_trainer.py  ← Michael's multi-turn trainer (extends TRL GRPOTrainer)
 │       ├── grpo.py               (Luca's original, multi-GPU + vLLM)
 │       └── lagrpo_trainer.py     (Luca's LA-GRPO trainer, multi-GPU + vLLM)
+├── documents/                    ← Implementation plans and session notes
 ├── secrets.json                  ← OpenAI API key (not in git)
 └── CLAUDE.md                     ← This file
 ```
 
-### Michael's TRL Fork (separate repo)
+### Multi-Turn Trainer (in-repo, no TRL fork)
 
-```
-trl/ (forked from huggingface/trl, branch: master_thesis)
-└── trainer/
-    ├── grpo_trainer.py               ← Original TRL (unchanged)
-    └── grpo_trainer_multiturn.py     ← MICHAEL'S FILE: GRPOTrainer with multi-turn support
-```
-
-Install with: `pip install git+https://github.com/migub/trl.git@master_thesis`
+The multi-turn GRPO trainer (`multiturn_grpo_trainer.py`) now lives in the repo directly and extends the **official TRL** `GRPOTrainer` (installed via `pip install trl`). No custom TRL fork is needed.
 
 ---
 
@@ -90,24 +89,32 @@ Install with: `pip install git+https://github.com/migub/trl.git@master_thesis`
 ### Single-GPU Training (Michael's setup)
 
 ```bash
+# Self-interest multi-game (Qwen3-14B, default)
+python multiturn_llm_training/grpo/grpo_single_gpu.py \
+    --use-wandb \
+    --game-type multi-game \
+    --model-name OpenPipe/Qwen3-14B-Instruct \
+    --lambda-self 1.0 \
+    --run-name grpo_multigame_self_only_qwen3
+
 # Cooperative multi-game training
 python multiturn_llm_training/grpo/grpo_single_gpu.py \
     --use-wandb \
     --game-type multi-game \
+    --model-name OpenPipe/Qwen3-14B-Instruct \
     --lambda-self 1.0 \
     --lambda-welfare 0.5 \
     --lambda-fair 0.3 \
-    --num-generations 8 \
-    --train-size 200 \
-    --opponent-model gpt-4o-mini \
     --run-name grpo_cooperative_v1
 
-# Baseline (self-interest only, frozen local opponent)
+# Cooperative-only ablation (JV + EC scenarios only)
 python multiturn_llm_training/grpo/grpo_single_gpu.py \
     --use-wandb \
-    --game-type generic-rental-agreement \
-    --num-generations 8 \
-    --run-name grpo_baseline_rental
+    --game-type cooperative-only \
+    --model-name OpenPipe/Qwen3-14B-Instruct \
+    --lambda-self 1.0 \
+    --lambda-welfare 0.5 \
+    --run-name grpo_cooperative_only_v1
 
 # Quick test
 python multiturn_llm_training/grpo/grpo_single_gpu.py --test
@@ -115,7 +122,7 @@ python multiturn_llm_training/grpo/grpo_single_gpu.py --test
 # Resume from checkpoint
 python multiturn_llm_training/grpo/grpo_single_gpu.py \
     --use-wandb \
-    --resume-from-checkpoint output/grpo_multiturn/checkpoint-50 \
+    --resume-from-checkpoint output/<run_name>/checkpoint-20 \
     [other args...]
 ```
 
@@ -138,9 +145,8 @@ accelerate launch multiturn_llm_training/train.py --config-path configs_training
 ```bash
 git clone https://github.com/migub/multiturn-llm-training.git
 cd multiturn-llm-training
-pip install --upgrade torch transformers accelerate peft bitsandbytes datasets
-pip install unsloth hydra-core omegaconf pyyaml openai retry attrs wandb numpy pandas
-pip install git+https://github.com/migub/trl.git@master_thesis --force-reinstall --no-deps
+pip install --upgrade torch transformers accelerate peft bitsandbytes datasets trl
+pip install hydra-core omegaconf pyyaml openai retry attrs wandb numpy pandas
 export OPENAI_API_KEY="your-key"
 echo '{"openai": {"api_key": "your-key"}}' > secrets.json
 wandb login
@@ -163,11 +169,12 @@ python tests/masking.py
 
 **Michael's single-GPU pipeline (active):**
 
-- Model: `unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit` (4-bit quantized, ~5GB VRAM)
-- LoRA: r=8, alpha=16, dropout=0.1, target_modules=[q,k,v,o,gate,up,down]\_proj (0.26% trainable)
-- No vLLM: direct `model.generate()` for dialogue generation
+- Model: `OpenPipe/Qwen3-14B-Instruct` with BitsAndBytes 4-bit quantization (nf4, double quant, bf16 compute)
+- LoRA: r=8, alpha=16, dropout=0.1, target_modules=all-linear
+- No vLLM: direct `model.generate()` for dialogue generation (vLLM colocate mode planned, see `documents/vllm-colocate-implementation-plan.md`)
 - Opponent: frozen local model (LoRA disabled) OR OpenAI API (gpt-4o-mini)
 - Reference model: LoRA disabled = base model (no separate model needed, no extra VRAM)
+- Loss: GRPO (`loss_type="grpo"`, explicitly set — TRL 0.29+ defaults to DAPO)
 - GPU: A100 80GB or RTX 5090 32GB
 
 **Luca's multi-GPU pipeline (original, not actively used):**
@@ -195,33 +202,36 @@ python tests/masking.py
 
 **`compute_max_metrics()`:** Brute-forces all possible outcomes (max 121 combinations) to find maximum achievable U_A, social_welfare, nash_product, and R_coop. Used for normalized ratio logging so training curves are comparable across game types.
 
-**Wandb logging:** Logs raw metrics (U_A, U_B, social_welfare, nash_product, agreement_rate) and four normalized ratios (ratio_self, ratio_welfare, ratio_nash, ratio_rcoop) directly from the reward function.
+**Wandb logging:** Metrics are accumulated over `logging_steps` and logged as averages (not just the last batch). Logs raw metrics (U_A, U_B, social_welfare, nash_product, agreement_rate), four normalized ratios (ratio_self, ratio_welfare, ratio_nash, ratio_rcoop), and `negotiation/agreed/*` variants that only average over successful negotiations (separating quality from agreement rate). Eval calls are excluded from the accumulator to prevent contamination.
 
 **Archetype tracking:** Each sample includes `archetype` field from `get_archetype_from_game()`.
 
+**Eval dataset:** `create_eval_dataset()` provides a fixed, curated set of 10 samples per game type (deterministic, comparable across runs). Training uses `create_dataset()` with random permutation.
+
+**Issue combo filtering:** Conflicting issue combinations (e.g., `gen-ra-duration` + `gen-ra-duration-distributive`) are excluded from 2-issue game generation.
+
 ### `evaluator/evaluator.py` — Text Label Support
 
-**`lookup_payoff()`:** Before numeric extraction, tries exact/partial text matching against payoff labels. Enables labels like "full scope" alongside "$1200". Falls back to numeric interpolation if no match.
+**`lookup_payoff()`:** Before numeric extraction, tries exact/partial text matching against payoff labels. Enables labels like "full scope" alongside "$1200". Falls back to numeric interpolation if no match. Uses two-pass matching: exact match first, then longest partial match (fixed bug where `"0%"` would match `"70%"` via substring).
 
-### `trl/trainer/grpo_trainer_multiturn.py` — Multi-Turn GRPO
+### `multiturn_llm_training/grpo/multiturn_grpo_trainer.py` — Multi-Turn GRPO
 
-Modified copy of TRL's `grpo_trainer.py`. Changes marked with `# MULTITURN:` comments.
+Extends the official TRL `GRPOTrainer` (no fork needed). Overrides `_generate_and_score_completions()`, `_get_per_token_logps()`, `compute_loss()`, and `_prepare_inputs()`.
 
-**New parameters:** `multiturn=True`, `max_negotiation_rounds`, `max_tokens_per_turn`, `opponent_model`
+**Key methods:**
 
-**New methods:**
-
-- `_multiturn_generate_single_response()` → one message via model.generate()
 - `_play_negotiation()` → full dialogue, LoRA on/off for agent/opponent, or OpenAI API
-- `_tokenize_multiturn_conversation()` → creates assistant_mask (1=agent, 0=opponent), with fallback
-- `_generate_multiturn()` → returns results as tool_mask for seamless integration with `_compute_loss()`
+- `_tokenize_conversation()` → creates assistant_mask (1=agent, 0=opponent), with fallback
+- `_gen_response()` → single turn via model.generate()
 - `_openai_opponent_response()` → OpenAI API for opponent
 
-**How it integrates:** `_generate()` checks `self.multiturn` flag → calls `_generate_multiturn()` → returns assistant_mask as `tool_mask_list` → TRL's existing `mask = completion_mask * tool_mask` handles the rest.
+**How it integrates:** Overrides `_generate_and_score_completions()` to play multi-turn dialogues, compute per-token logprobs with `assistant_mask`, and calculate GRPO advantages. The `assistant_mask` ensures only agent tokens contribute to the loss.
 
 ### `grpo_single_gpu.py` — Training Script
 
-CLI entry point. Key args: `--game-type`, `--lambda-self/welfare/fair`, `--num-generations`, `--opponent-model`, `--max-rounds`, `--max-tokens-per-turn`, `--use-wandb`, `--test`, `--resume-from-checkpoint`.
+CLI entry point. Key args: `--game-type`, `--model-name`, `--lambda-self/welfare/fair`, `--num-generations`, `--opponent-model`, `--max-rounds`, `--max-tokens-per-turn`, `--use-wandb`, `--test`, `--resume-from-checkpoint`, `--logging-steps` (default 5), `--eval-steps` (default 20), `--save-steps` (defaults to eval-steps).
+
+**Game types:** `generic-rental-agreement` (single game), `multi-game` (all scenarios), `cooperative-only` (JV + EC only, for ablation), `out-of-domain` (rio copa, for eval).
 
 ---
 
@@ -239,12 +249,12 @@ CLI entry point. Key args: `--game-type`, `--lambda-self/welfare/fair`, `--num-g
 
 ## Known Issues
 
-1. **agent_token_ratio=0 → NaN crash:** `_tokenize_multiturn_conversation()` sometimes fails. Fixed with fallback marking all tokens as agent.
-2. **LLaMA 8B weak instruction following:** Invents issues, reveals payoffs. Improves with training.
+1. **agent_token_ratio=0 → NaN crash:** `_tokenize_conversation()` sometimes fails. Fixed with fallback marking all tokens as agent.
+2. **Agent reveals payoff info:** Model leaks internal payoffs in dialogue (e.g., "R&D budget of $8M (payoff 40)"). System prompt forbids this but model ignores it. Improves with training.
 3. **OpenAI opponent too strong:** Untrained agent gets stuck. Train with frozen local first.
-4. **Slow sequential generation:** 80 forward passes per step (~2-4 min). Could batch 8 dialogues.
-5. **Text-based labels:** Fixed with `lookup_payoff()` but partial matches can still fail.
-6. **Reward not comparable across games:** Fixed with normalized ratios (0-1).
+4. **Slow sequential generation:** 80 forward passes per step (~2-4 min). vLLM colocate mode planned (see `documents/vllm-colocate-implementation-plan.md`).
+5. **Partial agreements get nonzero reward:** Game rules say partial agreements = 0 payoff, but `get_payoffs()` sums agreed issues only. In 2-issue games, agreeing on 1 issue gives positive reward. **Not yet fixed.**
+6. **`ratio_welfare` always 1.0 for pure distributive games:** In distributive games, U_A + U_B = constant, so this metric provides no signal. Only useful for integrative/compatible games.
 
 ---
 
@@ -257,31 +267,43 @@ CLI entry point. Key args: `--game-type`, `--lambda-self/welfare/fair`, `--num-g
 - `train/clip_ratio/*` — PPO clipping (<0.3 is ok)
 - `train/step_time` — seconds per step
 
-### Custom metrics (env.py → wandb.log)
+### Custom metrics (env.py → wandb.log, averaged over `logging_steps`)
 
-- `negotiation/U_A_mean`, `negotiation/U_B_mean` — raw payoffs
+- `negotiation/U_A_mean`, `negotiation/U_B_mean` — raw payoffs (includes 0s for failed negotiations)
 - `negotiation/social_welfare_mean` — U_A + U_B
 - `negotiation/nash_product_mean` — U_A × U_B
 - `negotiation/agreement_rate` — fraction reaching agreement
 - **`negotiation/ratio_self_mean`** — U_A / max(U_A), 0-1, game-normalized
-- **`negotiation/ratio_welfare_mean`** — welfare / max(welfare), 0-1
+- **`negotiation/ratio_welfare_mean`** — welfare / max(welfare), 0-1 (always 1.0 for pure distributive games)
 - **`negotiation/ratio_nash_mean`** — nash / max(nash), 0-1
 - **`negotiation/ratio_rcoop_mean`** — R_coop / max(R_coop), 0-1 ← **best metric for training progress**
 
+### Agreed-only metrics (quality of successful negotiations)
+
+- `negotiation/agreed/U_A_mean`, `negotiation/agreed/U_B_mean` — payoffs only for agreements
+- `negotiation/agreed/social_welfare_mean`
+- `negotiation/agreed/ratio_self_mean`, `ratio_welfare_mean`, `ratio_nash_mean`, `ratio_rcoop_mean`
+- These separate negotiation quality from agreement rate (e.g., ratio_self=0.4 could be 40% on all games OR 80% on 50% of games — agreed metrics clarify this)
+
+### Per-archetype metrics
+
+- `negotiation/{archetype}/U_A_mean`, `U_B_mean`, `ratio_*_mean`, `count`
+- Archetypes: `single-distributive`, `single-compatible`, `single-integrative`, `integrative compatible`, `integrative distributive`, `non-integrative compatible`, `non-integrative distributive`
+
 ### Trainer metrics
 
-- `multiturn/agent_token_ratio` — fraction agent tokens (~0.3-0.5)
-- `multiturn/archetype/*` — game archetype counts per step
+- `train/agent_tokens`, `train/opp_tokens` — token counts per step
+- `train/clip_ratio` — PPO clipping ratio
 
 ---
 
 ## Next Steps
 
-1. **Early stopping** — stop dialogue when agreement reached (saves tokens/time)
-2. **Batch generation** — all 8 agent turns simultaneously (~8x faster generation)
-3. **Ablation studies** — vary λ_self, λ_welfare, λ_fair for RQ2
+1. **vLLM colocate mode** — batched generation via `rollout_func`, see `documents/vllm-colocate-implementation-plan.md`
+2. **Fix partial agreement reward** — `get_payoffs()` should return 0 when any issue is N/A
+3. **Ablation studies** — vary λ_self, λ_welfare, λ_fair for RQ2 (use `cooperative-only` vs `multi-game`)
 4. **LA-GRPO** — turn-level credit assignment (Luca's key contribution)
-5. **Evaluation pipeline** — fixed test set, Pareto frontiers per archetype
+5. **Evaluation pipeline** — Pareto frontiers per archetype, use `out-of-domain` for generalization
 6. **Robustness** — cooperative agent vs adversarial opponents (RQ4)
 7. **Benchmarks** — MMLU-Pro, GLUE, IFEval for capability preservation (RQ5)
 

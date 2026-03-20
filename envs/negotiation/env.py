@@ -524,10 +524,11 @@ class NegotiationEnv:
                     evaluation["ratio_rcoop"] = ratio_rcoop
                     evaluations.append(evaluation)
 
-            # Accumulate metrics for averaged wandb logging
+            # Accumulate metrics for averaged wandb logging (training only, skip eval)
+            is_training = torch.is_grad_enabled()
             try:
                 import wandb
-                if wandb.run is not None:
+                if wandb.run is not None and is_training:
                     step_metrics = {
                         "U_A": list(batch_U_A),
                         "U_B": list(batch_U_B),
