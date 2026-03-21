@@ -524,10 +524,34 @@ class NegotiationEnv:
                     evaluation["ratio_rcoop"] = ratio_rcoop
                     evaluations.append(evaluation)
 
-            # Accumulate metrics for averaged wandb logging (training only, skip eval)
+            # Accumulate metrics for averaged wandb logging
             is_training = torch.is_grad_enabled()
             try:
                 import wandb
+                if wandb.run is not None and not is_training:
+                    # Eval mode: log immediately with eval/ prefix
+                    n = len(batch_U_A) or 1
+                    sw = [a + b for a, b in zip(batch_U_A, batch_U_B)]
+                    agreements = sum(batch_agreed)
+                    eval_metrics = {
+                        "eval/negotiation/U_A_mean": sum(batch_U_A) / n,
+                        "eval/negotiation/U_B_mean": sum(batch_U_B) / n,
+                        "eval/negotiation/social_welfare_mean": sum(sw) / n,
+                        "eval/negotiation/agreement_rate": agreements / n,
+                        "eval/negotiation/ratio_self_mean": sum(batch_ratio_self) / n,
+                        "eval/negotiation/ratio_welfare_mean": sum(batch_ratio_welfare) / n,
+                        "eval/negotiation/ratio_nash_mean": sum(batch_ratio_nash) / n,
+                        "eval/negotiation/ratio_rcoop_mean": sum(batch_ratio_rcoop) / n,
+                    }
+                    if agreements > 0:
+                        agreed_ratio_rcoop = [v for v, a in zip(batch_ratio_rcoop, batch_agreed) if a]
+                        agreed_ratio_self = [v for v, a in zip(batch_ratio_self, batch_agreed) if a]
+                        agreed_ratio_welfare = [v for v, a in zip(batch_ratio_welfare, batch_agreed) if a]
+                        eval_metrics["eval/negotiation/agreed/ratio_rcoop_mean"] = sum(agreed_ratio_rcoop) / len(agreed_ratio_rcoop)
+                        eval_metrics["eval/negotiation/agreed/ratio_self_mean"] = sum(agreed_ratio_self) / len(agreed_ratio_self)
+                        eval_metrics["eval/negotiation/agreed/ratio_welfare_mean"] = sum(agreed_ratio_welfare) / len(agreed_ratio_welfare)
+                    wandb.log(eval_metrics, commit=False)
+
                 if wandb.run is not None and is_training:
                     step_metrics = {
                         "U_A": list(batch_U_A),
