@@ -70,6 +70,7 @@ def main(args):
         eval_on_start=False,
         beta=args.beta,
         loss_type="grpo",
+        temperature=args.temperature,
     )
 
     # ---- BitsAndBytes Config ----
@@ -155,6 +156,7 @@ if __name__ == "__main__":
     parser.add_argument("--num-generations", type=int, default=8)
     parser.add_argument("--max-rounds", type=int, default=5)
     parser.add_argument("--max-tokens-per-turn", type=int, default=200)
+    parser.add_argument("--temperature", type=float, default=1.0)
     parser.add_argument("--lambda-self", type=float, default=1.0)
     parser.add_argument("--lambda-welfare", type=float, default=0.0)
     parser.add_argument("--lambda-fair", type=float, default=0.0)
