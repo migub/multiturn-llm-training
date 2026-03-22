@@ -304,6 +304,7 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
                 completions=all_conversations,
                 negotiation_roles=negotiation_roles,
                 game_configs=game_configs,
+                _mode=mode,
                 **reward_kwargs,
             )
             if isinstance(reward_result, tuple) and len(reward_result) == 2:

@@ -100,35 +100,40 @@ class NegotiationEnv:
                 pairs.append((p0, p1))
             issue_payoff_pairs.append(pairs)
         
-        # Enumerate all combinations, track max for each metric independently
+        # Two-pass approach: first find per-component maxima, then compute max R_coop
+        # using normalized components (so lambdas are scale-independent)
+        all_outcomes = []
         max_U_A = 0.0
         max_social_welfare = 0.0
         max_nash_product = 0.0
-        max_r_coop = 0.0
-        
+
         for combo in itertools.product(*issue_payoff_pairs):
             total_p0 = sum(p[0] for p in combo)
             total_p1 = sum(p[1] for p in combo)
-            
+
             if negotiation_role == 1:
                 U_A, U_B = total_p0, total_p1
             else:
                 U_A, U_B = total_p1, total_p0
-            
+
             social_welfare = U_A + U_B
             nash_product = U_A * U_B
-            
-            r_coop = (
-                self.lambda_self * U_A
-                + self.lambda_welfare * social_welfare
-                + self.lambda_fair * nash_product / 100.0
-            )
-            
+
+            all_outcomes.append((U_A, social_welfare, nash_product))
             max_U_A = max(max_U_A, U_A)
             max_social_welfare = max(max_social_welfare, social_welfare)
             max_nash_product = max(max_nash_product, nash_product)
+
+        # Pass 2: compute max R_coop using normalized components
+        max_r_coop = 0.0
+        for U_A, social_welfare, nash_product in all_outcomes:
+            r_coop = (
+                self.lambda_self * (U_A / max_U_A if max_U_A > 0 else 0.0)
+                + self.lambda_welfare * (social_welfare / max_social_welfare if max_social_welfare > 0 else 0.0)
+                + self.lambda_fair * (nash_product / max_nash_product if max_nash_product > 0 else 0.0)
+            )
             max_r_coop = max(max_r_coop, r_coop)
-        
+
         return {
             "max_U_A": max_U_A,
             "max_social_welfare": max_social_welfare,
@@ -400,7 +405,7 @@ class NegotiationEnv:
         lambda_fair = self.lambda_fair
         env_self = self  # capture for accumulator access in closure
 
-        def negotiation_payoff_reward(prompts, completions, get_full_info=False, game_config=None, negotiation_roles=None, negotiation_role=None, **kwargs):
+        def negotiation_payoff_reward(prompts, completions, get_full_info=False, game_config=None, negotiation_roles=None, negotiation_role=None, _mode=None, **kwargs):
             # Support both singular (from dataset) and plural (legacy) parameter names
             if negotiation_roles is None and negotiation_role is not None:
                 negotiation_roles = negotiation_role if isinstance(negotiation_role, list) else [negotiation_role] * len(completions)
@@ -488,17 +493,17 @@ class NegotiationEnv:
 
                 social_welfare = U_A + U_B
                 nash_product = U_A * U_B
-                nash_product_normalized = nash_product / 100.0
-
-                R_coop = (
-                    lambda_self * U_A
-                    + lambda_welfare * social_welfare
-                    + lambda_fair * nash_product_normalized
-                )
-
                 ratio_self = U_A / max_metrics["max_U_A"] if max_metrics["max_U_A"] > 0 else 0.0
                 ratio_welfare = social_welfare / max_metrics["max_social_welfare"] if max_metrics["max_social_welfare"] > 0 else 0.0
                 ratio_nash = nash_product / max_metrics["max_nash_product"] if max_metrics["max_nash_product"] > 0 else 0.0
+
+                # R_coop uses normalized components so lambdas are scale-independent
+                R_coop = (
+                    lambda_self * ratio_self
+                    + lambda_welfare * ratio_welfare
+                    + lambda_fair * ratio_nash
+                )
+
                 ratio_rcoop = R_coop / max_metrics["max_r_coop"] if max_metrics["max_r_coop"] > 0 else 0.0
 
                 rewards.append(R_coop)
@@ -525,7 +530,7 @@ class NegotiationEnv:
                     evaluations.append(evaluation)
 
             # Accumulate metrics for averaged wandb logging
-            is_training = torch.is_grad_enabled()
+            is_training = (_mode == "train") if _mode is not None else torch.is_grad_enabled()
             try:
                 import wandb
                 if wandb.run is not None and not is_training:
