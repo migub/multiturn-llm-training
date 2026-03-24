@@ -124,6 +124,9 @@ def main(args):
         max_negotiation_rounds=args.max_rounds,
         max_tokens_per_turn=args.max_tokens_per_turn,
         opponent_model=args.opponent_model,
+        # LA-GRPO
+        turn_level_sampling=args.turn_level_sampling,
+        turn_sampling_p=args.turn_sampling_p,
     )
 
     # ---- Train ----
@@ -161,6 +164,10 @@ if __name__ == "__main__":
     parser.add_argument("--lambda-welfare", type=float, default=0.0)
     parser.add_argument("--lambda-fair", type=float, default=0.0)
     parser.add_argument("--opponent-model", type=str, default=None)
+    parser.add_argument("--turn-level-sampling", action="store_true", default=False,
+                        help="Enable LA-GRPO turn-level sampling for local credit assignment")
+    parser.add_argument("--turn-sampling-p", type=float, default=0.3,
+                        help="Geometric distribution parameter for turn sampling (default: 0.3, mean ~2.3)")
     parser.add_argument("--resume-from-checkpoint", type=str, default=None)
 
     # Logging & Saving
