@@ -688,8 +688,8 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
             if i in agent_turn_indices:
                 # Which agent turn is this? (0th, 1st, 2nd, ...)
                 agent_turn_number = agent_turn_indices.index(i)
-                # For LA-GRPO: only mask turns >= sampled_h
-                if mask_from_agent_turn is None or agent_turn_number >= mask_from_agent_turn:
+                # For LA-GRPO: only mask turns == sampled_h
+                if mask_from_agent_turn is None or agent_turn_number == mask_from_agent_turn:
                     start = prev_len
                     end = min(curr_len, len(full_ids))
                     if start < end:
