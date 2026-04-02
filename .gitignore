@@ -23,6 +23,8 @@ hf_token.sh
 
 *.log
 
-*.json
+secrets.json
+settings.local.json
+artifacts/
 
 archive/
