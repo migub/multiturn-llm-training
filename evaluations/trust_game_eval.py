@@ -196,10 +196,12 @@ def has_adapter(model):
     return hasattr(model, "enable_adapter_layers")
 
 
-def play_single_game(model, tokenizer, gen_config, trained_role):
+def play_single_game(model, tokenizer, gen_config, trained_role, self_play=False):
     """
-    Play one Trust Game. The trained model plays `trained_role` (investor/trustee),
-    the frozen base model plays the other role.
+    Play one Trust Game.
+
+    If self_play=True: trained model (LoRA on) plays both roles.
+    Otherwise: trained model plays `trained_role`, frozen base model plays the other.
 
     Returns dict with investor_text, trustee_text, send, return_amt, parse_ok.
     """
@@ -207,7 +209,7 @@ def play_single_game(model, tokenizer, gen_config, trained_role):
     investor_messages = [{"role": "system", "content": INVESTOR_PROMPT}]
 
     if has_adapter(model):
-        if trained_role == "investor":
+        if self_play or trained_role == "investor":
             model.enable_adapter_layers()
         else:
             model.disable_adapter_layers()
@@ -224,7 +226,7 @@ def play_single_game(model, tokenizer, gen_config, trained_role):
     ]
 
     if has_adapter(model):
-        if trained_role == "trustee":
+        if self_play or trained_role == "trustee":
             model.enable_adapter_layers()
         else:
             model.disable_adapter_layers()
@@ -248,15 +250,23 @@ def play_single_game(model, tokenizer, gen_config, trained_role):
     }
 
 
-def play_trust_games(model, tokenizer, gen_config, num_games, verbose=False):
-    """Play N trust games per role. Returns dict with 'investor' and 'trustee' game lists."""
-    results = {"investor": [], "trustee": []}
+def play_trust_games(model, tokenizer, gen_config, num_games, verbose=False, self_play=False):
+    """Play N trust games. In self-play mode, both roles use the trained model."""
+    if self_play:
+        roles = {"self_play": None}
+    else:
+        roles = {"investor": "investor", "trustee": "trustee"}
 
-    for role in ["investor", "trustee"]:
-        print(f"\nPlaying {num_games} games as {role.upper()}...")
+    results = {}
+    for key, trained_role in roles.items():
+        results[key] = []
+        label = "SELF-PLAY" if self_play else f"as {key.upper()}"
+        print(f"\nPlaying {num_games} games {label}...")
         for i in range(num_games):
             t0 = time.time()
-            game = play_single_game(model, tokenizer, gen_config, trained_role=role)
+            game = play_single_game(model, tokenizer, gen_config,
+                                    trained_role=trained_role or "investor",
+                                    self_play=self_play)
             elapsed = time.time() - t0
 
             status = "OK" if game["parse_ok"] else "PARSE FAIL"
@@ -272,7 +282,7 @@ def play_trust_games(model, tokenizer, gen_config, num_games, verbose=False):
                 print(f"    Payoffs:  Investor={inv_payoff}, Trustee={tru_payoff}")
                 print()
 
-            results[role].append(game)
+            results[key].append(game)
 
     return results
 
@@ -338,13 +348,17 @@ def report_results(all_metrics, results, args):
     print(f"  Reference — Pareto optimum:    send=10, return=15  -> (15, 15) SW=30  NP=225")
     print("-" * 60)
 
-    for role in ["investor", "trustee"]:
-        m = all_metrics[role]
+    for key in all_metrics:
+        m = all_metrics[key]
         if m is None:
-            print(f"\n  [{role.upper()}] All games failed to parse.")
+            print(f"\n  [{key.upper()}] All games failed to parse.")
             continue
 
-        print(f"\n  [Trained as {role.upper()}]  (valid: {m['n_valid']}/{m['n_total']})")
+        if key == "self_play":
+            label = "SELF-PLAY (trained vs trained)"
+        else:
+            label = f"Trained as {key.upper()}"
+        print(f"\n  [{label}]  (valid: {m['n_valid']}/{m['n_total']})")
         print(f"    Avg send:            {m['avg_send']:5.2f} / 10    (std: {m['std_send']:.2f})")
         print(f"    Avg return:          {m['avg_return']:5.2f}          (std: {m['std_return']:.2f})")
         print(f"    Return ratio:        {m['avg_return_ratio']:5.1%}")
@@ -405,6 +419,8 @@ def main():
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--verbose", action="store_true",
                         help="Print full dialogues and payoffs for each game")
+    parser.add_argument("--self-play", action="store_true",
+                        help="Trained model plays both roles (LoRA on for both)")
     args = parser.parse_args()
 
     # Set seeds
@@ -426,13 +442,11 @@ def main():
     )
 
     # Play games
-    results = play_trust_games(model, tokenizer, gen_config, args.num_games, verbose=args.verbose)
+    results = play_trust_games(model, tokenizer, gen_config, args.num_games,
+                               verbose=args.verbose, self_play=args.self_play)
 
     # Compute metrics
-    all_metrics = {
-        "investor": compute_metrics(results["investor"]),
-        "trustee": compute_metrics(results["trustee"]),
-    }
+    all_metrics = {key: compute_metrics(games) for key, games in results.items()}
 
     # Report
     report_results(all_metrics, results, args)
