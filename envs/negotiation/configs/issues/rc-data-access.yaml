@@ -1,0 +1,11 @@
+name: data access
+issue_type: compatible
+descriptions:
+  - You have to negotiate the level of data sharing between the university and the pharma company. Full transparency and shared access to all experimental data accelerates your research and enables better scientific outcomes.
+  - You have to negotiate the level of data sharing between the university and the pharma company. Full shared access to all research data helps you monitor progress, make informed decisions, and integrate findings into your drug development pipeline faster.
+payoffs:
+  - [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  - [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+payoff_labels:
+  - ["minimal sharing", "quarterly reports", "monthly reports", "weekly updates", "shared dashboard", "shared database", "real-time access", "full lab access", "embedded liaison", "joint data team", "full integration"]
+  - ["minimal sharing", "quarterly reports", "monthly reports", "weekly updates", "shared dashboard", "shared database", "real-time access", "full lab access", "embedded liaison", "joint data team", "full integration"]

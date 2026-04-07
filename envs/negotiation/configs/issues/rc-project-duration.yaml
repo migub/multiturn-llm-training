@@ -1,0 +1,11 @@
+name: project duration
+issue_type: integrative
+descriptions:
+  - You have to negotiate the duration of the research partnership. A longer project gives your team more time for thorough research, peer review, and exploration of promising side discoveries.
+  - You have to negotiate the duration of the research partnership. A shorter project gets you to market faster and reduces your financial exposure, which is important for your shareholders.
+payoffs:
+  - [0, 2, 4, 6, 8, 10]
+  - [10, 8, 6, 4, 2, 0]
+payoff_labels:
+  - ["1 year", "2 years", "3 years", "4 years", "5 years", "6 years"]
+  - ["1 year", "2 years", "3 years", "4 years", "5 years", "6 years"]

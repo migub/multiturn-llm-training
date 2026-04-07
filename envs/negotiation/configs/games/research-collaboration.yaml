@@ -1,0 +1,8 @@
+name: research-collaboration
+description: A university research lab and a pharmaceutical company are negotiating a joint research partnership to develop a new drug candidate. The university has deep domain expertise in molecular biology but limited funding, while the pharma company has capital and commercialization capabilities but needs the lab's specialized knowledge. Both parties are motivated to reach an agreement but have different priorities regarding intellectual property, academic freedom, and speed to market.
+sides:
+  - You are an advisor representing the best interests of the university research lab. Your main goal is to negotiate the best possible agreement for the university based on the information in the payoff tables. The numbers in the payoff tables show how valuable each outcome is to you. You can trust that the payoffs assigned to the different options in your table are accurate.
+  - You are an advisor representing the best interests of the pharmaceutical company. Your main goal is to negotiate the best possible agreement for the pharma company based on the information in the payoff tables. The numbers in the payoff tables show how valuable each outcome is to you. You can trust that the payoffs assigned to the different options in your table are accurate.
+parties:
+  - University Lab
+  - PharmaCorp

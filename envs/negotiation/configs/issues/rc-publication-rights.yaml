@@ -1,0 +1,11 @@
+name: publication rights
+issue_type: integrative
+descriptions:
+  - You have to negotiate the publication embargo period before the university can publish research findings. Publishing quickly is essential for your academic reputation, securing future grants, and advancing your researchers' careers.
+  - You have to negotiate the publication embargo period before the university can publish research findings. A longer embargo protects your trade secrets and gives you time to file patents, but you care less about this issue if IP ownership is secured.
+payoffs:
+  - [10, 8, 6, 4, 2, 0]
+  - [0, 2, 4, 6, 8, 10]
+payoff_labels:
+  - ["no embargo", "3 months", "6 months", "9 months", "12 months", "18 months"]
+  - ["no embargo", "3 months", "6 months", "9 months", "12 months", "18 months"]

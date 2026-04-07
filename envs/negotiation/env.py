@@ -221,6 +221,8 @@ class NegotiationEnv:
                 games_used = [
                     {"game_settings": "rio_copa.yaml",
                     "issues": ["rp_contingent_liability.yaml","rp_family_employees.yaml","rp_financing.yaml","rp_non_compete_period.yaml"]},
+                    {"game_settings": "research-collaboration.yaml",
+                    "issues": ["rc-funding.yaml","rc-ip-ownership.yaml","rc-publication-rights.yaml","rc-data-access.yaml","rc-project-duration.yaml"]},
                 ]
 
             for gd in games_used:
@@ -347,6 +349,7 @@ class NegotiationEnv:
                  "issues": ["ec-remote-work.yaml", "ec-training-budget.yaml"], "issue_weights": [[50, 50], [50, 50]]},
             ],
             "out-of-domain": [
+                # Rio Copa
                 # 1. Single compatible
                 {"game_settings": "rio_copa.yaml",
                  "issues": ["rp_contingent_liability.yaml"], "issue_weights": [[1], [1]]},
@@ -362,6 +365,22 @@ class NegotiationEnv:
                 # 5. Integrative + integrative
                 {"game_settings": "rio_copa.yaml",
                  "issues": ["rp_financing.yaml", "rp_family_employees.yaml"], "issue_weights": [[50, 50], [50, 50]]},
+                # Research Collaboration
+                # 6. Single compatible
+                {"game_settings": "research-collaboration.yaml",
+                 "issues": ["rc-funding.yaml"], "issue_weights": [[1], [1]]},
+                # 7. Single distributive
+                {"game_settings": "research-collaboration.yaml",
+                 "issues": ["rc-ip-ownership.yaml"], "issue_weights": [[1], [1]]},
+                # 8. Integrative + integrative
+                {"game_settings": "research-collaboration.yaml",
+                 "issues": ["rc-publication-rights.yaml", "rc-project-duration.yaml"], "issue_weights": [[50, 50], [50, 50]]},
+                # 9. Compatible + distributive
+                {"game_settings": "research-collaboration.yaml",
+                 "issues": ["rc-data-access.yaml", "rc-ip-ownership.yaml"], "issue_weights": [[50, 50], [50, 50]]},
+                # 10. Integrative + compatible
+                {"game_settings": "research-collaboration.yaml",
+                 "issues": ["rc-publication-rights.yaml", "rc-funding.yaml"], "issue_weights": [[70, 30], [30, 70]]},
             ],
         }
 

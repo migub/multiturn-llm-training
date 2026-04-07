@@ -1,0 +1,11 @@
+name: funding amount
+issue_type: compatible
+descriptions:
+  - You have to negotiate the annual research funding that the pharma company will provide. A higher budget allows you to hire more researchers and acquire better equipment, leading to stronger results.
+  - You have to negotiate the annual research funding you will provide to the university lab. A higher budget accelerates the research timeline and improves the quality of results, benefiting both parties.
+payoffs:
+  - [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  - [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+payoff_labels:
+  - ["$1M", "$2M", "$3M", "$4M", "$5M", "$6M", "$7M", "$8M", "$9M", "$10M", "$11M"]
+  - ["$1M", "$2M", "$3M", "$4M", "$5M", "$6M", "$7M", "$8M", "$9M", "$10M", "$11M"]

@@ -1,0 +1,11 @@
+name: IP ownership
+issue_type: distributive
+descriptions:
+  - You have to negotiate what share of the intellectual property rights from the research your university will retain. Retaining IP allows the university to license the technology independently and use it in future research.
+  - You have to negotiate what share of the intellectual property rights from the research your company will acquire. Owning the IP is critical for protecting your commercial investment and ensuring exclusivity in the market.
+payoffs:
+  - [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  - [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+payoff_labels:
+  - ["0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"]
+  - ["0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"]
