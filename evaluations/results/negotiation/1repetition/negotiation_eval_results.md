@@ -6,13 +6,15 @@
 
 ## Results
 
-| Model | Lambda (s/w/f) | Steps | Agreement | U_A mean | U_A std | Social Welfare | Ratio Self | Ratio Welfare | Ratio Nash | Ratio R_coop |
-|-------|---------------|-------|-----------|----------|---------|----------------|------------|---------------|------------|--------------|
-| base_model | - | 0 | 70% | 44.1 | 33.0 | 88.2 | 0.441 | 0.591 | 0.499 | 0.441 |
-| self_only | 1.0 / 0.0 / 0.0 | 560 | 70% | 50.1 | 36.2 | 95.4 | 0.501 | 0.609 | 0.523 | 0.501 |
-| fair_only | 0.0 / 0.0 / 1.0 | 560 | 80% | 53.9 | 29.6 | 106.3 | 0.539 | 0.709 | 0.611 | 0.539 |
-| all_equal | 1.0 / 1.0 / 1.0 | 620 | **100%** | 66.0 | 19.6 | 123.9 | 0.659 | 0.861 | 0.665 | 0.659 |
-| self_fair_equal | 0.5 / 0.0 / 0.5 | 820 | **100%** | **67.7** | 19.7 | **131.6** | **0.677** | **0.910** | **0.760** | **0.677** |
+
+| Model           | Lambda (s/w/f)  | Steps | Agreement | U_A mean | U_A std | Social Welfare | Ratio Self | Ratio Welfare | Ratio Nash | Ratio R_coop |
+| --------------- | --------------- | ----- | --------- | -------- | ------- | -------------- | ---------- | ------------- | ---------- | ------------ |
+| base_model      | -               | 0     | 70%       | 44.1     | 33.0    | 88.2           | 0.441      | 0.591         | 0.499      | 0.441        |
+| self_only       | 1.0 / 0.0 / 0.0 | 560   | 70%       | 50.1     | 36.2    | 95.4           | 0.501      | 0.609         | 0.523      | 0.501        |
+| fair_only       | 0.0 / 0.0 / 1.0 | 560   | 80%       | 53.9     | 29.6    | 106.3          | 0.539      | 0.709         | 0.611      | 0.539        |
+| all_equal       | 1.0 / 1.0 / 1.0 | 620   | **100%**  | 66.0     | 19.6    | 123.9          | 0.659      | 0.861         | 0.665      | 0.659        |
+| self_fair_equal | 0.5 / 0.0 / 0.5 | 820   | **100%**  | **67.7** | 19.7    | **131.6**      | **0.677**  | **0.910**     | **0.760**  | **0.677**    |
+
 
 ## Key Findings
 
@@ -58,3 +60,4 @@ The 10 eval games cover a range of negotiation scenarios and archetypes:
 - **Selfplay only:** The opponent is the frozen base model. Results against adversarial or OpenAI opponents may differ.
 - **Single checkpoint per model:** Each model is evaluated at its final checkpoint only. Training dynamics (improvement over steps) are not captured here.
 - **R_coop computed with lambda_self=1.0 only:** The ratio_rcoop column uses lambda_self=1.0, lambda_welfare=0.0, lambda_fair=0.0 for all models. To compare models on their own reward function, rerun with matching lambda values.
+

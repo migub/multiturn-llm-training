@@ -5,8 +5,8 @@ Plays multi-game negotiations (selfplay with frozen opponent) and evaluates
 outcomes using GPT-4o-mini, producing metrics comparable to Luca's CSV format.
 
 Usage:
-  python evaluations/run_negotiation_eval.py --num-games 50
-  python evaluations/run_negotiation_eval.py --num-games 10 --checkpoint output/grpo-multigame-self-only/checkpoint-560
+  python evaluations/run_negotiation_eval.py --repetitions 5
+  python evaluations/run_negotiation_eval.py --repetitions 10 --checkpoint output/grpo-multigame-self-only/checkpoint-560
 """
 
 import sys
@@ -138,13 +138,14 @@ def play_negotiation(model, tokenizer, prompt_agent, prompt_opponent,
 # ============================================================
 
 def evaluate_checkpoint(model, tokenizer, has_lora, env, num_games,
-                        max_rounds=5, temperature=1.0, seed=42):
-    """Run num_games negotiations and evaluate with GPT-4o-mini."""
-    torch.manual_seed(seed)
-    np.random.seed(seed)
+                        max_rounds=5, temperature=1.0, seed=42, repetitions=1):
+    """Run negotiations and evaluate with GPT-4o-mini.
 
+    Each game configuration is played `repetitions` times with different seeds
+    to get statistically meaningful results.
+    """
     eval_dataset = env.create_eval_dataset()
-    n_configs = len(eval_dataset)
+    n_configs = min(num_games, len(eval_dataset))
 
     all_results = []
     all_U_A, all_U_B = [], []
@@ -154,97 +155,110 @@ def evaluate_checkpoint(model, tokenizer, has_lora, env, num_games,
                                            "ratio_welfare": [], "ratio_nash": [],
                                            "ratio_rcoop": [], "agreed": []})
 
-    total = min(num_games, n_configs)
-    print(f"\nPlaying {total} negotiations (max {max_rounds} rounds each)...")
+    total = n_configs * repetitions
+    print(f"\nPlaying {total} negotiations ({n_configs} configs x {repetitions} reps, "
+          f"max {max_rounds} rounds each)...")
 
-    for i in range(total):
-        sample = eval_dataset[i]
-        prompt_agent = sample["prompt"]
-        prompt_opponent = sample["prompt_2"]
-        agent_starts = sample["starting_agent"]
-        game_config = sample["game_config"]
-        negotiation_role = sample["negotiation_role"]
-        archetype = sample["archetype"]
+    game_counter = 0
+    for rep in range(repetitions):
+        rep_seed = seed + rep
+        torch.manual_seed(rep_seed)
+        np.random.seed(rep_seed)
 
-        t0 = time.time()
-        conversation = play_negotiation(
-            model, tokenizer, prompt_agent, prompt_opponent,
-            agent_starts=agent_starts, max_rounds=max_rounds,
-            has_lora=has_lora, temperature=temperature,
-        )
-        gen_time = time.time() - t0
+        for i in range(n_configs):
+            sample = eval_dataset[i]
+            prompt_agent = sample["prompt"]
+            prompt_opponent = sample["prompt_2"]
+            agent_starts = sample["starting_agent"]
+            game_config = sample["game_config"]
+            negotiation_role = sample["negotiation_role"]
+            archetype = sample["archetype"]
 
-        # Evaluate with GPT-4o-mini
-        game = Game(**game_config)
-        eval_model = OpenAIModel(model_provider="openai", model_name="gpt-4o-mini")
-        evaluator = Evaluator(model=eval_model, game=game, game_type=env.game_type)
+            t0 = time.time()
+            conversation = play_negotiation(
+                model, tokenizer, prompt_agent, prompt_opponent,
+                agent_starts=agent_starts, max_rounds=max_rounds,
+                has_lora=has_lora, temperature=temperature,
+            )
+            gen_time = time.time() - t0
 
-        starting_agent = 0 if agent_starts else 1
-        evaluation = evaluator.evaluate(conversation, starting_agent=starting_agent, get_payoffs=True)
+            # Evaluate with GPT-4o-mini
+            game = Game(**game_config)
+            eval_model = OpenAIModel(model_provider="openai", model_name="gpt-4o-mini")
+            evaluator = Evaluator(model=eval_model, game=game, game_type=env.game_type)
 
-        # Compute metrics
-        max_metrics = env.compute_max_metrics(game, negotiation_role)
+            starting_agent = 0 if agent_starts else 1
+            evaluation = evaluator.evaluate(conversation, starting_agent=starting_agent, get_payoffs=True)
 
-        if evaluation is None or "payoffs" not in evaluation:
-            U_A, U_B = 0.0, 0.0
-            ratio_self = ratio_welfare = ratio_nash = ratio_rcoop = 0.0
-            agreed = False
-        else:
-            p1 = evaluation["payoffs"]["Agent 1"]
-            p2 = evaluation["payoffs"]["Agent 2"]
-            U_A = p1 if negotiation_role == 1 else p2
-            U_B = p2 if negotiation_role == 1 else p1
+            # Compute metrics
+            max_metrics = env.compute_max_metrics(game, negotiation_role)
 
-            ratio_self = U_A / max_metrics["max_U_A"] if max_metrics["max_U_A"] > 0 else 0.0
-            sw = U_A + U_B
-            ratio_welfare = sw / max_metrics["max_social_welfare"] if max_metrics["max_social_welfare"] > 0 else 0.0
-            np_val = U_A * U_B
-            ratio_nash = np_val / max_metrics["max_nash_product"] if max_metrics["max_nash_product"] > 0 else 0.0
+            if evaluation is None or "payoffs" not in evaluation:
+                U_A, U_B = 0.0, 0.0
+                ratio_self = ratio_welfare = ratio_nash = ratio_rcoop = 0.0
+                agreed = False
+            else:
+                p1 = evaluation["payoffs"]["Agent 1"]
+                p2 = evaluation["payoffs"]["Agent 2"]
+                U_A = p1 if negotiation_role == 1 else p2
+                U_B = p2 if negotiation_role == 1 else p1
 
-            R_coop = (env.lambda_self * ratio_self
-                      + env.lambda_welfare * ratio_welfare
-                      + env.lambda_fair * ratio_nash)
-            ratio_rcoop = R_coop / max_metrics["max_r_coop"] if max_metrics["max_r_coop"] > 0 else 0.0
-            agreed = U_A > 0 or U_B > 0
+                ratio_self = U_A / max_metrics["max_U_A"] if max_metrics["max_U_A"] > 0 else 0.0
+                sw = U_A + U_B
+                ratio_welfare = sw / max_metrics["max_social_welfare"] if max_metrics["max_social_welfare"] > 0 else 0.0
+                np_val = U_A * U_B
+                ratio_nash = np_val / max_metrics["max_nash_product"] if max_metrics["max_nash_product"] > 0 else 0.0
 
-        all_U_A.append(float(U_A))
-        all_U_B.append(float(U_B))
-        all_ratio_self.append(float(ratio_self))
-        all_ratio_welfare.append(float(ratio_welfare))
-        all_ratio_nash.append(float(ratio_nash))
-        all_ratio_rcoop.append(float(ratio_rcoop))
-        all_agreed.append(agreed)
+                R_coop = (env.lambda_self * ratio_self
+                          + env.lambda_welfare * ratio_welfare
+                          + env.lambda_fair * ratio_nash)
+                ratio_rcoop = R_coop / max_metrics["max_r_coop"] if max_metrics["max_r_coop"] > 0 else 0.0
+                agreed = U_A > 0 or U_B > 0
 
-        archetype_data[archetype]["U_A"].append(float(U_A))
-        archetype_data[archetype]["U_B"].append(float(U_B))
-        archetype_data[archetype]["ratio_self"].append(float(ratio_self))
-        archetype_data[archetype]["ratio_welfare"].append(float(ratio_welfare))
-        archetype_data[archetype]["ratio_nash"].append(float(ratio_nash))
-        archetype_data[archetype]["ratio_rcoop"].append(float(ratio_rcoop))
-        archetype_data[archetype]["agreed"].append(agreed)
+            all_U_A.append(float(U_A))
+            all_U_B.append(float(U_B))
+            all_ratio_self.append(float(ratio_self))
+            all_ratio_welfare.append(float(ratio_welfare))
+            all_ratio_nash.append(float(ratio_nash))
+            all_ratio_rcoop.append(float(ratio_rcoop))
+            all_agreed.append(agreed)
 
-        status = "OK" if agreed else "FAIL"
-        print(f"  Game {i+1:3d}/{total}: U_A={U_A:.0f} U_B={U_B:.0f} "
-              f"r_self={ratio_self:.2f} r_nash={ratio_nash:.2f} [{status}] "
-              f"({gen_time:.1f}s) [{archetype}]")
+            archetype_data[archetype]["U_A"].append(float(U_A))
+            archetype_data[archetype]["U_B"].append(float(U_B))
+            archetype_data[archetype]["ratio_self"].append(float(ratio_self))
+            archetype_data[archetype]["ratio_welfare"].append(float(ratio_welfare))
+            archetype_data[archetype]["ratio_nash"].append(float(ratio_nash))
+            archetype_data[archetype]["ratio_rcoop"].append(float(ratio_rcoop))
+            archetype_data[archetype]["agreed"].append(agreed)
 
-        all_results.append({
-            "game_idx": i,
-            "archetype": archetype,
-            "negotiation_role": negotiation_role,
-            "agent_starts": agent_starts,
-            "U_A": U_A, "U_B": U_B,
-            "ratio_self": ratio_self, "ratio_welfare": ratio_welfare,
-            "ratio_nash": ratio_nash, "ratio_rcoop": ratio_rcoop,
-            "agreed": agreed,
-            "conversation": conversation,
-        })
+            status = "OK" if agreed else "FAIL"
+            game_counter += 1
+            print(f"  Game {game_counter:3d}/{total} (rep {rep+1}/{repetitions}): "
+                  f"U_A={U_A:.0f} U_B={U_B:.0f} "
+                  f"r_self={ratio_self:.2f} r_nash={ratio_nash:.2f} [{status}] "
+                  f"({gen_time:.1f}s) [{archetype}]")
+
+            all_results.append({
+                "game_idx": game_counter - 1,
+                "repetition": rep,
+                "config_idx": i,
+                "archetype": archetype,
+                "negotiation_role": negotiation_role,
+                "agent_starts": agent_starts,
+                "U_A": U_A, "U_B": U_B,
+                "ratio_self": ratio_self, "ratio_welfare": ratio_welfare,
+                "ratio_nash": ratio_nash, "ratio_rcoop": ratio_rcoop,
+                "agreed": agreed,
+                "conversation": conversation,
+            })
 
     # Aggregate
     n = len(all_U_A) or 1
     agreements = sum(all_agreed)
     metrics = {
         "n_games": total,
+        "n_configs": n_configs,
+        "repetitions": repetitions,
         "agreement_rate": agreements / n,
         "U_A_mean": mean([float(x) for x in all_U_A]),
         "U_A_std": stdev([float(x) for x in all_U_A]) if n > 1 else 0,
@@ -297,7 +311,9 @@ def main():
     parser.add_argument("--model-name", type=str, default="OpenPipe/Qwen3-14B-Instruct")
     parser.add_argument("--game-type", type=str, default="multi-game")
     parser.add_argument("--num-games", type=int, default=10,
-                        help="Number of negotiation games (max = eval dataset size)")
+                        help="Number of game configs to use (max = eval dataset size)")
+    parser.add_argument("--repetitions", type=int, default=1,
+                        help="Times to repeat each game config (different seeds for statistical significance)")
     parser.add_argument("--max-rounds", type=int, default=5)
     parser.add_argument("--temperature", type=float, default=1.0)
     parser.add_argument("--seed", type=int, default=42)
@@ -349,6 +365,7 @@ def main():
             max_rounds=args.max_rounds,
             temperature=args.temperature,
             seed=args.seed,
+            repetitions=args.repetitions,
         )
 
         # Print summary
