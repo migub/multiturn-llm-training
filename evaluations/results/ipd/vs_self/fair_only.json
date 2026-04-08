@@ -1,0 +1,5260 @@
+{
+  "args": {
+    "checkpoint": "output/grpo-multigame-fair-only/checkpoint-560",
+    "model_name": "OpenPipe/Qwen3-14B-Instruct",
+    "num_games": 50,
+    "num_rounds": 10,
+    "temperature": 1.0,
+    "seed": 42
+  },
+  "metrics": {
+    "self_play": {
+      "n_games": 50,
+      "n_total": 50,
+      "num_rounds": 10,
+      "parse_failure_rate": 0.0,
+      "avg_a_total": 30,
+      "avg_b_total": 30,
+      "std_a_total": 0.0,
+      "std_b_total": 0.0,
+      "avg_social_welfare": 60,
+      "std_social_welfare": 0.0,
+      "avg_nash_product": 900,
+      "std_nash_product": 0.0,
+      "avg_coop_rate_a": 1.0,
+      "avg_coop_rate_b": 1.0,
+      "avg_mutual_coop_rate": 1.0,
+      "avg_mutual_defect_rate": 0.0,
+      "per_round_coop_rate_a": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "per_round_coop_rate_b": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "retaliation_rate": null,
+      "forgiveness_rate": null
+    }
+  },
+  "games": {
+    "self_play": [
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "Given that every single round has involved mutual cooperation and the strategy of playing the game consistently for the mutual benefit, as long as Player A's cooperation continues, this remains a stable and beneficial strategy to maximize the ongoing payoff. \n\nI choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE",
+            "b_text": "Given the scenario where Player A has continued to cooperate for all of the previous rounds and I aim to maximize my total payoff, it is in my interest to also cooperate in Round 9. This is because mutual cooperation will yield the highest gain of 3 points for this round. If trust is maintained and cooperation becomes normalized, mutual adherence ensures maximum return for both players.\n\nSo my choice for this round is:\n\n**I choose COOPERATE**",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "Based on the pattern so far, it seems Player B also continues cooperating each time (as evidenced by both sides having received 3 points for cooperation). While cooperation has proven to be a consistent strategy throughout the entire game for both players so far, it's important in a game like this that decisions are consistent and trusting.\n\n**In the final round**, since all prior rounds have involved mutual cooperation without deception or opportunistic defecting on either side \u2014 and both players are playing as though attempting mutual cooperation \u2014 it would make strategic sense for the strategy of **trust and reciprocity** to continue.\n\nI choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      },
+      {
+        "rounds": [
+          {
+            "round": 1,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 2,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 3,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 4,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 5,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 6,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 7,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 8,
+            "a_text": "I choose COOPERATE",
+            "b_text": "I choose COOPERATE",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 9,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          },
+          {
+            "round": 10,
+            "a_text": "I choose COOPERATE.",
+            "b_text": "I choose COOPERATE.",
+            "a_action": "C",
+            "b_action": "C",
+            "a_payoff": 3,
+            "b_payoff": 3,
+            "parse_ok": true
+          }
+        ]
+      }
+    ]
+  }
+}
