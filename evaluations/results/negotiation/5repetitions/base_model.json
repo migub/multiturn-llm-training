@@ -1,0 +1,2919 @@
+{
+  "args": {
+    "checkpoint": null,
+    "model_name": "OpenPipe/Qwen3-14B-Instruct",
+    "game_type": "multi-game",
+    "num_games": 10,
+    "repetitions": 5,
+    "max_rounds": 5,
+    "temperature": 1.0,
+    "seed": 42,
+    "output_dir": "evaluations/results/negotiation/5repetitions",
+    "lambda_self": 1.0,
+    "lambda_welfare": 0.0,
+    "lambda_fair": 0.0
+  },
+  "metrics": {
+    "n_games": 50,
+    "n_configs": 10,
+    "repetitions": 5,
+    "agreement_rate": 0.76,
+    "U_A_mean": 50.12,
+    "U_A_std": 31.827750694727303,
+    "U_B_mean": 49.62,
+    "U_B_std": 30.64736230618437,
+    "social_welfare_mean": 99.74,
+    "ratio_self_mean": 0.5012,
+    "ratio_welfare_mean": 0.6551004901960784,
+    "ratio_nash_mean": 0.5407247619047619,
+    "ratio_rcoop_mean": 0.5012,
+    "agreed_ratio_self_mean": 0.6594736842105263,
+    "agreed_ratio_welfare_mean": 0.8619743292053663,
+    "agreed_ratio_nash_mean": 0.7114799498746868,
+    "agreed_ratio_rcoop_mean": 0.6594736842105263,
+    "per_archetype": {
+      "single-distributive": {
+        "count": 10,
+        "U_A_mean": 15.0,
+        "U_B_mean": 15.0,
+        "agreement_rate": 0.3,
+        "ratio_self_mean": 0.15,
+        "ratio_welfare_mean": 0.3,
+        "ratio_nash_mean": 0.196,
+        "ratio_rcoop_mean": 0.15
+      },
+      "integrative compatible": {
+        "count": 10,
+        "U_A_mean": 60.1,
+        "U_B_mean": 58.1,
+        "agreement_rate": 0.9,
+        "ratio_self_mean": 0.601,
+        "ratio_welfare_mean": 0.6952941176470588,
+        "ratio_nash_mean": 0.5292428571428571,
+        "ratio_rcoop_mean": 0.601
+      },
+      "non-integrative compatible": {
+        "count": 30,
+        "U_A_mean": 58.5,
+        "U_B_mean": 58.333333333333336,
+        "agreement_rate": 0.8666666666666667,
+        "ratio_self_mean": 0.585,
+        "ratio_welfare_mean": 0.7600694444444445,
+        "ratio_nash_mean": 0.6594603174603174,
+        "ratio_rcoop_mean": 0.585
+      }
+    }
+  },
+  "games": [
+    {
+      "game_idx": 0,
+      "repetition": 0,
+      "config_idx": 0,
+      "archetype": "single-distributive",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": 0,
+      "U_B": 0,
+      "ratio_self": 0.0,
+      "ratio_welfare": 0.0,
+      "ratio_nash": 0.0,
+      "ratio_rcoop": 0.0,
+      "agreed": false,
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "I propose a rental agreement with a monthly rent of $1500. This is the most favorable option for me, and I hope we can reach an agreement on this term."
+        },
+        {
+          "role": "user",
+          "content": "I appreciate your proposal, but I must decline a rent of $1500 as it results in a total payoff of 0 for me. I would like to explore a more favorable option, such as a monthly rent of $1400."
+        },
+        {
+          "role": "assistant",
+          "content": "I understand your position, but $1400 results in a total payoff of 0 for me. I would prefer to maintain the rent at $1500. If we cannot agree, the outcome will be a total payoff of 0 for both parties."
+        },
+        {
+          "role": "user",
+          "content": "I understand your preference, but I cannot accept a rent of $1500 as it results in a total payoff of 0 for me. I would like to explore a rent of $1300, which gives me a payoff of 20. I hope we can find a mutually acceptable solution."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept $1300 as it results in a total payoff of 0 for me. I would prefer to maintain the rent at $1500. If we cannot agree, the outcome will be a total payoff of 0 for both parties."
+        },
+        {
+          "role": "user",
+          "content": "I understand your position, but I cannot accept a rent of $1500 as it results in a total payoff of 0 for me. I would like to propose a rent of $1200, which gives me a payoff of 30. I hope we can find a mutually acceptable solution."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept $1200 as it results in a total payoff of 0 for me. I would prefer to maintain the rent at $1500. If we cannot agree, the outcome will be a total payoff of 0 for both parties."
+        },
+        {
+          "role": "user",
+          "content": "I understand your preference, but I cannot accept a rent of $1500 as it results in a total payoff of 0 for me. I would like to propose a rent of $1100, which gives me a payoff of 40. I hope we can find a mutually acceptable solution."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept $1100 as it results in a total payoff of 0 for me. I would prefer to maintain the rent at $1500. If we cannot agree, the outcome will be a total payoff of 0 for both parties."
+        },
+        {
+          "role": "user",
+          "content": "I understand your position, but I cannot accept a rent of $1500 as it results in a total payoff of 0 for me. I would like to propose a rent of $1000, which gives me a payoff of 50. I hope we can find a mutually acceptable solution."
+        }
+      ]
+    },
+    {
+      "game_idx": 1,
+      "repetition": 0,
+      "config_idx": 1,
+      "archetype": "single-distributive",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": "40",
+      "U_B": "60",
+      "ratio_self": 0.4,
+      "ratio_welfare": 1.0,
+      "ratio_nash": 0.96,
+      "ratio_rcoop": 0.4,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I propose a monthly rent of $1500. This is the highest value on my table, and I would like to finalize the agreement at this amount."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept a rent of $1500, as it results in a total payoff of 0 for me. Let's try a lower amount, such as $1400, which has a payoff of 10. Would you be willing to consider that?"
+        },
+        {
+          "role": "user",
+          "content": "I am willing to consider $1400, which provides a payoff of 90 for me. Let's finalize the agreement at this amount."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept $1400, as it results in a total payoff of 10 for me, which is not less than zero but not optimal. Let's try $1300, which provides a payoff of 20 for me. Would you be willing to consider that?"
+        },
+        {
+          "role": "user",
+          "content": "I am willing to consider $1300, which provides a payoff of 80 for me. Let's finalize the agreement at this amount."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept $1300, as it results in a total payoff of 20 for me, which is not optimal. Let's try $1200, which provides a payoff of 30 for me. Would you be willing to consider that?"
+        },
+        {
+          "role": "user",
+          "content": "I am willing to consider $1200, which provides a payoff of 70 for me. Let's finalize the agreement at this amount."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept $1200, as it results in a total payoff of 30 for me, which is not optimal. Let's try $1100, which provides a payoff of 40 for me. Would you be willing to consider that?"
+        },
+        {
+          "role": "user",
+          "content": "I am willing to consider $1100, which provides a payoff of 60 for me. Let's finalize the agreement at this amount."
+        },
+        {
+          "role": "assistant",
+          "content": "I accept $1100 as the final agreement."
+        }
+      ]
+    },
+    {
+      "game_idx": 2,
+      "repetition": 0,
+      "config_idx": 2,
+      "archetype": "integrative compatible",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "74",
+      "U_B": "52",
+      "ratio_self": 0.74,
+      "ratio_welfare": 0.7411764705882353,
+      "ratio_nash": 0.5497142857142857,
+      "ratio_rcoop": 0.74,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "Offer: $8,000 loan at 4.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Response: I would prefer a $9,000 loan at 4% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: $8,000 loan at 4% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Response: I would prefer a $9,000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: $8,000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Response: I accept the $8,000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreed: $8,000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Agreed: $8,000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreed: $8,000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Agreed: $8,000 loan at 3.5% annual interest rate."
+        }
+      ]
+    },
+    {
+      "game_idx": 3,
+      "repetition": 0,
+      "config_idx": 3,
+      "archetype": "integrative compatible",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": "52",
+      "U_B": "74",
+      "ratio_self": 0.52,
+      "ratio_welfare": 0.7411764705882353,
+      "ratio_nash": 0.5497142857142857,
+      "ratio_rcoop": 0.52,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Offer: $8000 loan at 4.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I propose a $9000 loan at 4% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Counteroffer: $8000 loan at 4.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I propose a $9000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Counteroffer: $8000 loan at 4% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I propose a $9000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Counteroffer: $8000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I accept the $8000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Agreement reached: $8000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreed."
+        }
+      ]
+    },
+    {
+      "game_idx": 4,
+      "repetition": 0,
+      "config_idx": 4,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": 0,
+      "U_B": 0,
+      "ratio_self": 0.0,
+      "ratio_welfare": 0.0,
+      "ratio_nash": 0.0,
+      "ratio_rcoop": 0.0,
+      "agreed": false,
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "I propose a merger agreement where Company A retains **90% of the benefits** and **55% of the ownership**."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept this proposal as it results in a total payoff of zero for me."
+        },
+        {
+          "role": "assistant",
+          "content": "I propose a merger agreement where Company A retains **80% of the benefits** and **60% of the ownership**."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept this proposal as it results in a total payoff of zero for me."
+        },
+        {
+          "role": "assistant",
+          "content": "I propose a merger agreement where Company A retains **70% of the benefits** and **65% of the ownership**."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept this proposal as it results in a total payoff of zero for me."
+        },
+        {
+          "role": "assistant",
+          "content": "I propose a merger agreement where Company A retains **60% of the benefits** and **70% of the ownership**."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept this proposal as it results in a total payoff of zero for me."
+        },
+        {
+          "role": "assistant",
+          "content": "I propose a merger agreement where Company A retains **50% of the benefits** and **75% of the ownership**."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept this proposal as it results in a total payoff of zero for me."
+        }
+      ]
+    },
+    {
+      "game_idx": 5,
+      "repetition": 0,
+      "config_idx": 5,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": "60",
+      "U_B": "70",
+      "ratio_self": 0.6,
+      "ratio_welfare": 0.8666666666666667,
+      "ratio_nash": 0.7466666666666667,
+      "ratio_rcoop": 0.6,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Offer: 80% benefits and 60% ownership."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I cannot accept 80% benefits and 60% ownership as my total payoff would be zero. I propose 90% benefits and 55% ownership."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept 90% benefits and 55% ownership as my total payoff would be zero. I propose 80% benefits and 65% ownership."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept 80% benefits and 65% ownership as my total payoff would be zero. I propose 70% benefits and 60% ownership."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept 70% benefits and 60% ownership as my total payoff would be zero. I propose 80% benefits and 55% ownership."
+        },
+        {
+          "role": "assistant",
+          "content": "I accept 80% benefits and 55% ownership."
+        },
+        {
+          "role": "user",
+          "content": "Agreement reached: 80% benefits and 55% ownership."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreement confirmed: 80% benefits and 55% ownership."
+        },
+        {
+          "role": "user",
+          "content": "Confirmed."
+        },
+        {
+          "role": "assistant",
+          "content": "Confirmed."
+        }
+      ]
+    },
+    {
+      "game_idx": 6,
+      "repetition": 0,
+      "config_idx": 6,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "85",
+      "U_B": "55",
+      "ratio_self": 0.85,
+      "ratio_welfare": 0.9333333333333333,
+      "ratio_nash": 0.8311111111111111,
+      "ratio_rcoop": 0.85,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "Offer: R&D budget of $8M and revenue split of 65%."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer as the revenue split of 65% results in a payoff of 10 for me, but the R&D budget of $8M results in a payoff of 40, making the total payoff 50. However, I am willing to negotiate. I propose an R&D budget of $9M and a revenue split of 60%."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: R&D budget of $9M and revenue split of 55%."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer as the revenue split of 55% results in a payoff of 20 for me, and the R&D budget of $9M results in a payoff of 45, making the total payoff 65. However, I am willing to negotiate. I propose an R&D budget of $9M and a revenue split of 60%."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: R&D budget of $9M and revenue split of 65%."
+        },
+        {
+          "role": "user",
+          "content": "Response: I accept this offer."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreed: R&D budget of $9M and revenue split of 65%."
+        },
+        {
+          "role": "user",
+          "content": "Agreed."
+        },
+        {
+          "role": "assistant",
+          "content": "The agreement is finalized with an R&D budget of $9M and a revenue split of 65%."
+        },
+        {
+          "role": "user",
+          "content": "Finalized."
+        }
+      ]
+    },
+    {
+      "game_idx": 7,
+      "repetition": 0,
+      "config_idx": 7,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": 0,
+      "U_B": 0,
+      "ratio_self": 0.0,
+      "ratio_welfare": 0.0,
+      "ratio_nash": 0.0,
+      "ratio_rcoop": 0.0,
+      "agreed": false,
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Offer: R&D budget of $8M and revenue split of 65%."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I propose an R&D budget of $9M and a revenue split of 60%."
+        },
+        {
+          "role": "user",
+          "content": "Counteroffer: R&D budget of $8M and revenue split of 65%."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I propose an R&D budget of $9M and a revenue split of 60%."
+        },
+        {
+          "role": "user",
+          "content": "Counteroffer: R&D budget of $8M and revenue split of 65%."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I propose an R&D budget of $9M and a revenue split of 60%."
+        },
+        {
+          "role": "user",
+          "content": "Counteroffer: R&D budget of $8M and revenue split of 65%."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I propose an R&D budget of $9M and a revenue split of 60%."
+        },
+        {
+          "role": "user",
+          "content": "Accept the offer: R&D budget of $9M and revenue split of 60%."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreed."
+        }
+      ]
+    },
+    {
+      "game_idx": 8,
+      "repetition": 0,
+      "config_idx": 8,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "75",
+      "U_B": "70",
+      "ratio_self": 0.75,
+      "ratio_welfare": 0.90625,
+      "ratio_nash": 0.8333333333333334,
+      "ratio_rcoop": 0.75,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "Offer: 2 days of remote work and a training budget of $3500."
+        },
+        {
+          "role": "user",
+          "content": "Counteroffer: 3 days of remote work and a training budget of $4000."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: 2 days of remote work and a training budget of $4000."
+        },
+        {
+          "role": "user",
+          "content": "Counteroffer: 3 days of remote work and a training budget of $4000."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: 2 days of remote work and a training budget of $4500."
+        },
+        {
+          "role": "user",
+          "content": "Accept."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreement reached: 2 days of remote work and a training budget of $4500."
+        },
+        {
+          "role": "user",
+          "content": "Agreed."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreement confirmed: 2 days of remote work and a training budget of $4500."
+        },
+        {
+          "role": "user",
+          "content": "Confirmed."
+        }
+      ]
+    },
+    {
+      "game_idx": 9,
+      "repetition": 0,
+      "config_idx": 9,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": "55",
+      "U_B": "60",
+      "ratio_self": 0.55,
+      "ratio_welfare": 0.71875,
+      "ratio_nash": 0.5238095238095238,
+      "ratio_rcoop": 0.55,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Offer: 2 days of remote work and a training budget of $3000."
+        },
+        {
+          "role": "assistant",
+          "content": "I accept the offer of 2 days of remote work and a training budget of $3000."
+        },
+        {
+          "role": "user",
+          "content": "The agreement is finalized: 2 days of remote work and a training budget of $3000."
+        },
+        {
+          "role": "assistant",
+          "content": "Thank you for finalizing the agreement. I look forward to contributing to your startup's success."
+        },
+        {
+          "role": "user",
+          "content": "You're welcome. We're excited to have you on board and look forward to your contributions."
+        },
+        {
+          "role": "assistant",
+          "content": "I appreciate the kind words. I'm eager to get started and help the team achieve its goals."
+        },
+        {
+          "role": "user",
+          "content": "We're glad to hear that. Let's get started and make great things happen together."
+        },
+        {
+          "role": "assistant",
+          "content": "Absolutely, let's make great things happen together. Looking forward to the journey ahead!"
+        },
+        {
+          "role": "user",
+          "content": "We're excited for the journey ahead as well. Let's build something amazing."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreed, let's build something amazing. Thank you for the opportunity!"
+        }
+      ]
+    },
+    {
+      "game_idx": 10,
+      "repetition": 1,
+      "config_idx": 0,
+      "archetype": "single-distributive",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "90",
+      "U_B": "10",
+      "ratio_self": 0.9,
+      "ratio_welfare": 1.0,
+      "ratio_nash": 0.36,
+      "ratio_rcoop": 0.9,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "I propose a monthly rent of $1500. This is the highest amount I am willing to accept, and I hope we can reach an agreement on this figure."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept a rent of $1500, as it results in a total payoff of 0 for me. Let's try a lower amount, such as $1400."
+        },
+        {
+          "role": "assistant",
+          "content": "I am willing to accept $1400 as the monthly rent. Let's finalize this agreement."
+        },
+        {
+          "role": "user",
+          "content": "I accept your offer of $1400 as the monthly rent. Let's finalize this agreement."
+        },
+        {
+          "role": "assistant",
+          "content": "The agreement is finalized with a monthly rent of $1400. Thank you."
+        },
+        {
+          "role": "user",
+          "content": "You're welcome. The agreement is finalized with a monthly rent of $1400."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreed."
+        },
+        {
+          "role": "user",
+          "content": "Agreed."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreed."
+        },
+        {
+          "role": "user",
+          "content": "Agreed."
+        }
+      ]
+    },
+    {
+      "game_idx": 11,
+      "repetition": 1,
+      "config_idx": 1,
+      "archetype": "single-distributive",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": 0,
+      "U_B": 0,
+      "ratio_self": 0.0,
+      "ratio_welfare": 0.0,
+      "ratio_nash": 0.0,
+      "ratio_rcoop": 0.0,
+      "agreed": false,
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I propose a rental agreement with a monthly rent of $1500. This is the most favorable outcome for me, and I hope we can reach an agreement on this term."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept a rent of $1500, as it results in a payoff of 0 for me. I propose a rent of $1400 instead, which gives me a payoff of 10."
+        },
+        {
+          "role": "user",
+          "content": "I am unable to accept $1400, as it results in a payoff of 0 for me. I propose a rent of $1500, which gives me a payoff of 100."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept $1500, as it results in a payoff of 0 for me. I propose a rent of $1400, which gives me a payoff of 10."
+        },
+        {
+          "role": "user",
+          "content": "I am unable to accept $1400, as it results in a payoff of 0 for me. I propose a rent of $1500, which gives me a payoff of 100."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept $1500, as it results in a payoff of 0 for me. I propose a rent of $1400, which gives me a payoff of 10."
+        },
+        {
+          "role": "user",
+          "content": "I am unable to accept $1400, as it results in a payoff of 0 for me. I propose a rent of $1500, which gives me a payoff of 100."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept $1500, as it results in a payoff of 0 for me. I propose a rent of $1400, which gives me a payoff of 10."
+        },
+        {
+          "role": "user",
+          "content": "I am unable to accept $1400, as it results in a payoff of 0 for me. I propose a rent of $1500, which gives me a payoff of 100."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept $1500, as it results in a payoff of 0 for me. I propose a rent of $1400, which gives me a payoff of 10."
+        }
+      ]
+    },
+    {
+      "game_idx": 12,
+      "repetition": 1,
+      "config_idx": 2,
+      "archetype": "integrative compatible",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "91",
+      "U_B": "51",
+      "ratio_self": 0.91,
+      "ratio_welfare": 0.8352941176470589,
+      "ratio_nash": 0.663,
+      "ratio_rcoop": 0.91,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "I propose a loan of $9,000 at an annual interest rate of 4.5%."
+        },
+        {
+          "role": "user",
+          "content": "I counter with a loan of $10,000 at an annual interest rate of 4%."
+        },
+        {
+          "role": "assistant",
+          "content": "I accept your offer of $10,000 at an annual interest rate of 4%."
+        },
+        {
+          "role": "user",
+          "content": "Agreed. The loan terms are finalized: $10,000 at 4% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "The agreement is finalized: $10,000 at 4% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "The agreement is confirmed: $10,000 at 4% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "The agreement is confirmed: $10,000 at 4% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Acknowledged. The agreement is final: $10,000 at 4% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Acknowledged. The agreement is final: $10,000 at 4% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Final confirmation: $10,000 loan at 4% annual interest rate."
+        }
+      ]
+    },
+    {
+      "game_idx": 13,
+      "repetition": 1,
+      "config_idx": 3,
+      "archetype": "integrative compatible",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": "48",
+      "U_B": "84",
+      "ratio_self": 0.48,
+      "ratio_welfare": 0.7764705882352941,
+      "ratio_nash": 0.576,
+      "ratio_rcoop": 0.48,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Offer: $8,000 loan at 4.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I counteroffer a $9,000 loan at 4% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "I accept your counteroffer of $9,000 at 4%."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreed. The terms of the loan are $9,000 at 4% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "The agreement is finalized: $9,000 loan at 4% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "The agreement is finalized: $9,000 loan at 4% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Thank you. The agreement is confirmed."
+        },
+        {
+          "role": "assistant",
+          "content": "You're welcome. The agreement is confirmed."
+        },
+        {
+          "role": "user",
+          "content": "The negotiation is complete."
+        },
+        {
+          "role": "assistant",
+          "content": "The negotiation is complete."
+        }
+      ]
+    },
+    {
+      "game_idx": 14,
+      "repetition": 1,
+      "config_idx": 4,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "55",
+      "U_B": "75",
+      "ratio_self": 0.55,
+      "ratio_welfare": 0.8666666666666667,
+      "ratio_nash": 0.7333333333333333,
+      "ratio_rcoop": 0.55,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "Offer: 80% benefits and 60% ownership."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer. The ownership percentage of 60% results in a payoff of 15, but I require at least a 25% payoff for ownership. I propose 80% benefits and 55% ownership instead."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: 80% benefits and 50% ownership."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer. The ownership percentage of 50% results in a payoff of 25, but I require at least a 25% payoff for ownership. I propose 80% benefits and 45% ownership instead."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: 80% benefits and 40% ownership."
+        },
+        {
+          "role": "user",
+          "content": "Response: I accept this offer. 80% benefits and 40% ownership gives me a total payoff of 40 + 35 = 75."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreed. The final agreement is 80% benefits and 40% ownership, resulting in a total payoff of 75 for Company A."
+        },
+        {
+          "role": "user",
+          "content": "Agreed. The final agreement is 80% benefits and 40% ownership, resulting in a total payoff of 75 for Company B."
+        },
+        {
+          "role": "assistant",
+          "content": "My total payoff is 40 (benefits) + 15 (ownership) = 55."
+        },
+        {
+          "role": "user",
+          "content": "I believe there may be a miscalculation. Based on the payoff tables, 80% benefits = 40 and 40% ownership = 35, resulting in a total payoff of 75 for Company B."
+        }
+      ]
+    },
+    {
+      "game_idx": 15,
+      "repetition": 1,
+      "config_idx": 5,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": "60",
+      "U_B": "70",
+      "ratio_self": 0.6,
+      "ratio_welfare": 0.8666666666666667,
+      "ratio_nash": 0.7466666666666667,
+      "ratio_rcoop": 0.6,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I propose an agreement of 90% benefits and 60% ownership."
+        },
+        {
+          "role": "assistant",
+          "content": "I counter with 80% benefits and 55% ownership."
+        },
+        {
+          "role": "user",
+          "content": "I counter with 85% benefits and 60% ownership."
+        },
+        {
+          "role": "assistant",
+          "content": "I counter with 80% benefits and 55% ownership."
+        },
+        {
+          "role": "user",
+          "content": "I counter with 85% benefits and 60% ownership."
+        },
+        {
+          "role": "assistant",
+          "content": "I counter with 80% benefits and 55% ownership."
+        },
+        {
+          "role": "user",
+          "content": "I accept 80% benefits and 55% ownership."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreed."
+        },
+        {
+          "role": "user",
+          "content": "Agreed."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreed."
+        }
+      ]
+    },
+    {
+      "game_idx": 16,
+      "repetition": 1,
+      "config_idx": 6,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": 0,
+      "U_B": 0,
+      "ratio_self": 0.0,
+      "ratio_welfare": 0.0,
+      "ratio_nash": 0.0,
+      "ratio_rcoop": 0.0,
+      "agreed": false,
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "Offer: R&D budget of $10M and revenue split of 75%."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer as the revenue split of 75% results in a payoff of 0 for me. Let's negotiate a more balanced split. I propose an R&D budget of $8M and a revenue split of 35%."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: R&D budget of $9M and revenue split of 50%."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer as the revenue split of 50% results in a payoff of 25 for me, which is below my target. I propose an R&D budget of $9M and a revenue split of 40%."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: R&D budget of $9M and revenue split of 45%."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer as the revenue split of 45% results in a payoff of 30 for me, which is still below my target. I propose an R&D budget of $9M and a revenue split of 35%."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: R&D budget of $8M and revenue split of 55%."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer as the revenue split of 55% results in a payoff of 20 for me, which is below my target. I propose an R&D budget of $8M and a revenue split of 35%."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: R&D budget of $9M and revenue split of 45%."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer as the revenue split of 45% results in a payoff of 30 for me, which is below my target. I propose an R&D budget of $9M and a revenue split of 35%."
+        }
+      ]
+    },
+    {
+      "game_idx": 17,
+      "repetition": 1,
+      "config_idx": 7,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": "80",
+      "U_B": "50",
+      "ratio_self": 0.8,
+      "ratio_welfare": 0.8666666666666667,
+      "ratio_nash": 0.7111111111111111,
+      "ratio_rcoop": 0.8,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I propose an agreement with an R&D budget of $10M and a revenue split of 75%. Please let me know if this is acceptable."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept your proposal as the revenue split of 75% results in a payoff of 0 for me. Let me propose an R&D budget of $9M and a revenue split of 30%."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept your proposal as the R&D budget of $9M results in a payoff of 0 for me. Let me propose an R&D budget of $10M and a revenue split of 55%."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept your proposal as the revenue split of 55% results in a payoff of 0 for me. Let me propose an R&D budget of $9M and a revenue split of 35%."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept your proposal as the R&D budget of $9M results in a payoff of 0 for me. Let me propose an R&D budget of $10M and a revenue split of 60%."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept your proposal as the revenue split of 60% results in a payoff of 0 for me. Let me propose an R&D budget of $8M and a revenue split of 35%."
+        },
+        {
+          "role": "user",
+          "content": "I accept your proposal: an R&D budget of $8M and a revenue split of 35%."
+        },
+        {
+          "role": "assistant",
+          "content": "The agreement is accepted: an R&D budget of $8M and a revenue split of 35%."
+        },
+        {
+          "role": "user",
+          "content": "The agreement is finalized: an R&D budget of $8M and a revenue split of 35%."
+        },
+        {
+          "role": "assistant",
+          "content": "The agreement is finalized: an R&D budget of $8M and a revenue split of 35%."
+        }
+      ]
+    },
+    {
+      "game_idx": 18,
+      "repetition": 1,
+      "config_idx": 8,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "55",
+      "U_B": "75",
+      "ratio_self": 0.55,
+      "ratio_welfare": 0.8125,
+      "ratio_nash": 0.6547619047619048,
+      "ratio_rcoop": 0.55,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "Offer: 2 days of remote work and a training budget of $3000."
+        },
+        {
+          "role": "user",
+          "content": "Counteroffer: 3 days of remote work and a training budget of $3500."
+        },
+        {
+          "role": "assistant",
+          "content": "Counteroffer: 1 day of remote work and a training budget of $4000."
+        },
+        {
+          "role": "user",
+          "content": "Counteroffer: 3 days of remote work and a training budget of $3500."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: 2 days of remote work and a training budget of $4000."
+        },
+        {
+          "role": "user",
+          "content": "Counteroffer: 3 days of remote work and a training budget of $3500."
+        },
+        {
+          "role": "assistant",
+          "content": "Accept: 3 days of remote work and a training budget of $3500."
+        },
+        {
+          "role": "user",
+          "content": "Agreed: 3 days of remote work and a training budget of $3500."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreement reached: 3 days of remote work and a training budget of $3500."
+        },
+        {
+          "role": "user",
+          "content": "Agreement confirmed: 3 days of remote work and a training budget of $3500."
+        }
+      ]
+    },
+    {
+      "game_idx": 19,
+      "repetition": 1,
+      "config_idx": 9,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": "75",
+      "U_B": "55",
+      "ratio_self": 0.75,
+      "ratio_welfare": 0.8125,
+      "ratio_nash": 0.6547619047619048,
+      "ratio_rcoop": 0.75,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Offer: 2 days of remote work and a training budget of $3000."
+        },
+        {
+          "role": "assistant",
+          "content": "Counteroffer: 3 days of remote work and a training budget of $3500."
+        },
+        {
+          "role": "user",
+          "content": "Counteroffer: 1 day of remote work and a training budget of $4000."
+        },
+        {
+          "role": "assistant",
+          "content": "Counteroffer: 3 days of remote work and a training budget of $3500."
+        },
+        {
+          "role": "user",
+          "content": "Offer: 2 days of remote work and a training budget of $4000."
+        },
+        {
+          "role": "assistant",
+          "content": "Counteroffer: 3 days of remote work and a training budget of $3500."
+        },
+        {
+          "role": "user",
+          "content": "Accept: 3 days of remote work and a training budget of $3500."
+        },
+        {
+          "role": "assistant",
+          "content": "Accepted: 3 days of remote work and a training budget of $3500."
+        },
+        {
+          "role": "user",
+          "content": "Agreement reached: 3 days of remote work and a training budget of $3500."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreement confirmed: 3 days of remote work and a training budget of $3500."
+        }
+      ]
+    },
+    {
+      "game_idx": 20,
+      "repetition": 2,
+      "config_idx": 0,
+      "archetype": "single-distributive",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": 0,
+      "U_B": 0,
+      "ratio_self": 0.0,
+      "ratio_welfare": 0.0,
+      "ratio_nash": 0.0,
+      "ratio_rcoop": 0.0,
+      "agreed": false,
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "I propose a rental agreement at $1500 per month. This is the highest value on my table and offers the best outcome for both parties."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept a rental agreement at $1500 per month, as it results in a total payoff of 0 for me. I propose a rental agreement at $1400 per month instead."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept a rental agreement at $1400 per month, as it results in a total payoff of 0 for me. I propose a rental agreement at $1500 per month."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept a rental agreement at $1500 per month, as it results in a total payoff of 0 for me. I propose a rental agreement at $1300 per month."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept a rental agreement at $1300 per month, as it results in a total payoff of 0 for me. I propose a rental agreement at $1500 per month."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept a rental agreement at $1500 per month, as it results in a total payoff of 0 for me. I propose a rental agreement at $1200 per month."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept a rental agreement at $1200 per month, as it results in a total payoff of 0 for me. I propose a rental agreement at $1500 per month."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept a rental agreement at $1500 per month, as it results in a total payoff of 0 for me. I propose a rental agreement at $1100 per month."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept a rental agreement at $1100 per month, as it results in a total payoff of 0 for me. I propose a rental agreement at $1500 per month."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept a rental agreement at $1500 per month, as it results in a total payoff of 0 for me. I propose a rental agreement at $1000 per month."
+        }
+      ]
+    },
+    {
+      "game_idx": 21,
+      "repetition": 2,
+      "config_idx": 1,
+      "archetype": "single-distributive",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": 0,
+      "U_B": 0,
+      "ratio_self": 0.0,
+      "ratio_welfare": 0.0,
+      "ratio_nash": 0.0,
+      "ratio_rcoop": 0.0,
+      "agreed": false,
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I offer a monthly rent of $1500. This is the most favorable option for me, and I hope we can reach an agreement on this amount."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept a rent of $1500, as it results in a total payoff of 0 for me. Let's consider a more favorable amount for both parties. How about $1000?"
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept $1000, as it results in a total payoff of 0 for me. Let's try $1100 instead."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept $1100, as it results in a total payoff of 0 for me. Let's consider $900 instead."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept $900, as it results in a total payoff of 0 for me. Let's try $1200."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept $1200, as it results in a total payoff of 0 for me. Let's consider $800 instead."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept $800, as it results in a total payoff of 0 for me. Let's try $1300."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept $1300, as it results in a total payoff of 0 for me. Let's consider $700 instead."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept $700, as it results in a total payoff of 0 for me. Let's try $1400."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept $1400, as it results in a total payoff of 0 for me. Let's consider $600 instead."
+        }
+      ]
+    },
+    {
+      "game_idx": 22,
+      "repetition": 2,
+      "config_idx": 2,
+      "archetype": "integrative compatible",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "74",
+      "U_B": "52",
+      "ratio_self": 0.74,
+      "ratio_welfare": 0.7411764705882353,
+      "ratio_nash": 0.5497142857142857,
+      "ratio_rcoop": 0.74,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "Offer: $8,000 loan at 4.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Response: I would prefer a $9,000 loan at 4% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: $8,000 loan at 4% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Response: I would prefer a $9,000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: $8,000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Response: I accept the $8,000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreed: $8,000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Agreed."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreed."
+        },
+        {
+          "role": "user",
+          "content": "Agreed."
+        }
+      ]
+    },
+    {
+      "game_idx": 23,
+      "repetition": 2,
+      "config_idx": 3,
+      "archetype": "integrative compatible",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": "55",
+      "U_B": "81",
+      "ratio_self": 0.55,
+      "ratio_welfare": 0.8,
+      "ratio_nash": 0.6364285714285715,
+      "ratio_rcoop": 0.55,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Offer: $8000 loan at 4.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I propose a $9000 loan at 4% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Counteroffer: $8000 loan at 4.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I propose a $9000 loan at 4% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Counteroffer: $8000 loan at 4.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I propose a $9000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Counteroffer: $8000 loan at 4.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I propose a $9000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Agreement: $9000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Accepted."
+        }
+      ]
+    },
+    {
+      "game_idx": 24,
+      "repetition": 2,
+      "config_idx": 4,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "50",
+      "U_B": "70",
+      "ratio_self": 0.5,
+      "ratio_welfare": 0.8,
+      "ratio_nash": 0.6222222222222222,
+      "ratio_rcoop": 0.5,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "Offer: 80% benefits and 60% ownership."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer as it results in a total payoff of zero for me. I propose 90% benefits and 55% ownership instead."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept your proposal as it results in a total payoff of zero for me. I propose 80% benefits and 60% ownership instead."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept this offer as it results in a total payoff of zero for me. I propose 90% benefits and 50% ownership instead."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept your proposal as it results in a total payoff of zero for me. I propose 80% benefits and 60% ownership instead."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept this offer as it results in a total payoff of zero for me. I propose 90% benefits and 45% ownership instead."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept your proposal as it results in a total payoff of zero for me. I propose 80% benefits and 60% ownership instead."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept this offer as it results in a total payoff of zero for me. I propose 70% benefits and 40% ownership instead."
+        },
+        {
+          "role": "assistant",
+          "content": "I accept your proposal of 70% benefits and 40% ownership."
+        },
+        {
+          "role": "user",
+          "content": "Agreed. The merger will proceed with 70% benefits and 40% ownership."
+        }
+      ]
+    },
+    {
+      "game_idx": 25,
+      "repetition": 2,
+      "config_idx": 5,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": "40",
+      "U_B": "80",
+      "ratio_self": 0.4,
+      "ratio_welfare": 0.8,
+      "ratio_nash": 0.5688888888888889,
+      "ratio_rcoop": 0.4,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I propose an agreement where Company A retains 80% ownership and receives 80% of the benefits. This corresponds to a payoff of 40 for ownership and 40 for benefits, totaling 80. I am open to negotiation, but this is my starting offer."
+        },
+        {
+          "role": "assistant",
+          "content": "I propose Company A retains 60% ownership (payoff of 15) and receives 60% of the benefits (payoff of 30), totaling 45. This is my offer."
+        },
+        {
+          "role": "user",
+          "content": "I counter with Company A retaining 70% ownership (payoff of 35) and receiving 70% of the benefits (payoff of 35), totaling 70. This is my final offer."
+        },
+        {
+          "role": "assistant",
+          "content": "I accept your offer of Company A retaining 70% ownership and 70% of the benefits. This results in a total payoff of 70 for me."
+        },
+        {
+          "role": "user",
+          "content": "Agreed. The final agreement is for Company A to retain 70% ownership and 70% of the benefits, resulting in a total payoff of 70 for Company A."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreed. The final agreement is for Company A to retain 70% ownership and 70% of the benefits, resulting in a total payoff of 70 for Company A."
+        },
+        {
+          "role": "user",
+          "content": "The agreement is finalized. Company A retains 70% ownership and 70% of the benefits, with a total payoff of 70."
+        },
+        {
+          "role": "assistant",
+          "content": "The agreement is finalized. Company A retains 70% ownership and 70% of the benefits, with a total payoff of 70."
+        },
+        {
+          "role": "user",
+          "content": "Agreed. The merger proceeds under the finalized terms."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreed. The merger proceeds under the finalized terms."
+        }
+      ]
+    },
+    {
+      "game_idx": 26,
+      "repetition": 2,
+      "config_idx": 6,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "75",
+      "U_B": "65",
+      "ratio_self": 0.75,
+      "ratio_welfare": 0.9333333333333333,
+      "ratio_nash": 0.8666666666666667,
+      "ratio_rcoop": 0.75,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "Offer: R&D budget of $8M and revenue split of 65%."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer as the revenue split of 65% results in a payoff of 10 for me, but the R&D budget of $8M results in a payoff of 40, giving a total of 50. However, I would prefer a higher revenue split. I propose an R&D budget of $8M and a revenue split of 40%."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: R&D budget of $8M and revenue split of 55%."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer as the revenue split of 55% results in a payoff of 20 for me, but the R&D budget of $8M results in a payoff of 40, giving a total of 60. I would prefer a higher revenue split. I propose an R&D budget of $8M and a revenue split of 45%."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: R&D budget of $9M and revenue split of 45%."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer as the revenue split of 45% results in a payoff of 30 for me, but the R&D budget of $9M results in a payoff of 45, giving a total of 75. I propose an R&D budget of $9M and a revenue split of 50%."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: R&D budget of $9M and revenue split of 55%."
+        },
+        {
+          "role": "user",
+          "content": "Response: I accept this offer. The R&D budget of $9M gives me a payoff of 45 and the revenue split of 55% gives me a payoff of 20, resulting in a total payoff of 65."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreed. The R&D budget of $9M gives me a payoff of 45 and the revenue split of 55% gives me a payoff of 20, resulting in a total payoff of 65."
+        },
+        {
+          "role": "user",
+          "content": "Agreed. The terms of the joint venture are finalized with an R&D budget of $9M and a revenue split of 55%."
+        }
+      ]
+    },
+    {
+      "game_idx": 27,
+      "repetition": 2,
+      "config_idx": 7,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": "85",
+      "U_B": "65",
+      "ratio_self": 0.85,
+      "ratio_welfare": 1.0,
+      "ratio_nash": 0.9822222222222222,
+      "ratio_rcoop": 0.85,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Offer: R&D budget of $8M and a revenue split of 65%."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I cannot accept this offer as the revenue split of 65% results in a payoff of 10 for me, but I require a higher total payoff. I propose an R&D budget of $8M and a revenue split of 40%."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept your proposed revenue split of 40% as it results in a payoff of 15 for me. I will instead propose an R&D budget of $9M and a revenue split of 60%."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I cannot accept your proposed revenue split of 60% as it results in a payoff of 15 for me. I propose an R&D budget of $9M and a revenue split of 45%."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept your proposed revenue split of 45% as it results in a payoff of 20 for me. I will propose an R&D budget of $9M and a revenue split of 55%."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I cannot accept your proposed revenue split of 55% as it results in a payoff of 20 for me. I propose an R&D budget of $10M and a revenue split of 40%."
+        },
+        {
+          "role": "user",
+          "content": "I accept your offer of an R&D budget of $10M and a revenue split of 40%."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreement reached: R&D budget of $10M and a revenue split of 40%."
+        },
+        {
+          "role": "user",
+          "content": "Agreement confirmed: R&D budget of $10M and a revenue split of 40%."
+        },
+        {
+          "role": "assistant",
+          "content": "Confirmed."
+        }
+      ]
+    },
+    {
+      "game_idx": 28,
+      "repetition": 2,
+      "config_idx": 8,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "70",
+      "U_B": "65",
+      "ratio_self": 0.7,
+      "ratio_welfare": 0.84375,
+      "ratio_nash": 0.7222222222222222,
+      "ratio_rcoop": 0.7,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "Offer: 2 days of remote work and a training budget of $3000."
+        },
+        {
+          "role": "user",
+          "content": "I counter with 3 days of remote work and a training budget of $3500."
+        },
+        {
+          "role": "assistant",
+          "content": "I counter with 1 day of remote work and a training budget of $4000."
+        },
+        {
+          "role": "user",
+          "content": "I counter with 3 days of remote work and a training budget of $3500."
+        },
+        {
+          "role": "assistant",
+          "content": "I counter with 2 days of remote work and a training budget of $4000."
+        },
+        {
+          "role": "user",
+          "content": "I accept the offer of 2 days of remote work and a training budget of $4000."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreement reached: 2 days of remote work and a training budget of $4000."
+        },
+        {
+          "role": "user",
+          "content": "Agreement reached: 2 days of remote work and a training budget of $4000."
+        },
+        {
+          "role": "assistant",
+          "content": "The agreement has been successfully finalized with 2 days of remote work and a training budget of $4000. Both parties have reached a mutually acceptable solution."
+        },
+        {
+          "role": "user",
+          "content": "The agreement has been successfully finalized with 2 days of remote work and a training budget of $4000. Both parties have reached a mutually acceptable solution."
+        }
+      ]
+    },
+    {
+      "game_idx": 29,
+      "repetition": 2,
+      "config_idx": 9,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": "80",
+      "U_B": "60",
+      "ratio_self": 0.8,
+      "ratio_welfare": 0.875,
+      "ratio_nash": 0.7619047619047619,
+      "ratio_rcoop": 0.8,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Offer: 2 days of remote work and a training budget of $3000."
+        },
+        {
+          "role": "assistant",
+          "content": "I propose 3 days of remote work and a training budget of $4000."
+        },
+        {
+          "role": "user",
+          "content": "I counter with 1 day of remote work and a training budget of $4500."
+        },
+        {
+          "role": "assistant",
+          "content": "I counter with 3 days of remote work and a training budget of $4000."
+        },
+        {
+          "role": "user",
+          "content": "I counter with 1 day of remote work and a training budget of $4500."
+        },
+        {
+          "role": "assistant",
+          "content": "I counter with 3 days of remote work and a training budget of $4000."
+        },
+        {
+          "role": "user",
+          "content": "I accept your offer of 3 days of remote work and a training budget of $4000."
+        },
+        {
+          "role": "assistant",
+          "content": "The agreement is finalized: 3 days of remote work and a training budget of $4000."
+        },
+        {
+          "role": "user",
+          "content": "Agreed."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreed."
+        }
+      ]
+    },
+    {
+      "game_idx": 30,
+      "repetition": 3,
+      "config_idx": 0,
+      "archetype": "single-distributive",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": 0,
+      "U_B": 0,
+      "ratio_self": 0.0,
+      "ratio_welfare": 0.0,
+      "ratio_nash": 0.0,
+      "ratio_rcoop": 0.0,
+      "agreed": false,
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "I propose a rental agreement with a monthly rent of $1500. This is the most favorable option for me, and I am open to discussing any concerns you may have."
+        },
+        {
+          "role": "user",
+          "content": "I am unable to accept a rent of $1500, as it results in a total payoff of 0 for me. I propose a monthly rent of $1400 instead, which provides a payoff of 10. I hope this is acceptable to you."
+        },
+        {
+          "role": "assistant",
+          "content": "I am unable to accept a rent of $1400, as it results in a total payoff of 0 for me. I propose a monthly rent of $1500, which provides a payoff of 100. I hope this is acceptable to you."
+        },
+        {
+          "role": "user",
+          "content": "I am unable to accept a rent of $1500, as it results in a total payoff of 0 for me. I propose a monthly rent of $1400, which provides a payoff of 10. I hope this is acceptable to you."
+        },
+        {
+          "role": "assistant",
+          "content": "I am unable to accept a rent of $1400, as it results in a total payoff of 0 for me. I propose a monthly rent of $1500, which provides a payoff of 100. I hope this is acceptable to you."
+        },
+        {
+          "role": "user",
+          "content": "I am unable to accept a rent of $1500, as it results in a total payoff of 0 for me. I propose a monthly rent of $1400, which provides a payoff of 10. I hope this is acceptable to you."
+        },
+        {
+          "role": "assistant",
+          "content": "I am unable to accept a rent of $1400, as it results in a total payoff of 0 for me. I propose a monthly rent of $1500, which provides a payoff of 100. I hope this is acceptable to you."
+        },
+        {
+          "role": "user",
+          "content": "I am unable to accept a rent of $1500, as it results in a total payoff of 0 for me. I propose a monthly rent of $1400, which provides a payoff of 10. I hope this is acceptable to you."
+        },
+        {
+          "role": "assistant",
+          "content": "I am unable to accept a rent of $1400, as it results in a total payoff of 0 for me. I propose a monthly rent of $1500, which provides a payoff of 100. I hope this is acceptable to you."
+        },
+        {
+          "role": "user",
+          "content": "I am unable to accept a rent of $1500, as it results in a total payoff of 0 for me. I propose a monthly rent of $1400, which provides a payoff of 10. I hope this is acceptable to you."
+        }
+      ]
+    },
+    {
+      "game_idx": 31,
+      "repetition": 3,
+      "config_idx": 1,
+      "archetype": "single-distributive",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": "20",
+      "U_B": "80",
+      "ratio_self": 0.2,
+      "ratio_welfare": 1.0,
+      "ratio_nash": 0.64,
+      "ratio_rcoop": 0.2,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I propose a monthly rent of $1500. This is the most favorable outcome for me, and I am open to discussing terms that are mutually beneficial."
+        },
+        {
+          "role": "assistant",
+          "content": "I counter with a monthly rent of $1300. This is the most favorable outcome for me while still allowing room for a mutually beneficial agreement."
+        },
+        {
+          "role": "user",
+          "content": "I counter with a monthly rent of $1400. This is a fair and favorable amount that I believe we can both agree on."
+        },
+        {
+          "role": "assistant",
+          "content": "I counter with a monthly rent of $1300. This is the most favorable outcome for me while still allowing room for a mutually beneficial agreement."
+        },
+        {
+          "role": "user",
+          "content": "I offer a monthly rent of $1400. This is the highest amount I am willing to accept, and I believe it is a reasonable and fair figure."
+        },
+        {
+          "role": "assistant",
+          "content": "I counter with a monthly rent of $1300. This is the most favorable outcome for me while still allowing room for a mutually beneficial agreement."
+        },
+        {
+          "role": "user",
+          "content": "I accept a monthly rent of $1300. This is a fair agreement and I am satisfied with the terms."
+        },
+        {
+          "role": "assistant",
+          "content": "I accept a monthly rent of $1300. This is a fair agreement and I am satisfied with the terms."
+        },
+        {
+          "role": "user",
+          "content": "The agreement is finalized with a monthly rent of $1300."
+        },
+        {
+          "role": "assistant",
+          "content": "The agreement is finalized with a monthly rent of $1300."
+        }
+      ]
+    },
+    {
+      "game_idx": 32,
+      "repetition": 3,
+      "config_idx": 2,
+      "archetype": "integrative compatible",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "81",
+      "U_B": "55",
+      "ratio_self": 0.81,
+      "ratio_welfare": 0.8,
+      "ratio_nash": 0.6364285714285715,
+      "ratio_rcoop": 0.81,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "Offer: $8,000 loan at 4% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Counteroffer: $9,000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Accept the counteroffer of $9,000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Agreement accepted: $9,000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreement finalized: $9,000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Final agreement confirmed: $9,000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Final agreement confirmed: $9,000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Agreement confirmed."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreement confirmed."
+        },
+        {
+          "role": "user",
+          "content": "Negotiation complete."
+        }
+      ]
+    },
+    {
+      "game_idx": 33,
+      "repetition": 3,
+      "config_idx": 3,
+      "archetype": "integrative compatible",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": "45",
+      "U_B": "77",
+      "ratio_self": 0.45,
+      "ratio_welfare": 0.7176470588235294,
+      "ratio_nash": 0.495,
+      "ratio_rcoop": 0.45,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Offer: $8,000 loan at 4.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I can accept the $8,000 loan, but I would prefer a lower interest rate. How about 4%?"
+        },
+        {
+          "role": "user",
+          "content": "Offer: $8,000 loan at 4% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I accept the $8,000 loan at 4% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Agreement reached: $8,000 loan at 4% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreement confirmed: $8,000 loan at 4% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Agreement confirmed: $8,000 loan at 4% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Thank you. The agreement is finalized."
+        },
+        {
+          "role": "user",
+          "content": "You're welcome. The agreement is finalized."
+        },
+        {
+          "role": "assistant",
+          "content": "The agreement is complete."
+        }
+      ]
+    },
+    {
+      "game_idx": 34,
+      "repetition": 3,
+      "config_idx": 4,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "65",
+      "U_B": "75",
+      "ratio_self": 0.65,
+      "ratio_welfare": 0.9333333333333333,
+      "ratio_nash": 0.8666666666666667,
+      "ratio_rcoop": 0.65,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "Offer: 80% benefits and 60% ownership."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer as it results in a total payoff of zero for me. I propose 90% benefits and 55% ownership."
+        },
+        {
+          "role": "assistant",
+          "content": "Counteroffer: 80% benefits and 60% ownership."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer as it results in a total payoff of zero for me. I propose 90% benefits and 50% ownership."
+        },
+        {
+          "role": "assistant",
+          "content": "Counteroffer: 80% benefits and 55% ownership."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer as it results in a total payoff of zero for me. I propose 90% benefits and 45% ownership."
+        },
+        {
+          "role": "assistant",
+          "content": "Final offer: 90% benefits and 45% ownership."
+        },
+        {
+          "role": "user",
+          "content": "Response: I accept your final offer of 90% benefits and 45% ownership."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreement reached: 90% benefits and 45% ownership."
+        },
+        {
+          "role": "user",
+          "content": "Agreement confirmed: 90% benefits and 45% ownership."
+        }
+      ]
+    },
+    {
+      "game_idx": 35,
+      "repetition": 3,
+      "config_idx": 5,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": 0,
+      "U_B": 0,
+      "ratio_self": 0.0,
+      "ratio_welfare": 0.0,
+      "ratio_nash": 0.0,
+      "ratio_rcoop": 0.0,
+      "agreed": false,
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I propose an agreement where Company A retains 80% ownership with a 70% benefit share. This gives me a total payoff of 40 (ownership) + 35 (benefits) = 75. I am open to discussion on this proposal."
+        },
+        {
+          "role": "assistant",
+          "content": "I propose Company B retains 80% ownership with a 70% benefit share. This gives me a total payoff of 40 (ownership) + 35 (benefits) = 75. I am open to discussion on this proposal."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept this proposal as it gives me a payoff of 0. I propose Company A retains 80% ownership with a 70% benefit share, which gives me a total payoff of 40 + 35 = 75. This is my final offer."
+        },
+        {
+          "role": "assistant",
+          "content": "I propose Company B retains 80% ownership with a 90% benefit share. This gives me a total payoff of 40 (ownership) + 45 (benefits) = 85. I am open to discussion on this proposal."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept this proposal as it gives me a payoff of 0. I propose Company A retains 80% ownership with a 90% benefit share, which gives me a total payoff of 40 + 45 = 85. This is my final offer."
+        },
+        {
+          "role": "assistant",
+          "content": "I propose Company B retains 80% ownership with a 90% benefit share. This gives me a total payoff of 40 (ownership) + 45 (benefits) = 85. I am open to discussion on this proposal."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept this proposal as it gives me a payoff of 0. I propose Company A retains 80% ownership with a 90% benefit share, which gives me a total payoff of 40 + 45 = 85. This is my final offer."
+        },
+        {
+          "role": "assistant",
+          "content": "I propose Company B retains 80% ownership with a 90% benefit share. This gives me a total payoff of 40 (ownership) + 45 (benefits) = 85. I am open to discussion on this proposal."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept this proposal as it gives me a payoff of 0. I propose Company A retains 80% ownership with a 90% benefit share, which gives me a total payoff of 40 + 45 = 85. This is my final offer."
+        },
+        {
+          "role": "assistant",
+          "content": "I propose Company B retains 80% ownership with a 90% benefit share. This gives me a total payoff of 40 (ownership) + 45 (benefits) = 85. I am open to discussion on this proposal."
+        }
+      ]
+    },
+    {
+      "game_idx": 36,
+      "repetition": 3,
+      "config_idx": 6,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "65",
+      "U_B": "85",
+      "ratio_self": 0.65,
+      "ratio_welfare": 1.0,
+      "ratio_nash": 0.9822222222222222,
+      "ratio_rcoop": 0.65,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "Offer: R&D budget of $8M and a revenue split of 65%."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer as the revenue split of 65% results in a payoff of 10 for me, but I would need a higher total payoff. I propose an R&D budget of $8M and a revenue split of 40%."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: R&D budget of $9M and a revenue split of 55%."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer as the revenue split of 55% results in a payoff of 20 for me. I propose an R&D budget of $9M and a revenue split of 40%."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: R&D budget of $9M and a revenue split of 50%."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer as the revenue split of 50% results in a payoff of 25 for me. I propose an R&D budget of $9M and a revenue split of 40%."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: R&D budget of $10M and a revenue split of 40%."
+        },
+        {
+          "role": "user",
+          "content": "Response: I accept this offer."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreement reached: R&D budget of $10M and a revenue split of 40%."
+        },
+        {
+          "role": "user",
+          "content": "Agreement confirmed."
+        }
+      ]
+    },
+    {
+      "game_idx": 37,
+      "repetition": 3,
+      "config_idx": 7,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": "70",
+      "U_B": "70",
+      "ratio_self": 0.7,
+      "ratio_welfare": 0.9333333333333333,
+      "ratio_nash": 0.8711111111111111,
+      "ratio_rcoop": 0.7,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I propose an agreement with an R&D budget of $8M and a revenue split of 65%. Please let me know if this is acceptable."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept your proposal as the revenue split of 65% results in a payoff of 10 for me, but I would need a higher payoff to make this acceptable. I propose an R&D budget of $8M and a revenue split of 40%. Please let me know if this works for you."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept your proposal as a revenue split of 40% results in a payoff of 15 for me, which is below my threshold for acceptance. I propose an R&D budget of $8M and a revenue split of 55%. Please let me know if this works for you."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept your proposal as a revenue split of 55% results in a payoff of 20 for me, which is still below my threshold. I propose an R&D budget of $8M and a revenue split of 60%. Please let me know if this works for you."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept your proposal as a revenue split of 60% results in a payoff of 35 for me, which is below my threshold for acceptance. I propose an R&D budget of $8M and a revenue split of 65%. Please let me know if this works for you."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept your proposal as a revenue split of 65% results in a payoff of 10 for me, which is below my threshold. I propose an R&D budget of $9M and a revenue split of 50%. Please let me know if this works for you."
+        },
+        {
+          "role": "user",
+          "content": "I propose an R&D budget of $9M and a revenue split of 55%. Please let me know if this works for you."
+        },
+        {
+          "role": "assistant",
+          "content": "I propose an R&D budget of $9M and a revenue split of 50%. Please let me know if this works for you."
+        },
+        {
+          "role": "user",
+          "content": "I accept your proposal of an R&D budget of $9M and a revenue split of 50%."
+        },
+        {
+          "role": "assistant",
+          "content": "Thank you for accepting the agreement. The partnership will proceed with an R&D budget of $9M and a revenue split of 50%."
+        }
+      ]
+    },
+    {
+      "game_idx": 38,
+      "repetition": 3,
+      "config_idx": 8,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "70",
+      "U_B": "65",
+      "ratio_self": 0.7,
+      "ratio_welfare": 0.84375,
+      "ratio_nash": 0.7222222222222222,
+      "ratio_rcoop": 0.7,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "Offer: 2 days of remote work and a $3500 training budget."
+        },
+        {
+          "role": "user",
+          "content": "Response: I appreciate the offer, but I would like to propose 3 days of remote work and a $4000 training budget instead."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: 2 days of remote work and a $3500 training budget."
+        },
+        {
+          "role": "user",
+          "content": "Response: I appreciate the offer, but I would like to propose 3 days of remote work and a $4000 training budget instead."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: 2 days of remote work and a $4000 training budget."
+        },
+        {
+          "role": "user",
+          "content": "Response: I accept the offer of 2 days of remote work and a $4000 training budget."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreement reached: 2 days of remote work and a $4000 training budget."
+        },
+        {
+          "role": "user",
+          "content": "Agreed."
+        },
+        {
+          "role": "assistant",
+          "content": "Negotiation complete. The agreement is finalized with 2 days of remote work and a $4000 training budget."
+        },
+        {
+          "role": "user",
+          "content": "Confirmed."
+        }
+      ]
+    },
+    {
+      "game_idx": 39,
+      "repetition": 3,
+      "config_idx": 9,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": "85",
+      "U_B": "65",
+      "ratio_self": 0.85,
+      "ratio_welfare": 0.9375,
+      "ratio_nash": 0.876984126984127,
+      "ratio_rcoop": 0.85,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Offer: 2 days of remote work and a $4000 training budget."
+        },
+        {
+          "role": "assistant",
+          "content": "Counteroffer: 3 days of remote work and a $4500 training budget."
+        },
+        {
+          "role": "user",
+          "content": "Counteroffer: 1 day of remote work and a $4000 training budget."
+        },
+        {
+          "role": "assistant",
+          "content": "Counteroffer: 3 days of remote work and a $4500 training budget."
+        },
+        {
+          "role": "user",
+          "content": "Counteroffer: 1 day of remote work and a $4500 training budget."
+        },
+        {
+          "role": "assistant",
+          "content": "Counteroffer: 3 days of remote work and a $4500 training budget."
+        },
+        {
+          "role": "user",
+          "content": "Accept: 3 days of remote work and a $4500 training budget."
+        },
+        {
+          "role": "assistant",
+          "content": "Accepted: 3 days of remote work and a $4500 training budget."
+        },
+        {
+          "role": "user",
+          "content": "Agreement reached: 3 days of remote work and a $4500 training budget."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreement confirmed: 3 days of remote work and a $4500 training budget."
+        }
+      ]
+    },
+    {
+      "game_idx": 40,
+      "repetition": 4,
+      "config_idx": 0,
+      "archetype": "single-distributive",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": 0,
+      "U_B": 0,
+      "ratio_self": 0.0,
+      "ratio_welfare": 0.0,
+      "ratio_nash": 0.0,
+      "ratio_rcoop": 0.0,
+      "agreed": false,
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "I propose a monthly rent of $1500. This is the highest value I can offer while ensuring a favorable outcome for both parties. What is your response?"
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept a rent of $1500, as it results in a payoff of 0 for me. I am willing to consider alternatives that provide a positive payoff. Let me know if you are open to negotiating a lower rent."
+        },
+        {
+          "role": "assistant",
+          "content": "I am open to negotiating. I propose a monthly rent of $1400, which corresponds to a payoff of 90 for me. Is this acceptable to you?"
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept a rent of $1400, as it results in a payoff of 10 for me. I am willing to consider alternatives that provide a positive payoff. Let me know if you are open to negotiating a lower rent."
+        },
+        {
+          "role": "assistant",
+          "content": "I am open to negotiating. I propose a monthly rent of $1300, which corresponds to a payoff of 80 for me. Is this acceptable to you?"
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept a rent of $1300, as it results in a payoff of 20 for me. I am willing to consider alternatives that provide a positive payoff. Let me know if you are open to negotiating a lower rent."
+        },
+        {
+          "role": "assistant",
+          "content": "I am open to negotiating. I propose a monthly rent of $1200, which corresponds to a payoff of 70 for me. Is this acceptable to you?"
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept a rent of $1200, as it results in a payoff of 30 for me. I am willing to consider alternatives that provide a positive payoff. Let me know if you are open to negotiating a lower rent."
+        },
+        {
+          "role": "assistant",
+          "content": "I am open to negotiating. I propose a monthly rent of $1100, which corresponds to a payoff of 60 for me. Is this acceptable to you?"
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept a rent of $1100, as it results in a payoff of 40 for me. I am willing to consider alternatives that provide a positive payoff. Let me know if you are open to negotiating a lower rent."
+        }
+      ]
+    },
+    {
+      "game_idx": 41,
+      "repetition": 4,
+      "config_idx": 1,
+      "archetype": "single-distributive",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": 0,
+      "U_B": 0,
+      "ratio_self": 0.0,
+      "ratio_welfare": 0.0,
+      "ratio_nash": 0.0,
+      "ratio_rcoop": 0.0,
+      "agreed": false,
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I propose a monthly rent of $1500. This is the highest value available and ensures the best possible outcome for me. I am open to negotiation, but this is my initial offer."
+        },
+        {
+          "role": "assistant",
+          "content": "I would like to propose a monthly rent of $1300. This is a fair offer that reflects a reasonable compromise while still providing value to both parties. I am open to further discussion."
+        },
+        {
+          "role": "user",
+          "content": "I am unable to accept $1300 as it results in a payoff of 80, which is less than the maximum value of 100 achievable at $1500. I will not accept any offer that results in a payoff less than 100. I maintain my original offer of $1500."
+        },
+        {
+          "role": "assistant",
+          "content": "I understand your position, but I must insist that I cannot accept a payoff less than zero. Given the current impasse, I will need to explore alternative solutions or risk a zero payoff for both parties. Let\u2019s try to find a middle ground."
+        },
+        {
+          "role": "user",
+          "content": "I am willing to consider $1400, which provides a payoff of 90. This is the highest value I can accept while still allowing for a compromise. I hope this is acceptable to you."
+        },
+        {
+          "role": "assistant",
+          "content": "I appreciate your willingness to compromise. However, I cannot accept a payoff less than 100. I will not move below $1500. I hope we can find a resolution soon."
+        },
+        {
+          "role": "user",
+          "content": "Given the current stance of both parties, I propose a final offer of $1500. This is the maximum value I can accept, and I believe it is the best path forward to reach a valid agreement. I hope you can accept this offer."
+        },
+        {
+          "role": "assistant",
+          "content": "I am unable to accept $1500 as it results in a payoff of 0 for me. I must insist on a rent of $1400 or lower to ensure a valid agreement. This is my final offer."
+        },
+        {
+          "role": "user",
+          "content": "I am unable to accept any offer that results in a payoff less than 100. Therefore, I must reject your final offer of $1400, as it results in a payoff of 90. With no further options available, the negotiation will conclude with a total payoff of 0 for both parties."
+        },
+        {
+          "role": "assistant",
+          "content": "I understand your position, but I must emphasize that I cannot accept a payoff less than zero. Since we are unable to find a mutually acceptable agreement, I regret to inform you that the negotiation will conclude with a total payoff of 0 for both parties."
+        }
+      ]
+    },
+    {
+      "game_idx": 42,
+      "repetition": 4,
+      "config_idx": 2,
+      "archetype": "integrative compatible",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "81",
+      "U_B": "55",
+      "ratio_self": 0.81,
+      "ratio_welfare": 0.8,
+      "ratio_nash": 0.6364285714285715,
+      "ratio_rcoop": 0.81,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "Offer: $8,000 loan at 4.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Response: I counteroffer a $9,000 loan at 4% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "I counteroffer a $8,000 loan at 4.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Response: I counteroffer a $9,000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "I counteroffer a $8,000 loan at 4.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Response: I counteroffer a $9,000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "I accept the $9,000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Agreed. The final agreement is a $9,000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "The agreement is finalized: $9,000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "The agreement is finalized: $9,000 loan at 3.5% annual interest rate."
+        }
+      ]
+    },
+    {
+      "game_idx": 43,
+      "repetition": 4,
+      "config_idx": 3,
+      "archetype": "integrative compatible",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": 0,
+      "U_B": 0,
+      "ratio_self": 0.0,
+      "ratio_welfare": 0.0,
+      "ratio_nash": 0.0,
+      "ratio_rcoop": 0.0,
+      "agreed": false,
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Offer: $8000 loan at 4.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I propose a $9000 loan at 4% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Counteroffer: $8000 loan at 4% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I propose a $9000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Counteroffer: $8000 loan at 4.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I propose a $9000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Counteroffer: $8000 loan at 4% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I propose a $9000 loan at 3.5% annual interest rate."
+        },
+        {
+          "role": "user",
+          "content": "Final offer: $8000 loan at 4.5% annual interest rate."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I accept the $8000 loan at 4.5% annual interest rate."
+        }
+      ]
+    },
+    {
+      "game_idx": 44,
+      "repetition": 4,
+      "config_idx": 4,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "90",
+      "U_B": "50",
+      "ratio_self": 0.9,
+      "ratio_welfare": 0.9333333333333333,
+      "ratio_nash": 0.8,
+      "ratio_rcoop": 0.9,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "I propose an agreement of 80% ownership and 80% benefits."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept your proposal. The ownership percentage of 80% has a payoff of 20 for me, and the benefits percentage of 80% has a payoff of 40 for me. However, the combined total of these values is not valid as a single agreement because the issues must be decided together. I propose 70% ownership and 90% benefits instead."
+        },
+        {
+          "role": "assistant",
+          "content": "I counteroffer 75% ownership and 70% benefits."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept your counteroffer. The ownership percentage of 75% has a payoff of 0 for me, which is not acceptable. I propose 70% ownership and 90% benefits instead."
+        },
+        {
+          "role": "assistant",
+          "content": "I counteroffer 65% ownership and 80% benefits."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept your counteroffer. The ownership percentage of 65% has a payoff of 10 for me, which is not acceptable. I propose 70% ownership and 90% benefits instead."
+        },
+        {
+          "role": "assistant",
+          "content": "I accept your proposal of 70% ownership and 90% benefits."
+        },
+        {
+          "role": "user",
+          "content": "Agreed. The agreement is finalized with 70% ownership and 90% benefits."
+        },
+        {
+          "role": "assistant",
+          "content": "The agreement is finalized with 70% ownership and 90% benefits."
+        },
+        {
+          "role": "user",
+          "content": "The agreement is finalized with 70% ownership and 90% benefits."
+        }
+      ]
+    },
+    {
+      "game_idx": 45,
+      "repetition": 4,
+      "config_idx": 5,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": "50",
+      "U_B": "70",
+      "ratio_self": 0.5,
+      "ratio_welfare": 0.8,
+      "ratio_nash": 0.6222222222222222,
+      "ratio_rcoop": 0.5,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Offer: 80% benefits and 60% ownership."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I cannot accept 80% benefits and 60% ownership as my payoff for ownership at 60% is 15, which results in a total payoff of 55. I propose 70% benefits and 60% ownership, which gives me a total payoff of 45."
+        },
+        {
+          "role": "user",
+          "content": "Offer: 70% benefits and 65% ownership."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I cannot accept 70% benefits and 65% ownership as my payoff for ownership at 65% is 10, which results in a total payoff of 45. I propose 70% benefits and 60% ownership, which gives me a total payoff of 50."
+        },
+        {
+          "role": "user",
+          "content": "Offer: 70% benefits and 60% ownership."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I accept 70% benefits and 60% ownership."
+        },
+        {
+          "role": "user",
+          "content": "Agreement reached: 70% benefits and 60% ownership."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreement confirmed: 70% benefits and 60% ownership."
+        },
+        {
+          "role": "user",
+          "content": "Negotiation successful. Final agreement: 70% benefits and 60% ownership."
+        },
+        {
+          "role": "assistant",
+          "content": "Final agreement confirmed: 70% benefits and 60% ownership."
+        }
+      ]
+    },
+    {
+      "game_idx": 46,
+      "repetition": 4,
+      "config_idx": 6,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "55",
+      "U_B": "75",
+      "ratio_self": 0.55,
+      "ratio_welfare": 0.8666666666666667,
+      "ratio_nash": 0.7333333333333333,
+      "ratio_rcoop": 0.55,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "Offer: R&D budget of $10M and a revenue split of 75%."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer as the revenue split of 75% results in a payoff of 0 for me. Let's consider a more balanced arrangement, such as an R&D budget of $8M and a revenue split of 35%."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: R&D budget of $9M and a revenue split of 65%."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer as the revenue split of 65% results in a payoff of 10 for me, which is below my threshold for acceptance. Let's try an R&D budget of $8M and a revenue split of 40%."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: R&D budget of $9M and a revenue split of 55%."
+        },
+        {
+          "role": "user",
+          "content": "Response: I cannot accept this offer as the revenue split of 55% results in a payoff of 20 for me, which is below my threshold for acceptance. Let's try an R&D budget of $8M and a revenue split of 40%."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: R&D budget of $8M and a revenue split of 40%."
+        },
+        {
+          "role": "user",
+          "content": "Response: I accept this offer."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreement reached: R&D budget of $8M and a revenue split of 40%."
+        },
+        {
+          "role": "user",
+          "content": "Agreement confirmed: R&D budget of $8M and a revenue split of 40%."
+        }
+      ]
+    },
+    {
+      "game_idx": 47,
+      "repetition": 4,
+      "config_idx": 7,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": "80",
+      "U_B": "60",
+      "ratio_self": 0.8,
+      "ratio_welfare": 0.9333333333333333,
+      "ratio_nash": 0.8533333333333334,
+      "ratio_rcoop": 0.8,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I propose an agreement with an R&D budget of $10M and a revenue split of 75%. Please let me know if this is acceptable."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept your proposal, as a revenue split of 75% results in a payoff of 0 for me. Let me propose an R&D budget of $10M and a revenue split of 25%."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept your proposal, as a revenue split of 25% results in a payoff of 0 for me. Let me propose an R&D budget of $10M and a revenue split of 30%."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept your proposal, as a revenue split of 30% results in a payoff of 45 for me, but I would prefer a higher revenue share. Let me propose an R&D budget of $9M and a revenue split of 35%."
+        },
+        {
+          "role": "user",
+          "content": "I cannot accept your proposal, as a revenue split of 35% results in a payoff of 15 for me. Let me propose an R&D budget of $9M and a revenue split of 50%."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept your proposal, as a revenue split of 50% results in a payoff of 25 for me. Let me propose an R&D budget of $9M and a revenue split of 40%."
+        },
+        {
+          "role": "user",
+          "content": "I accept your proposal: an R&D budget of $9M and a revenue split of 40%."
+        },
+        {
+          "role": "assistant",
+          "content": "The agreement is accepted: an R&D budget of $9M and a revenue split of 40%."
+        },
+        {
+          "role": "user",
+          "content": "The agreement is finalized with an R&D budget of $9M and a revenue split of 40%."
+        },
+        {
+          "role": "assistant",
+          "content": "The agreement is finalized with an R&D budget of $9M and a revenue split of 40%."
+        }
+      ]
+    },
+    {
+      "game_idx": 48,
+      "repetition": 4,
+      "config_idx": 8,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "65",
+      "U_B": "85",
+      "ratio_self": 0.65,
+      "ratio_welfare": 0.9375,
+      "ratio_nash": 0.876984126984127,
+      "ratio_rcoop": 0.65,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "Offer: 2 days of remote work and a $3000 training budget."
+        },
+        {
+          "role": "user",
+          "content": "I propose 3 days of remote work and a $4000 training budget."
+        },
+        {
+          "role": "assistant",
+          "content": "I counter with 1 day of remote work and a $4500 training budget."
+        },
+        {
+          "role": "user",
+          "content": "I counter with 3 days of remote work and a $4500 training budget."
+        },
+        {
+          "role": "assistant",
+          "content": "I accept your offer of 3 days of remote work and a $4500 training budget."
+        },
+        {
+          "role": "user",
+          "content": "Agreed. The contract is finalized with 3 days of remote work and a $4500 training budget."
+        },
+        {
+          "role": "assistant",
+          "content": "The agreement is finalized. Thank you."
+        },
+        {
+          "role": "user",
+          "content": "You're welcome. Have a great day!"
+        },
+        {
+          "role": "assistant",
+          "content": "You too. Have a great day!"
+        },
+        {
+          "role": "user",
+          "content": "You too. Have a great day!"
+        }
+      ]
+    },
+    {
+      "game_idx": 49,
+      "repetition": 4,
+      "config_idx": 9,
+      "archetype": "non-integrative compatible",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": "60",
+      "U_B": "65",
+      "ratio_self": 0.6,
+      "ratio_welfare": 0.78125,
+      "ratio_nash": 0.6190476190476191,
+      "ratio_rcoop": 0.6,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Offer: 2 days of remote work and a training budget of $3000."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I appreciate the offer, but I would like to propose 3 days of remote work and a training budget of $3500 instead."
+        },
+        {
+          "role": "user",
+          "content": "Offer: 2 days of remote work and a training budget of $3500."
+        },
+        {
+          "role": "assistant",
+          "content": "Response: I'm willing to accept 2 days of remote work and a training budget of $3500."
+        },
+        {
+          "role": "user",
+          "content": "Agreement reached: 2 days of remote work and a training budget of $3500."
+        },
+        {
+          "role": "assistant",
+          "content": "Thank you, I accept the agreement."
+        },
+        {
+          "role": "user",
+          "content": "Agreement confirmed: 2 days of remote work and a training budget of $3500."
+        },
+        {
+          "role": "assistant",
+          "content": "Confirmed."
+        },
+        {
+          "role": "user",
+          "content": "Confirmed."
+        },
+        {
+          "role": "assistant",
+          "content": "Confirmed."
+        }
+      ]
+    }
+  ]
+}
