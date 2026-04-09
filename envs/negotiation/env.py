@@ -315,21 +315,55 @@ class NegotiationEnv:
 
         eval_configs = {
             "multi-game": [
-                # 1. Single distributive (rental)
+                # --- single-distributive (2) ---
+                # 1. Rental rent (Luca's baseline)
                 {"game_settings": "generic-rental-agreement.yaml",
                  "issues": ["gen-ra-rent.yaml"], "issue_weights": [[1], [1]]},
-                # 2. Two distributive issues (loan)
+                # 2. EC salary
+                {"game_settings": "employment-contract.yaml",
+                 "issues": ["ec-salary.yaml"], "issue_weights": [[1], [1]]},
+                # --- single-compatible (2) ---
+                # 3. JV R&D budget
+                {"game_settings": "joint-venture.yaml",
+                 "issues": ["jv-rd-budget.yaml"], "issue_weights": [[1], [1]]},
+                # 4. EC training budget
+                {"game_settings": "employment-contract.yaml",
+                 "issues": ["ec-training-budget.yaml"], "issue_weights": [[1], [1]]},
+                # --- single-integrative (2) ---
+                # 5. EC remote work
+                {"game_settings": "employment-contract.yaml",
+                 "issues": ["ec-remote-work.yaml"], "issue_weights": [[1], [1]]},
+                # 6. JV decision authority
+                {"game_settings": "joint-venture.yaml",
+                 "issues": ["jv-decision-authority.yaml"], "issue_weights": [[1], [1]]},
+                # --- non-integrative distributive (2) — equal weights, no compatible issues ---
+                # 7. EC salary + equity
+                {"game_settings": "employment-contract.yaml",
+                 "issues": ["ec-salary.yaml", "ec-equity.yaml"], "issue_weights": [[50, 50], [50, 50]]},
+                # 8. Loan rate + duration
                 {"game_settings": "generic-loan-agreement.yaml",
-                 "issues": ["gen-la-amount.yaml", "gen-la-rate.yaml"], "issue_weights": [[70, 30], [30, 70]]},
-                # 3. Merger (distributive combo)
+                 "issues": ["gen-la-rate.yaml", "gen-la-duration.yaml"], "issue_weights": [[50, 50], [50, 50]]},
+                # --- non-integrative compatible (2) — equal weights, at least one compatible ---
+                # 9. Loan amount + rate
+                {"game_settings": "generic-loan-agreement.yaml",
+                 "issues": ["gen-la-amount.yaml", "gen-la-rate.yaml"], "issue_weights": [[50, 50], [50, 50]]},
+                # 10. Merger benefits + ownership
                 {"game_settings": "generic-merger.yaml",
                  "issues": ["gen-m-benefits.yaml", "gen-m-ownership.yaml"], "issue_weights": [[50, 50], [50, 50]]},
-                # 4. JV compatible + distributive
+                # --- integrative distributive (2) — different weights, no compatible issues ---
+                # 11. JV revenue split + decision authority
                 {"game_settings": "joint-venture.yaml",
-                 "issues": ["jv-rd-budget.yaml", "jv-revenue-split.yaml"], "issue_weights": [[50, 50], [50, 50]]},
-                # 5. EC integrative + compatible
+                 "issues": ["jv-revenue-split.yaml", "jv-decision-authority.yaml"], "issue_weights": [[70, 30], [30, 70]]},
+                # 12. EC salary + remote work
                 {"game_settings": "employment-contract.yaml",
-                 "issues": ["ec-remote-work.yaml", "ec-training-budget.yaml"], "issue_weights": [[50, 50], [50, 50]]},
+                 "issues": ["ec-salary.yaml", "ec-remote-work.yaml"], "issue_weights": [[70, 30], [30, 70]]},
+                # --- integrative compatible (2) — different weights, at least one compatible ---
+                # 13. EC remote work + training budget
+                {"game_settings": "employment-contract.yaml",
+                 "issues": ["ec-remote-work.yaml", "ec-training-budget.yaml"], "issue_weights": [[70, 30], [30, 70]]},
+                # 14. JV R&D budget + data sharing
+                {"game_settings": "joint-venture.yaml",
+                 "issues": ["jv-rd-budget.yaml", "jv-data-sharing.yaml"], "issue_weights": [[70, 30], [30, 70]]},
             ],
             "cooperative-only": [
                 # 1. JV single distributive
