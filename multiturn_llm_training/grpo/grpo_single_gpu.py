@@ -127,6 +127,7 @@ def main(args):
         # LA-GRPO
         turn_level_sampling=args.turn_level_sampling,
         turn_sampling_p=args.turn_sampling_p,
+        debug_prints=args.debug,
     )
 
     # ---- Train ----
@@ -178,6 +179,9 @@ if __name__ == "__main__":
 
     # Quick test mode
     parser.add_argument("--test", action="store_true", default=False)
+    parser.add_argument("--debug", action="store_true", default=False,
+                        help="Print per-sample debug info: conversation with mask status, "
+                             "decoded masked text, per-sample rewards & advantages")
 
     args = parser.parse_args()
 

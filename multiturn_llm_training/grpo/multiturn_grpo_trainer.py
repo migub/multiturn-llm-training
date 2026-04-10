@@ -87,6 +87,7 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
         # LA-GRPO: turn-level sampling
         turn_level_sampling: bool = False,
         turn_sampling_p: float = 0.3,
+        debug_prints: bool = False,
         **kwargs,
     ):
         if not isinstance(reward_funcs, list):
@@ -100,6 +101,7 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
         self.forward_batch_size = forward_batch_size  # chunk size for forward pass
         self.turn_level_sampling = turn_level_sampling
         self.turn_sampling_p = turn_sampling_p
+        self.debug_prints = debug_prints
         self._total_train_tokens = 0
         self._turn_rng = np.random.default_rng(seed=42)
 
@@ -304,6 +306,36 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
 
             print(f"  Dialogue {i+1}/{len(prompts)} done — {len(conversation)} turns, {n_agent} agent tokens")
 
+            if self.debug_prints:
+                print(f"\n[DEBUG] ========= Sample {i+1}/{len(prompts)} =========")
+                if self.turn_level_sampling:
+                    print(f"[DEBUG] LA-GRPO sampled_h={sampled_h}, mask_from_agent_turn={mask_from_agent_turn}")
+                print(f"[DEBUG] Conversation ({len(conversation)} turns, agent_turn_indices={agent_indices}):")
+                for turn_i, msg in enumerate(conversation):
+                    is_agent = turn_i in agent_indices
+                    role = "AGENT" if is_agent else "OPP  "
+                    if is_agent:
+                        agent_turn_num = agent_indices.index(turn_i)
+                        if mask_from_agent_turn is None or agent_turn_num == mask_from_agent_turn:
+                            marker = f" [agent#{agent_turn_num} MASKED=1 -> LOSS]"
+                        else:
+                            marker = f" [agent#{agent_turn_num} MASKED=0 -> frozen]"
+                    else:
+                        marker = " [MASKED=0]"
+                    snippet = msg["content"][:140].replace("\n", " ")
+                    print(f"[DEBUG]   Turn {turn_i} ({role}){marker}: {snippet}")
+
+                masked_ids = tok_ids[ass_mask.bool()]
+                masked_text = self._tokenizer.decode(masked_ids, skip_special_tokens=False)
+                total_masked = int(ass_mask.sum().item())
+                total_tokens = int(tok_ids.size(0))
+                print(f"[DEBUG] Mask summary: {total_masked}/{total_tokens} tokens masked "
+                      f"(agent_tokens_generated={n_agent}, opp_tokens_generated={n_opp})")
+                print(f"[DEBUG] Decoded masked text (what the loss optimizes):")
+                preview = masked_text[:800].replace("\n", " \\n ")
+                print(f"[DEBUG]   >>> {preview}{'...' if len(masked_text) > 800 else ''}")
+                print(f"[DEBUG] ==========================================\n")
+
         gen_time = time.time() - gen_start
         print(f"Generation done in {gen_time:.1f}s")
 
@@ -384,7 +416,24 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
             self.accelerator.process_index * len(prompts),
             (self.accelerator.process_index + 1) * len(prompts),
         )
+        local_rewards_for_debug = rewards[process_slice].detach().cpu().tolist() if self.debug_prints else None
         advantages = advantages[process_slice]
+
+        if self.debug_prints:
+            print(f"\n[DEBUG] ===== Step {self.state.global_step} Rewards & Advantages ({mode}) =====")
+            print(f"[DEBUG] Group size (num_generations): {self.num_generations}")
+            print(f"[DEBUG] Group mean reward: {mean_grouped[0].item():.4f}, std: {std_grouped[0].item():.4f}")
+            per_func_local = rewards_per_func[process_slice].detach().cpu()
+            func_names = [f.__name__ if hasattr(f, "__name__") else f"reward_{k}"
+                          for k, f in enumerate(self.reward_funcs)]
+            for idx in range(len(prompts)):
+                per_func_str = ", ".join(
+                    f"{func_names[k]}={per_func_local[idx, k].item():.3f}"
+                    for k in range(len(self.reward_funcs))
+                )
+                print(f"[DEBUG]   Sample {idx+1}: reward={local_rewards_for_debug[idx]:.4f} "
+                      f"adv={advantages[idx].item():+.4f}  ({per_func_str})")
+            print(f"[DEBUG] ============================================\n")
 
         # ---- Log metrics ----
         completion_length = assistant_mask.sum(1).float().mean().item()
