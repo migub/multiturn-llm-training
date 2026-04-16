@@ -39,7 +39,7 @@ def main(args):
     )
     print("Negotiation Environment created")
     train_dataset = negotiation_env.create_dataset(size=args.train_size)
-    eval_dataset = negotiation_env.create_eval_dataset()
+    eval_dataset = None if args.no_eval else negotiation_env.create_eval_dataset()
     reward_functions = negotiation_env.get_reward_functions()
 
     # ---- Training Config ----
@@ -65,7 +65,7 @@ def main(args):
         logging_steps=args.logging_steps,
         log_completions=True,
         report_to="wandb" if args.use_wandb else "none",
-        eval_strategy="steps",
+        eval_strategy="no" if args.no_eval else "steps",
         eval_steps=args.eval_steps,
         eval_on_start=False,
         beta=args.beta,
@@ -182,6 +182,8 @@ if __name__ == "__main__":
     parser.add_argument("--debug", action="store_true", default=False,
                         help="Print per-sample debug info: conversation with mask status, "
                              "decoded masked text, per-sample rewards & advantages")
+    parser.add_argument("--no-eval", action="store_true", default=False,
+                        help="Disable evaluation entirely (eval_strategy='no', no eval_dataset).")
 
     args = parser.parse_args()
 
