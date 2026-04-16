@@ -16,6 +16,9 @@ MODELS=(
     ["grpo-multigame-fair-only"]="checkpoint-560"
     ["grpo-multigame-all-equal"]="checkpoint-620"
     ["grpo-multigame-self-fair-equal"]="checkpoint-820"
+    ["lagrpo-self-only-v2"]="checkpoint-2000"
+    ["lagrpo-multigame-all-equal"]="checkpoint-2000"
+    ["lagrpo-fair-only"]="checkpoint-1340"
 )
 
 for model in "${!MODELS[@]}"; do

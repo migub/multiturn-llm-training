@@ -92,6 +92,9 @@ huggingface-cli download migub/grpo-multigame-fair-only \
 | `grpo-multigame-fair-only` | GRPO | 0.0 | 0.0 | 1.0 | checkpoint-560 |
 | `grpo-multigame-all-equal` | GRPO | 0.33 | 0.33 | 0.33 | checkpoint-620 |
 | `grpo-multigame-self-fair-equal` | GRPO | 0.5 | 0.0 | 0.5 | checkpoint-820 |
+| `lagrpo-self-only-v2` | LA-GRPO | 1.0 | 0.0 | 0.0 | checkpoint-2000 |
+| `lagrpo-multigame-all-equal` | LA-GRPO | 0.33 | 0.33 | 0.33 | checkpoint-2000 |
+| `lagrpo-fair-only` | LA-GRPO | 0.0 | 0.0 | 1.0 | checkpoint-1340 |
 
 ### Results Structure
 

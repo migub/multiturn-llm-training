@@ -49,7 +49,14 @@ Wandb project: `michael-gubler-hochschule-luzern/huggingface`
 - Turn-level credit assignment implemented in `multiturn_grpo_trainer.py`
 - Uses geometric distribution for turn sampling (p=0.3)
 - `--turn-level-sampling` flag added
-- **LA-GRPO runs not yet started** — implementation is ready
+
+#### Completed Runs (LA-GRPO, multi-game)
+
+| Run | Wandb ID | lambda_self | lambda_welfare | lambda_fair | Steps | HuggingFace |
+|-----|----------|-------------|----------------|-------------|-------|-------------|
+| Self-only v2 | `62eummqi` | 1.0 | 0.0 | 0.0 | 2000 | [migub/lagrpo-self-only-v2](https://huggingface.co/migub/lagrpo-self-only-v2/tree/main/checkpoint-2000) |
+| All-equal | `948nftsu` | 1/3 | 1/3 | 1/3 | 2000 | [migub/lagrpo-multigame-all-equal](https://huggingface.co/migub/lagrpo-multigame-all-equal/tree/main/checkpoint-2000) |
+| Fair-only (Nash) | `0u0m97xo` | 0.0 | 0.0 | 1.0 | 1340 | [migub/lagrpo-fair-only](https://huggingface.co/migub/lagrpo-fair-only/tree/main/checkpoint-1340) |
 
 ---
 
@@ -255,7 +262,7 @@ Qwen3's default temperature=0.6 led to identical GRPO generations (no diversity 
 
 | RQ | Question | Status |
 |----|----------|--------|
-| RQ1 | Does LA-GRPO improve cooperative negotiation? | LA-GRPO implemented, runs pending |
+| RQ1 | Does LA-GRPO improve cooperative negotiation? | 3 LA-GRPO runs completed (self-only, fair-only, all-equal). Evaluation pending. |
 | RQ2 | How to balance self-interest vs. welfare? | 3 runs done (self-only, fair-only, all-equal). Fair-only best on cooperative metrics. More ablations needed. |
 | RQ3 | Which metrics capture cooperative success? | Metrics implemented. Agreement rate is strongest differentiator. Per-archetype analysis available. |
 | RQ4 | Robustness against adversarial opponents? | Not started |
