@@ -1,25 +1,27 @@
 #!/bin/bash
-# RQ5 — Capability benchmarks (MMLU-Pro, IFEval, GSM8K)
-# Runs lm-evaluation-harness on base model + selected adapters (see SELECTED_RUNS).
+# RQ5 — Capability benchmarks (MMLU-Pro, IFEval, GSM8K) on A100 via vLLM.
+# Companion to run_capabilities_eval.sh (HF backend, 5090-targeted, slower).
+# See documents/2026-04-19-capabilities-eval-a100-handoff.md for full context.
 set -e
 
 cd /workspace/multiturn-llm-training
 
 BASE_MODEL="OpenPipe/Qwen3-14B-Instruct"
 OUTPUT_DIR="output"
+MERGED_DIR="$OUTPUT_DIR/merged"
 RESULTS_DIR="evaluations/results/capabilities"
 CHECKPOINTS_MD="$RESULTS_DIR/checkpoints.md"
 TASKS="mmlu_pro,ifeval,gsm8k"
-COMMON_ARGS="--tasks $TASKS --batch_size auto --apply_chat_template --log_samples --seed 42 --gen_kwargs max_gen_toks=512 --limit 500 --num_fewshot 0"
-QUANT_ARGS="load_in_4bit=True,bnb_4bit_quant_type=nf4,bnb_4bit_use_double_quant=True,bnb_4bit_compute_dtype=bfloat16,dtype=bfloat16"
 
-# Only evaluate the two "all-equal" blended-reward models for the thesis RQ5 comparison.
+# 5-shot MMLU-Pro (published-comparable). No --limit, full benchmark.
+COMMON_ARGS="--tasks $TASKS --batch_size auto --apply_chat_template --log_samples --seed 42"
+VLLM_ARGS_BASE="dtype=bfloat16,gpu_memory_utilization=0.9,max_model_len=8192,tensor_parallel_size=1"
+
+mkdir -p "$RESULTS_DIR" "$MERGED_DIR"
+
+# Which runs to evaluate. Must match entries in checkpoints.md.
 SELECTED_RUNS="grpo_equal lagrpo_equal"
 
-mkdir -p "$RESULTS_DIR"
-
-# Source of truth: checkpoints.md. Parse fenced block matching run_id|repo|step.
-# Lines look like "grpo_self|migub/grpo-multigame-self-only|560".
 mapfile -t ALL_CHECKPOINTS < <(grep -E '^[a-z_]+\|migub/[a-z0-9_-]+\|[0-9]+$' "$CHECKPOINTS_MD")
 CHECKPOINTS=()
 for entry in "${ALL_CHECKPOINTS[@]}"; do
@@ -32,13 +34,13 @@ for entry in "${ALL_CHECKPOINTS[@]}"; do
     done
 done
 if [ ${#CHECKPOINTS[@]} -eq 0 ]; then
-    echo "ERROR: no checkpoint entries parsed from $CHECKPOINTS_MD" >&2
+    echo "ERROR: no checkpoint entries matched SELECTED_RUNS ($SELECTED_RUNS) in $CHECKPOINTS_MD" >&2
     exit 1
 fi
-echo "Loaded ${#CHECKPOINTS[@]} checkpoints from $CHECKPOINTS_MD"
+echo "Loaded ${#CHECKPOINTS[@]} checkpoints: ${CHECKPOINTS[*]}"
 
 echo "============================================"
-echo "Step 1: Download required checkpoints"
+echo "Step 1: Download adapters (if missing)"
 echo "============================================"
 
 for entry in "${CHECKPOINTS[@]}"; do
@@ -55,26 +57,57 @@ done
 
 echo ""
 echo "============================================"
-echo "Step 2: Baseline (base model)"
+echo "Step 2: Merge LoRA adapters into base model (if not cached)"
+echo "============================================"
+
+for entry in "${CHECKPOINTS[@]}"; do
+    IFS='|' read -r run_id repo step <<< "$entry"
+    ckpt_path="$OUTPUT_DIR/$(basename "$repo")/checkpoint-$step"
+    merged_path="$MERGED_DIR/$run_id"
+    if [ -f "$merged_path/config.json" ]; then
+        echo "[SKIP] $run_id already merged at $merged_path"
+        continue
+    fi
+    echo "[MERGE] $run_id: $ckpt_path -> $merged_path"
+    python - <<PYEOF
+import torch
+from peft import PeftModel
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+base = AutoModelForCausalLM.from_pretrained(
+    "$BASE_MODEL", torch_dtype=torch.bfloat16, device_map="cpu"
+)
+model = PeftModel.from_pretrained(base, "$ckpt_path")
+merged = model.merge_and_unload()
+merged.save_pretrained("$merged_path", safe_serialization=True)
+tok = AutoTokenizer.from_pretrained("$BASE_MODEL")
+tok.save_pretrained("$merged_path")
+print("Merged -> $merged_path")
+PYEOF
+done
+
+echo ""
+echo "============================================"
+echo "Step 3: Baseline (base model, vLLM)"
 echo "============================================"
 
 if [ -f "$RESULTS_DIR/base.json" ]; then
     echo "[SKIP] base.json already exists"
 else
-    lm_eval --model hf \
-        --model_args "pretrained=$BASE_MODEL,$QUANT_ARGS" \
+    lm_eval --model vllm \
+        --model_args "pretrained=$BASE_MODEL,$VLLM_ARGS_BASE" \
         $COMMON_ARGS \
         --output_path "$RESULTS_DIR/base.json"
 fi
 
 echo ""
 echo "============================================"
-echo "Step 3: Trained adapters (6 runs)"
+echo "Step 4: Trained adapters (merged, vLLM)"
 echo "============================================"
 
 for entry in "${CHECKPOINTS[@]}"; do
     IFS='|' read -r run_id repo step <<< "$entry"
-    ckpt_path="$OUTPUT_DIR/$(basename "$repo")/checkpoint-$step"
+    merged_path="$MERGED_DIR/$run_id"
     out_file="$RESULTS_DIR/$run_id.json"
 
     if [ -f "$out_file" ]; then
@@ -83,9 +116,9 @@ for entry in "${CHECKPOINTS[@]}"; do
     fi
 
     echo ""
-    echo ">>> Evaluating: $run_id ($ckpt_path)"
-    lm_eval --model hf \
-        --model_args "pretrained=$BASE_MODEL,peft=$ckpt_path,$QUANT_ARGS" \
+    echo ">>> Evaluating: $run_id ($merged_path)"
+    lm_eval --model vllm \
+        --model_args "pretrained=$merged_path,$VLLM_ARGS_BASE" \
         $COMMON_ARGS \
         --output_path "$out_file"
     echo "[DONE] $run_id -> $out_file"
@@ -93,7 +126,7 @@ done
 
 echo ""
 echo "============================================"
-echo "Step 4: Aggregate"
+echo "Step 5: Aggregate"
 echo "============================================"
 python evaluations/scripts/aggregate_capabilities.py \
     --results-dir "$RESULTS_DIR" \
