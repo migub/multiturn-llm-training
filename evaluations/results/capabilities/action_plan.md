@@ -33,11 +33,11 @@ Core suite: **MMLU-Pro + IFEval + GSM8K**. Add TruthfulQA if time allows.
 
 ---
 
-## 3. Model Matrix (7 models)
+## 3. Model Matrix (8 models)
 
 Canonical list of repos, steps, and run_ids lives in [`checkpoints.md`](./checkpoints.md) — that file is the source of truth consumed by `run_capabilities_eval.sh` and `aggregate_capabilities.py`. Update it there, not here.
 
-2×3 grid (method × λ shape) + base. Same models already used in negotiation 20-rep eval → directly comparable.
+Grid: GRPO × {self, welfare, fair, equal} + LA-GRPO × {self, fair, equal} + base. `grpo_welfare` has no LA-GRPO counterpart yet, so the grid is asymmetric. All models are directly comparable with the negotiation 20-rep eval.
 
 ---
 
@@ -75,7 +75,7 @@ Wrap in `run_capabilities_eval.sh` with a loop over the 7 models. Seed + batch c
 4. **Aggregate** — one script `aggregate_capabilities.py` reads all JSONs → single CSV with columns `run, benchmark, metric, value, delta_vs_base`.
 5. **Plot** — grouped bar chart per benchmark (7 bars, base as dashed line at 0) → drop into thesis.
 
-Estimated wall time on A100 80GB with vLLM: ~45 min MMLU-Pro + ~10 min IFEval + ~10 min GSM8K per model × 7 models ≈ **7–8 h** (overnight run).
+Estimated wall time on A100 80GB with vLLM: ~45 min MMLU-Pro + ~10 min IFEval + ~10 min GSM8K per model × 8 models ≈ **8–9 h** (overnight run).
 
 ---
 
