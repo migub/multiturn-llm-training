@@ -7,7 +7,14 @@ computes deltas vs. `base.json`, and writes one flat CSV.
 import argparse
 import csv
 import json
+import re
 from pathlib import Path
+
+# lm-eval appends "_YYYY-MM-DDTHH-MM-SS.microseconds" to --output_path when
+# --log_samples is set. Strip it so stems line up with <run_id>.
+_LM_EVAL_TIMESTAMP_RE = re.compile(
+    r"_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}\.\d+$"
+)
 
 # (task_name, metric_key_in_lm_eval_results)
 # lm-eval stores metrics as e.g. "acc,none" or "exact_match,strict-match".
@@ -61,7 +68,7 @@ def main():
 
     all_results: dict[str, dict[str, float]] = {}
     for jf in json_files:
-        run_id = jf.stem
+        run_id = _LM_EVAL_TIMESTAMP_RE.sub("", jf.stem)
         all_results[run_id] = load_results(jf)
 
     if args.base_run not in all_results:

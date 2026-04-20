@@ -1,0 +1,10 @@
+run,benchmark,value,base_value,delta_vs_base,delta_pp
+base,mmlu_pro,0.6903,0.6903,0.0,0.0
+base,ifeval,0.8521,0.8521,0.0,0.0
+base,gsm8k,0.8802,0.8802,0.0,0.0
+grpo_equal,mmlu_pro,0.6902,0.6903,-0.0002,-0.02
+grpo_equal,ifeval,0.8577,0.8521,0.0055,0.55
+grpo_equal,gsm8k,0.8817,0.8802,0.0015,0.15
+lagrpo_equal,mmlu_pro,0.6876,0.6903,-0.0027,-0.27
+lagrpo_equal,ifeval,0.8484,0.8521,-0.0037,-0.37
+lagrpo_equal,gsm8k,0.8795,0.8802,-0.0008,-0.08

@@ -8,7 +8,9 @@ cd /workspace/multiturn-llm-training
 
 BASE_MODEL="OpenPipe/Qwen3-14B-Instruct"
 OUTPUT_DIR="output"
-MERGED_DIR="$OUTPUT_DIR/merged"
+# Merged models go on local overlay SSD (56GB free, fast) instead of mfs workspace
+# (workspace has a ~20GB user quota — a single 28GB merged model won't fit).
+MERGED_DIR="/root/merged"
 RESULTS_DIR="evaluations/results/capabilities"
 CHECKPOINTS_MD="$RESULTS_DIR/checkpoints.md"
 TASKS="mmlu_pro,ifeval,gsm8k"
@@ -57,38 +59,7 @@ done
 
 echo ""
 echo "============================================"
-echo "Step 2: Merge LoRA adapters into base model (if not cached)"
-echo "============================================"
-
-for entry in "${CHECKPOINTS[@]}"; do
-    IFS='|' read -r run_id repo step <<< "$entry"
-    ckpt_path="$OUTPUT_DIR/$(basename "$repo")/checkpoint-$step"
-    merged_path="$MERGED_DIR/$run_id"
-    if [ -f "$merged_path/config.json" ]; then
-        echo "[SKIP] $run_id already merged at $merged_path"
-        continue
-    fi
-    echo "[MERGE] $run_id: $ckpt_path -> $merged_path"
-    python - <<PYEOF
-import torch
-from peft import PeftModel
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-base = AutoModelForCausalLM.from_pretrained(
-    "$BASE_MODEL", torch_dtype=torch.bfloat16, device_map="cpu"
-)
-model = PeftModel.from_pretrained(base, "$ckpt_path")
-merged = model.merge_and_unload()
-merged.save_pretrained("$merged_path", safe_serialization=True)
-tok = AutoTokenizer.from_pretrained("$BASE_MODEL")
-tok.save_pretrained("$merged_path")
-print("Merged -> $merged_path")
-PYEOF
-done
-
-echo ""
-echo "============================================"
-echo "Step 3: Baseline (base model, vLLM)"
+echo "Step 2: Baseline (base model, vLLM)"
 echo "============================================"
 
 if [ -f "$RESULTS_DIR/base.json" ]; then
@@ -102,17 +73,41 @@ fi
 
 echo ""
 echo "============================================"
-echo "Step 4: Trained adapters (merged, vLLM)"
+echo "Step 3: Merge + eval each adapter (sequential to save disk)"
 echo "============================================"
+# Interleaved: merge → eval → delete. Only one merged model on disk at any time.
+# Merge uses GPU (device_map=cuda) for ~30s merges vs ~10min on CPU.
 
 for entry in "${CHECKPOINTS[@]}"; do
     IFS='|' read -r run_id repo step <<< "$entry"
+    ckpt_path="$OUTPUT_DIR/$(basename "$repo")/checkpoint-$step"
     merged_path="$MERGED_DIR/$run_id"
     out_file="$RESULTS_DIR/$run_id.json"
 
     if [ -f "$out_file" ]; then
         echo "[SKIP] $run_id already evaluated"
         continue
+    fi
+
+    if [ ! -f "$merged_path/config.json" ]; then
+        echo "[MERGE] $run_id: $ckpt_path -> $merged_path"
+        python - <<PYEOF
+import torch
+from peft import PeftModel
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+base = AutoModelForCausalLM.from_pretrained(
+    "$BASE_MODEL", torch_dtype=torch.bfloat16, device_map="cuda"
+)
+model = PeftModel.from_pretrained(base, "$ckpt_path")
+merged = model.merge_and_unload()
+merged.save_pretrained("$merged_path", safe_serialization=True, max_shard_size="5GB")
+tok = AutoTokenizer.from_pretrained("$BASE_MODEL")
+tok.save_pretrained("$merged_path")
+print("Merged -> $merged_path")
+PYEOF
+    else
+        echo "[SKIP MERGE] $run_id already at $merged_path"
     fi
 
     echo ""
@@ -122,11 +117,14 @@ for entry in "${CHECKPOINTS[@]}"; do
         $COMMON_ARGS \
         --output_path "$out_file"
     echo "[DONE] $run_id -> $out_file"
+
+    echo "[CLEANUP] removing $merged_path to free overlay disk"
+    rm -rf "$merged_path"
 done
 
 echo ""
 echo "============================================"
-echo "Step 5: Aggregate"
+echo "Step 4: Aggregate"
 echo "============================================"
 python evaluations/scripts/aggregate_capabilities.py \
     --results-dir "$RESULTS_DIR" \

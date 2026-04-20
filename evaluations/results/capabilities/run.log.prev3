@@ -1,0 +1,158 @@
+Loaded 2 checkpoints: grpo_equal|migub/grpo-multigame-all-equal|620 lagrpo_equal|migub/lagrpo-multigame-all-equal|2000
+============================================
+Step 1: Download adapters (if missing)
+============================================
+[SKIP] grpo_equal already at output/grpo-multigame-all-equal/checkpoint-620
+[SKIP] lagrpo_equal already at output/lagrpo-multigame-all-equal/checkpoint-2000
+
+============================================
+Step 2: Baseline (base model, vLLM)
+============================================
+2026-04-20:00:24:07 INFO     [config.evaluate_config:301] Using default fewshot_as_multiturn=True.
+2026-04-20:00:24:20 INFO     [_cli.run:376] Selected Tasks: ['mmlu_pro', 'ifeval', 'gsm8k']
+2026-04-20:00:24:21 INFO     [evaluator:211] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
+2026-04-20:00:24:21 INFO     [evaluator:236] Initializing vllm model, with arguments: {'pretrained': 'OpenPipe/Qwen3-14B-Instruct', 'dtype': 'bfloat16', 'gpu_memory_utilization': 0.9, 'max_model_len': 8192, 'tensor_parallel_size': 1}
+INFO 04-20 00:24:27 [utils.py:233] non-default args: {'dtype': 'bfloat16', 'seed': 1234, 'max_model_len': 8192, 'disable_log_stats': True, 'model': 'OpenPipe/Qwen3-14B-Instruct'}
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+INFO 04-20 00:24:41 [model.py:549] Resolved architecture: Qwen3ForCausalLM
+INFO 04-20 00:24:41 [model.py:1678] Using max model len 8192
+INFO 04-20 00:24:41 [scheduler.py:238] Chunked prefill is enabled with max_num_batched_tokens=8192.
+INFO 04-20 00:24:41 [vllm.py:790] Asynchronous scheduling is enabled.
+(EngineCore pid=7321) INFO 04-20 00:24:43 [core.py:105] Initializing a V1 LLM engine (v0.19.1) with config: model='OpenPipe/Qwen3-14B-Instruct', speculative_config=None, tokenizer='OpenPipe/Qwen3-14B-Instruct', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=8192, download_dir=None, load_format=auto, tensor_parallel_size=1, pipeline_parallel_size=1, data_parallel_size=1, decode_context_parallel_size=1, dcp_comm_backend=ag_rs, disable_custom_all_reduce=False, quantization=None, enforce_eager=False, enable_return_routed_experts=False, kv_cache_dtype=auto, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, kv_cache_metrics=False, kv_cache_metrics_sample=0.01, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False, enable_mfu_metrics=False, enable_mm_processor_stats=False, enable_logging_iteration_details=False), seed=1234, served_model_name=OpenPipe/Qwen3-14B-Instruct, enable_prefix_caching=True, enable_chunked_prefill=True, pooler_config=None, compilation_config={'mode': <CompilationMode.VLLM_COMPILE: 3>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['none'], 'splitting_ops': ['vllm::unified_attention', 'vllm::unified_attention_with_output', 'vllm::unified_mla_attention', 'vllm::unified_mla_attention_with_output', 'vllm::mamba_mixer2', 'vllm::mamba_mixer', 'vllm::short_conv', 'vllm::linear_attention', 'vllm::plamo2_mamba_mixer', 'vllm::gdn_attention_core', 'vllm::olmo_hybrid_gdn_full_forward', 'vllm::kda_attention', 'vllm::sparse_attn_indexer', 'vllm::rocm_aiter_sparse_attn_indexer', 'vllm::unified_kv_cache_update', 'vllm::unified_mla_kv_cache_update'], 'compile_mm_encoder': False, 'cudagraph_mm_encoder': False, 'encoder_cudagraph_token_budgets': [], 'encoder_cudagraph_max_images_per_batch': 0, 'compile_sizes': [], 'compile_ranges_endpoints': [8192], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'size_asserts': False, 'alignment_asserts': False, 'scalar_asserts': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.FULL_AND_PIECEWISE: (2, 1)>, 'cudagraph_num_of_warmups': 1, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160, 168, 176, 184, 192, 200, 208, 216, 224, 232, 240, 248, 256, 272, 288, 304, 320, 336, 352, 368, 384, 400, 416, 432, 448, 464, 480, 496, 512], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': False, 'fuse_act_quant': False, 'fuse_attn_quant': False, 'enable_sp': False, 'fuse_gemm_comms': False, 'fuse_allreduce_rms': False}, 'max_cudagraph_capture_size': 512, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False, 'assume_32_bit_indexing': False}, 'local_cache_dir': None, 'fast_moe_cold_start': True, 'static_all_moe_layers': []}
+(EngineCore pid=7321) INFO 04-20 00:24:43 [parallel_state.py:1400] world_size=1 rank=0 local_rank=0 distributed_init_method=tcp://172.23.0.2:37955 backend=nccl
+(EngineCore pid=7321) INFO 04-20 00:24:43 [parallel_state.py:1716] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, PCP rank 0, TP rank 0, EP rank N/A, EPLB rank N/A
+(EngineCore pid=7321) INFO 04-20 00:24:45 [gpu_model_runner.py:4735] Starting to load model OpenPipe/Qwen3-14B-Instruct...
+(EngineCore pid=7321) INFO 04-20 00:24:47 [cuda.py:334] Using FLASH_ATTN attention backend out of potential backends: ['FLASH_ATTN', 'FLASHINFER', 'TRITON_ATTN', 'FLEX_ATTENTION'].
+(EngineCore pid=7321) INFO 04-20 00:24:47 [flash_attn.py:596] Using FlashAttention version 2
+(EngineCore pid=7321) <frozen importlib._bootstrap_external>:1241: FutureWarning: The cuda.cudart module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.runtime module instead.
+(EngineCore pid=7321) <frozen importlib._bootstrap_external>:1241: FutureWarning: The cuda.nvrtc module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.nvrtc module instead.
+(EngineCore pid=7321) Loading safetensors checkpoint shards:   0% Completed | 0/8 [00:00<?, ?it/s]
+(EngineCore pid=7321) Loading safetensors checkpoint shards:  12% Completed | 1/8 [00:00<00:03,  1.99it/s]
+(EngineCore pid=7321) Loading safetensors checkpoint shards:  25% Completed | 2/8 [00:01<00:05,  1.13it/s]
+(EngineCore pid=7321) Loading safetensors checkpoint shards:  38% Completed | 3/8 [00:03<00:07,  1.54s/it]
+(EngineCore pid=7321) Loading safetensors checkpoint shards:  50% Completed | 4/8 [00:05<00:06,  1.66s/it]
+(EngineCore pid=7321) Loading safetensors checkpoint shards:  62% Completed | 5/8 [00:07<00:05,  1.80s/it]
+(EngineCore pid=7321) Loading safetensors checkpoint shards:  75% Completed | 6/8 [00:09<00:03,  1.77s/it]
+(EngineCore pid=7321) Loading safetensors checkpoint shards:  88% Completed | 7/8 [00:11<00:01,  1.89s/it]
+(EngineCore pid=7321) Loading safetensors checkpoint shards: 100% Completed | 8/8 [00:12<00:00,  1.42s/it]
+(EngineCore pid=7321) Loading safetensors checkpoint shards: 100% Completed | 8/8 [00:12<00:00,  1.52s/it]
+(EngineCore pid=7321) 
+(EngineCore pid=7321) INFO 04-20 00:25:00 [default_loader.py:384] Loading weights took 12.20 seconds
+(EngineCore pid=7321) INFO 04-20 00:25:01 [gpu_model_runner.py:4820] Model loading took 27.52 GiB memory and 13.958673 seconds
+(EngineCore pid=7321) INFO 04-20 00:25:11 [backends.py:1051] Using cache directory: /root/.cache/vllm/torch_compile_cache/4e1b51ff84/rank_0_0/backbone for vLLM's torch.compile
+(EngineCore pid=7321) INFO 04-20 00:25:11 [backends.py:1111] Dynamo bytecode transform time: 9.89 s
+(EngineCore pid=7321) INFO 04-20 00:25:18 [backends.py:372] Cache the graph of compile range (1, 8192) for later use
+(EngineCore pid=7321) INFO 04-20 00:25:28 [backends.py:390] Compiling a graph for compile range (1, 8192) takes 16.52 s
+(EngineCore pid=7321) INFO 04-20 00:25:30 [decorators.py:655] saved AOT compiled function to /root/.cache/vllm/torch_compile_cache/torch_aot_compile/8f8ec33bd6ba6a6ec22bf82e661745ecc5591deb4e166f8da5e36e1e13e37db5/rank_0_0/model
+(EngineCore pid=7321) INFO 04-20 00:25:30 [monitor.py:48] torch.compile took 29.43 s in total
+(EngineCore pid=7321) INFO 04-20 00:25:32 [monitor.py:76] Initial profiling/warmup run took 1.82 s
+(EngineCore pid=7321) INFO 04-20 00:25:40 [kv_cache_utils.py:829] Overriding num_gpu_blocks=0 with num_gpu_blocks_override=512
+(EngineCore pid=7321) INFO 04-20 00:25:40 [gpu_model_runner.py:5876] Profiling CUDA graph memory: PIECEWISE=51 (largest=512), FULL=35 (largest=256)
+(EngineCore pid=7321) INFO 04-20 00:25:42 [gpu_model_runner.py:5955] Estimated CUDA graph memory: 0.61 GiB total
+(EngineCore pid=7321) INFO 04-20 00:25:42 [gpu_worker.py:436] Available KV cache memory: 41.96 GiB
+(EngineCore pid=7321) INFO 04-20 00:25:42 [gpu_worker.py:470] In v0.19, CUDA graph memory profiling will be enabled by default (VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=1), which more accurately accounts for CUDA graph memory during KV cache allocation. To try it now, set VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=1 and increase --gpu-memory-utilization from 0.9000 to 0.9077 to maintain the same effective KV cache size.
+(EngineCore pid=7321) INFO 04-20 00:25:42 [kv_cache_utils.py:1319] GPU KV cache size: 274,976 tokens
+(EngineCore pid=7321) INFO 04-20 00:25:42 [kv_cache_utils.py:1324] Maximum concurrency for 8,192 tokens per request: 33.57x
+(EngineCore pid=7321) Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):   0%|          | 0/51 [00:00<?, ?it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):   4%|▍         | 2/51 [00:00<00:04, 10.31it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):   8%|▊         | 4/51 [00:00<00:04, 10.40it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  12%|█▏        | 6/51 [00:00<00:04, 10.52it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  16%|█▌        | 8/51 [00:00<00:04, 10.23it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  20%|█▉        | 10/51 [00:00<00:03, 11.00it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  24%|██▎       | 12/51 [00:01<00:03, 11.35it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  27%|██▋       | 14/51 [00:01<00:03, 11.44it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  31%|███▏      | 16/51 [00:01<00:02, 11.88it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  35%|███▌      | 18/51 [00:01<00:02, 12.62it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  39%|███▉      | 20/51 [00:01<00:02, 12.95it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  43%|████▎     | 22/51 [00:01<00:02, 13.62it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  47%|████▋     | 24/51 [00:01<00:01, 14.15it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  51%|█████     | 26/51 [00:02<00:01, 14.19it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  55%|█████▍    | 28/51 [00:02<00:01, 14.37it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  59%|█████▉    | 30/51 [00:02<00:01, 14.74it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  63%|██████▎   | 32/51 [00:02<00:01, 14.69it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  67%|██████▋   | 34/51 [00:02<00:01, 15.08it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  71%|███████   | 36/51 [00:02<00:00, 15.65it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  75%|███████▍  | 38/51 [00:02<00:00, 15.34it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  78%|███████▊  | 40/51 [00:03<00:00, 15.07it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  82%|████████▏ | 42/51 [00:03<00:00, 15.57it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  86%|████████▋ | 44/51 [00:03<00:00, 16.19it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  90%|█████████ | 46/51 [00:03<00:00, 16.91it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  94%|█████████▍| 48/51 [00:03<00:00, 16.75it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  98%|█████████▊| 50/51 [00:03<00:00, 17.29it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE): 100%|██████████| 51/51 [00:03<00:00, 13.94it/s]
+(EngineCore pid=7321) Capturing CUDA graphs (decode, FULL):   0%|          | 0/35 [00:00<?, ?it/s]Capturing CUDA graphs (decode, FULL):   6%|▌         | 2/35 [00:00<00:02, 15.37it/s]Capturing CUDA graphs (decode, FULL):  11%|█▏        | 4/35 [00:00<00:02, 15.15it/s]Capturing CUDA graphs (decode, FULL):  17%|█▋        | 6/35 [00:00<00:01, 15.16it/s]Capturing CUDA graphs (decode, FULL):  23%|██▎       | 8/35 [00:00<00:01, 15.72it/s]Capturing CUDA graphs (decode, FULL):  29%|██▊       | 10/35 [00:00<00:01, 15.97it/s]Capturing CUDA graphs (decode, FULL):  34%|███▍      | 12/35 [00:00<00:01, 15.81it/s]Capturing CUDA graphs (decode, FULL):  40%|████      | 14/35 [00:00<00:01, 16.07it/s]Capturing CUDA graphs (decode, FULL):  46%|████▌     | 16/35 [00:00<00:01, 16.53it/s]Capturing CUDA graphs (decode, FULL):  51%|█████▏    | 18/35 [00:01<00:00, 17.43it/s]Capturing CUDA graphs (decode, FULL):  57%|█████▋    | 20/35 [00:01<00:00, 17.59it/s]Capturing CUDA graphs (decode, FULL):  63%|██████▎   | 22/35 [00:01<00:00, 17.83it/s]Capturing CUDA graphs (decode, FULL):  69%|██████▊   | 24/35 [00:01<00:00, 18.38it/s]Capturing CUDA graphs (decode, FULL):  77%|███████▋  | 27/35 [00:01<00:00, 19.29it/s]Capturing CUDA graphs (decode, FULL):  83%|████████▎ | 29/35 [00:01<00:00, 19.46it/s]Capturing CUDA graphs (decode, FULL):  91%|█████████▏| 32/35 [00:01<00:00, 20.32it/s]Capturing CUDA graphs (decode, FULL): 100%|██████████| 35/35 [00:01<00:00, 21.47it/s]Capturing CUDA graphs (decode, FULL): 100%|██████████| 35/35 [00:01<00:00, 18.16it/s]
+(EngineCore pid=7321) INFO 04-20 00:25:49 [gpu_model_runner.py:6046] Graph capturing finished in 7 secs, took 0.66 GiB
+(EngineCore pid=7321) INFO 04-20 00:25:49 [gpu_worker.py:597] CUDA graph pool memory: 0.66 GiB (actual), 0.61 GiB (estimated), difference: 0.05 GiB (7.7%).
+(EngineCore pid=7321) INFO 04-20 00:25:49 [core.py:283] init engine (profile, create kv cache, warmup model) took 48.50 seconds
+Generating test split:   0%|          | 0/12032 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 12032/12032 [00:00<00:00, 246368.44 examples/s]
+Generating validation split:   0%|          | 0/70 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 70/70 [00:00<00:00, 26534.23 examples/s]
+Filter:   0%|          | 0/70 [00:00<?, ? examples/s]Filter: 100%|██████████| 70/70 [00:00<00:00, 14614.30 examples/s]
+Filter:   0%|          | 0/12032 [00:00<?, ? examples/s]Filter:  66%|██████▋   | 8000/12032 [00:00<00:00, 75470.55 examples/s]Filter: 100%|██████████| 12032/12032 [00:00<00:00, 66696.01 examples/s]
+Filter:   0%|          | 0/70 [00:00<?, ? examples/s]Filter: 100%|██████████| 70/70 [00:00<00:00, 18939.57 examples/s]
+Filter:   0%|          | 0/12032 [00:00<?, ? examples/s]Filter:  66%|██████▋   | 8000/12032 [00:00<00:00, 73023.95 examples/s]Filter: 100%|██████████| 12032/12032 [00:00<00:00, 74590.53 examples/s]
+Filter:   0%|          | 0/70 [00:00<?, ? examples/s]Filter: 100%|██████████| 70/70 [00:00<00:00, 18027.83 examples/s]
+Filter:   0%|          | 0/12032 [00:00<?, ? examples/s]Filter:  75%|███████▍  | 9000/12032 [00:00<00:00, 79420.70 examples/s]Filter: 100%|██████████| 12032/12032 [00:00<00:00, 78702.77 examples/s]
+Filter:   0%|          | 0/70 [00:00<?, ? examples/s]Filter: 100%|██████████| 70/70 [00:00<00:00, 19539.55 examples/s]
+Filter:   0%|          | 0/12032 [00:00<?, ? examples/s]Filter:  83%|████████▎ | 10000/12032 [00:00<00:00, 81548.57 examples/s]Filter: 100%|██████████| 12032/12032 [00:00<00:00, 81402.99 examples/s]
+Filter:   0%|          | 0/70 [00:00<?, ? examples/s]Filter: 100%|██████████| 70/70 [00:00<00:00, 18531.92 examples/s]
+Filter:   0%|          | 0/12032 [00:00<?, ? examples/s]Filter:  83%|████████▎ | 10000/12032 [00:00<00:00, 82497.00 examples/s]Filter: 100%|██████████| 12032/12032 [00:00<00:00, 81880.58 examples/s]
+Filter:   0%|          | 0/70 [00:00<?, ? examples/s]Filter: 100%|██████████| 70/70 [00:00<00:00, 18656.75 examples/s]
+Filter:   0%|          | 0/12032 [00:00<?, ? examples/s]Filter:  66%|██████▋   | 8000/12032 [00:00<00:00, 77877.08 examples/s]Filter: 100%|██████████| 12032/12032 [00:00<00:00, 73185.39 examples/s]
+Filter:   0%|          | 0/70 [00:00<?, ? examples/s]Filter: 100%|██████████| 70/70 [00:00<00:00, 16024.52 examples/s]
+Filter:   0%|          | 0/12032 [00:00<?, ? examples/s]Filter:  58%|█████▊    | 7000/12032 [00:00<00:00, 63722.33 examples/s]Filter: 100%|██████████| 12032/12032 [00:00<00:00, 69949.25 examples/s]
+Filter:   0%|          | 0/70 [00:00<?, ? examples/s]Filter: 100%|██████████| 70/70 [00:00<00:00, 18670.99 examples/s]
+Filter:   0%|          | 0/12032 [00:00<?, ? examples/s]Filter:  66%|██████▋   | 8000/12032 [00:00<00:00, 69410.80 examples/s]Filter: 100%|██████████| 12032/12032 [00:00<00:00, 65562.22 examples/s]
+Filter:   0%|          | 0/70 [00:00<?, ? examples/s]Filter: 100%|██████████| 70/70 [00:00<00:00, 15745.23 examples/s]
+Filter:   0%|          | 0/12032 [00:00<?, ? examples/s]Filter:  58%|█████▊    | 7000/12032 [00:00<00:00, 57180.72 examples/s]Filter: 100%|██████████| 12032/12032 [00:00<00:00, 58568.19 examples/s]
+Filter:   0%|          | 0/70 [00:00<?, ? examples/s]Filter: 100%|██████████| 70/70 [00:00<00:00, 19627.07 examples/s]
+Filter:   0%|          | 0/12032 [00:00<?, ? examples/s]Filter:  75%|███████▍  | 9000/12032 [00:00<00:00, 74332.39 examples/s]Filter: 100%|██████████| 12032/12032 [00:00<00:00, 70155.30 examples/s]
+Filter:   0%|          | 0/70 [00:00<?, ? examples/s]Filter: 100%|██████████| 70/70 [00:00<00:00, 20221.87 examples/s]
+Filter:   0%|          | 0/12032 [00:00<?, ? examples/s]Filter:  66%|██████▋   | 8000/12032 [00:00<00:00, 76180.78 examples/s]Filter: 100%|██████████| 12032/12032 [00:00<00:00, 62810.83 examples/s]
+Filter:   0%|          | 0/70 [00:00<?, ? examples/s]Filter: 100%|██████████| 70/70 [00:00<00:00, 13735.73 examples/s]
+Filter:   0%|          | 0/12032 [00:00<?, ? examples/s]Filter:  50%|████▉     | 6000/12032 [00:00<00:00, 46328.92 examples/s]Filter: 100%|█████████▉| 12000/12032 [00:00<00:00, 47478.72 examples/s]Filter: 100%|██████████| 12032/12032 [00:00<00:00, 46913.79 examples/s]
+Filter:   0%|          | 0/70 [00:00<?, ? examples/s]Filter: 100%|██████████| 70/70 [00:00<00:00, 20494.30 examples/s]
+Filter:   0%|          | 0/12032 [00:00<?, ? examples/s]Filter:  58%|█████▊    | 7000/12032 [00:00<00:00, 66750.47 examples/s]Filter: 100%|██████████| 12032/12032 [00:00<00:00, 62719.34 examples/s]
+Filter:   0%|          | 0/70 [00:00<?, ? examples/s]Filter: 100%|██████████| 70/70 [00:00<00:00, 20861.25 examples/s]
+Filter:   0%|          | 0/12032 [00:00<?, ? examples/s]Filter:  75%|███████▍  | 9000/12032 [00:00<00:00, 80965.91 examples/s]Filter: 100%|██████████| 12032/12032 [00:00<00:00, 75457.67 examples/s]
+Traceback (most recent call last):
+  File "/usr/local/bin/lm_eval", line 8, in <module>
+    sys.exit(cli_evaluate())
+             ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/__main__.py", line 10, in cli_evaluate
+    parser.execute(args)
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/_cli/harness.py", line 60, in execute
+    args.func(args)
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/_cli/run.py", line 379, in _execute
+    results = simple_evaluate(
+              ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/utils.py", line 498, in _wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/evaluator.py", line 292, in simple_evaluate
+    task_dict = get_task_dict(
+                ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/tasks/__init__.py", line 646, in get_task_dict
+    task_name_from_string_dict = task_manager.load_task_or_group(
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/tasks/__init__.py", line 428, in load_task_or_group
+    collections.ChainMap(
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/tasks/__init__.py", line 430, in <lambda>
+    lambda task: self._load_individual_task_or_group(task),
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/tasks/__init__.py", line 327, in _load_individual_task_or_group
+    task_config = self._get_config(name_or_config)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/tasks/__init__.py", line 235, in _get_config
+    return utils.load_yaml_config(yaml_path, mode="full")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/utils.py", line 543, in load_yaml_config
+    yaml_config = yaml.load(file, Loader=loader)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/yaml/__init__.py", line 81, in load
+    return loader.get_single_data()
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/yaml/constructor.py", line 51, in get_single_data
+    return self.construct_document(node)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/yaml/constructor.py", line 60, in construct_document
+    for dummy in generator:
+  File "/usr/local/lib/python3.11/dist-packages/yaml/constructor.py", line 413, in construct_yaml_map
+    value = self.construct_mapping(node)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/yaml/constructor.py", line 218, in construct_mapping
+    return super().construct_mapping(node, deep=deep)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/yaml/constructor.py", line 143, in construct_mapping
+    value = self.construct_object(value_node, deep=deep)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/yaml/constructor.py", line 100, in construct_object
+    data = constructor(self, node)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/utils.py", line 523, in import_function
+    spec.loader.exec_module(module)
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/tasks/ifeval/utils.py", line 4, in <module>
+    from lm_eval.tasks.ifeval import instructions_registry
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/tasks/ifeval/instructions_registry.py", line 17, in <module>
+    from lm_eval.tasks.ifeval import instructions
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/tasks/ifeval/instructions.py", line 25, in <module>
+    import langdetect
+ModuleNotFoundError: No module named 'langdetect'
+(EngineCore pid=7321) INFO 04-20 00:25:59 [core.py:1210] Shutdown initiated (timeout=0)
+(EngineCore pid=7321) INFO 04-20 00:25:59 [core.py:1233] Shutdown complete
+ERROR 04-20 00:26:00 [core_client.py:667] Engine core proc EngineCore died unexpectedly, shutting down client.

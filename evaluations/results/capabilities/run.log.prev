@@ -1,0 +1,15 @@
+Loaded 2 checkpoints: grpo_equal|migub/grpo-multigame-all-equal|620 lagrpo_equal|migub/lagrpo-multigame-all-equal|2000
+============================================
+Step 1: Download adapters (if missing)
+============================================
+[SKIP] grpo_equal already at output/grpo-multigame-all-equal/checkpoint-620
+[SKIP] lagrpo_equal already at output/lagrpo-multigame-all-equal/checkpoint-2000
+
+============================================
+Step 2: Merge LoRA adapters into base model (if not cached)
+============================================
+[MERGE] grpo_equal: output/grpo-multigame-all-equal/checkpoint-620 -> output/merged/grpo_equal
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/443 [00:00<?, ?it/s]Loading weights: 100%|██████████| 443/443 [00:00<00:00, 4553.08it/s]
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]
