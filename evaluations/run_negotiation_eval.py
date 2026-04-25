@@ -29,6 +29,7 @@ from envs.negotiation.env import NegotiationEnv
 from envs.negotiation.games import Game
 from evaluator.evaluator import Evaluator
 from evaluator.openai_model import OpenAIModel
+from evaluations.adversarial_personas import PERSONAS, apply_persona
 
 
 # ============================================================
@@ -138,7 +139,8 @@ def play_negotiation(model, tokenizer, prompt_agent, prompt_opponent,
 # ============================================================
 
 def evaluate_checkpoint(model, tokenizer, has_lora, env, num_games,
-                        max_rounds=5, temperature=1.0, seed=42, repetitions=1):
+                        max_rounds=5, temperature=1.0, seed=42, repetitions=1,
+                        opponent_persona="cooperative"):
     """Run negotiations and evaluate with GPT-4o-mini.
 
     Each game configuration is played `repetitions` times with different seeds
@@ -168,7 +170,7 @@ def evaluate_checkpoint(model, tokenizer, has_lora, env, num_games,
         for i in range(n_configs):
             sample = eval_dataset[i]
             prompt_agent = sample["prompt"]
-            prompt_opponent = sample["prompt_2"]
+            prompt_opponent = apply_persona(sample["prompt_2"], opponent_persona)
             agent_starts = sample["starting_agent"]
             game_config = sample["game_config"]
             negotiation_role = sample["negotiation_role"]
@@ -322,6 +324,9 @@ def main():
     parser.add_argument("--lambda-self", type=float, default=1.0)
     parser.add_argument("--lambda-welfare", type=float, default=0.0)
     parser.add_argument("--lambda-fair", type=float, default=0.0)
+    parser.add_argument("--opponent-persona", type=str, default="cooperative",
+                        choices=list(PERSONAS.keys()),
+                        help="Adversarial persona injected into opponent system prompt (RQ4)")
     args = parser.parse_args()
 
     os.makedirs(args.output_dir, exist_ok=True)
@@ -366,6 +371,7 @@ def main():
             temperature=args.temperature,
             seed=args.seed,
             repetitions=args.repetitions,
+            opponent_persona=args.opponent_persona,
         )
 
         # Print summary
@@ -380,8 +386,9 @@ def main():
         if "agreed_ratio_rcoop_mean" in metrics:
             print(f"  Agreed ratio R_coop:{metrics['agreed_ratio_rcoop_mean']:.3f}")
 
-        # Save JSON
-        output_path = os.path.join(args.output_dir, f"{name}.json")
+        # Save JSON (tagged with persona so runs don't overwrite each other)
+        suffix = f"_{args.opponent_persona}" if args.opponent_persona != "cooperative" else ""
+        output_path = os.path.join(args.output_dir, f"{name}{suffix}.json")
         with open(output_path, "w") as f:
             json.dump({"args": vars(args), "metrics": metrics, "games": results},
                       f, indent=2, default=str)
@@ -397,6 +404,7 @@ def main():
 
         all_csv_rows.append({
             "method": name.rsplit("_", 1)[0] if "_" in name else name,
+            "opponent_persona": args.opponent_persona,
             "number": step,
             "mean_reward": metrics["U_A_mean"],  # Using U_A as reward proxy
             "std_reward": metrics["U_A_std"],
@@ -411,9 +419,10 @@ def main():
         del model
         torch.cuda.empty_cache()
 
-    # Save CSV summary
+    # Save CSV summary (tagged with persona)
     import csv
-    csv_path = os.path.join(args.output_dir, "evaluation_results_grpo.csv")
+    csv_suffix = f"_{args.opponent_persona}" if args.opponent_persona != "cooperative" else ""
+    csv_path = os.path.join(args.output_dir, f"evaluation_results_grpo{csv_suffix}.csv")
     with open(csv_path, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=all_csv_rows[0].keys())
         writer.writeheader()
