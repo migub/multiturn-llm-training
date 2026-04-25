@@ -2,50 +2,32 @@
   "args": {
     "checkpoint": "none",
     "model_name": "OpenPipe/Qwen3-14B-Instruct",
-    "num_games": 100,
+    "num_games": 300,
     "temperature": 1.0,
     "seed": 42
   },
   "metrics": {
-    "investor": {
-      "n_valid": 100,
-      "n_total": 100,
+    "self_play": {
+      "n_valid": 300,
+      "n_total": 300,
       "parse_failure_rate": 0.0,
       "avg_send": 5,
-      "avg_return": 10.94,
-      "avg_return_ratio": 0.7293333333333333,
-      "avg_investor_payoff": 15.94,
-      "avg_trustee_payoff": 4.06,
+      "avg_return": 11.093333333333334,
+      "avg_return_ratio": 0.7395555555555555,
+      "avg_investor_payoff": 16.093333333333334,
+      "avg_trustee_payoff": 3.9066666666666667,
       "avg_social_welfare": 20,
-      "avg_nash_product": 63.42,
+      "avg_nash_product": 61.08,
       "std_send": 0.0,
-      "std_return": 1.1443316606189613,
-      "std_investor_payoff": 1.1443316606189613,
-      "std_trustee_payoff": 1.1443316606189613,
+      "std_return": 1.3406266525873816,
+      "std_investor_payoff": 1.3406266525873816,
+      "std_trustee_payoff": 1.3406266525873816,
       "std_social_welfare": 0.0,
-      "std_nash_product": 14.918079330432953
-    },
-    "trustee": {
-      "n_valid": 100,
-      "n_total": 100,
-      "parse_failure_rate": 0.0,
-      "avg_send": 5,
-      "avg_return": 11.09,
-      "avg_return_ratio": 0.7393333333333333,
-      "avg_investor_payoff": 16.09,
-      "avg_trustee_payoff": 3.91,
-      "avg_social_welfare": 20,
-      "avg_nash_product": 60.87,
-      "std_send": 0.0,
-      "std_return": 1.4361494534084023,
-      "std_investor_payoff": 1.4361494534084023,
-      "std_trustee_payoff": 1.4361494534084023,
-      "std_social_welfare": 0.0,
-      "std_nash_product": 20.281182500938243
+      "std_nash_product": 18.586692833897917
     }
   },
   "games": {
-    "investor": [
+    "self_play": [
       {
         "investor_text": "I send 5 points.",
         "trustee_text": "I return 10 points.",
@@ -745,14 +727,1363 @@
         "send": 5,
         "return_amt": 10,
         "parse_ok": true
-      }
-    ],
-    "trustee": [
+      },
       {
         "investor_text": "I send 5 points.",
         "trustee_text": "I return 12 points.",
         "send": 5,
         "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 15 points.",
+        "send": 5,
+        "return_amt": 15,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 15 points.",
+        "send": 5,
+        "return_amt": 15,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 15 points.",
+        "send": 5,
+        "return_amt": 15,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 15 points.",
+        "send": 5,
+        "return_amt": 15,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 15 points.",
+        "send": 5,
+        "return_amt": 15,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 15 points.",
+        "send": 5,
+        "return_amt": 15,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 15 points.",
+        "send": 5,
+        "return_amt": 15,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 15 points.",
+        "send": 5,
+        "return_amt": 15,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 15 points.",
+        "send": 5,
+        "return_amt": 15,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 15 points.",
+        "send": 5,
+        "return_amt": 15,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 15 points.",
+        "send": 5,
+        "return_amt": 15,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 15 points.",
+        "send": 5,
+        "return_amt": 15,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 15 points.",
+        "send": 5,
+        "return_amt": 15,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 12 points.",
+        "send": 5,
+        "return_amt": 12,
+        "parse_ok": true
+      },
+      {
+        "investor_text": "I send 5 points.",
+        "trustee_text": "I return 10 points.",
+        "send": 5,
+        "return_amt": 10,
         "parse_ok": true
       },
       {
@@ -795,657 +2126,6 @@
         "trustee_text": "I return 10 points.",
         "send": 5,
         "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 15 points.",
-        "send": 5,
-        "return_amt": 15,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 15 points.",
-        "send": 5,
-        "return_amt": 15,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 15 points.",
-        "send": 5,
-        "return_amt": 15,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 15 points.",
-        "send": 5,
-        "return_amt": 15,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 15 points.",
-        "send": 5,
-        "return_amt": 15,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 15 points.",
-        "send": 5,
-        "return_amt": 15,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 10 points.",
-        "send": 5,
-        "return_amt": 10,
-        "parse_ok": true
-      },
-      {
-        "investor_text": "I send 5 points.",
-        "trustee_text": "I return 12 points.",
-        "send": 5,
-        "return_amt": 12,
         "parse_ok": true
       }
     ]
