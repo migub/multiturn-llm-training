@@ -255,8 +255,12 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
                 mask_from_agent_turn = sampled_h
             print(f"  LA-GRPO: sampled_h={sampled_h}, mask_from_agent_turn={mask_from_agent_turn}")
 
-        # Generate shared prefix once if LA-GRPO with h > 0
+        # Generate shared prefix once if LA-GRPO with h > 0.
+        # Prefix tokens are generated ONCE and counted ONCE (not G times),
+        # which is what makes LA-GRPO cheaper than vanilla GRPO.
         prefix_state = None
+        prefix_agent_tokens = 0
+        prefix_opp_tokens = 0
         if sampled_h is not None and sampled_h > 0:
             # All prompts in batch are identical (duplicated num_generations times)
             agent_prompt_0 = prompts[0]
@@ -273,7 +277,10 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
                 agent_starts=(starting_agent is None or starting_agent == True),
                 num_rounds=sampled_h,
             )
-            print(f"  LA-GRPO: prefix has {len(prefix_state['conversation'])} turns")
+            prefix_agent_tokens = prefix_state["n_agent_tokens_generated"]
+            prefix_opp_tokens = prefix_state["n_opp_tokens_generated"]
+            print(f"  LA-GRPO: prefix has {len(prefix_state['conversation'])} turns, "
+                  f"{prefix_agent_tokens} agent tokens, {prefix_opp_tokens} opp tokens (counted once)")
 
         for i in range(len(prompts)):
             print(f"  Dialogue {i+1}/{len(prompts)} starting...")
@@ -285,14 +292,14 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
             if isinstance(opp_prompt, list):
                 opp_prompt = opp_prompt[-1]["content"] if opp_prompt else ""
 
-            conversation, agent_indices = self._play_negotiation(
+            conversation, agent_indices, n_agent_new, n_opp_new = self._play_negotiation(
                 prompt_agent=agent_prompt,
                 prompt_opponent=opp_prompt,
                 agent_starts=(starting_agent is None or starting_agent == True),
                 resume_state=prefix_state,
             )
 
-            tok_ids, att_mask, ass_mask, n_agent, n_opp = self._tokenize_conversation(
+            tok_ids, att_mask, ass_mask, _, _ = self._tokenize_conversation(
                 agent_prompt, conversation, agent_indices,
                 mask_from_agent_turn=mask_from_agent_turn,
             )
@@ -301,10 +308,13 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
             all_token_ids.append(tok_ids)
             all_attention_masks.append(att_mask)
             all_assistant_masks.append(ass_mask)
-            generated_tokens_agent.append(n_agent)
-            generated_tokens_opp.append(n_opp)
+            # n_agent_new / n_opp_new exclude the shared prefix (when LA-GRPO),
+            # so summing them and adding prefix_*_tokens once gives true generation cost.
+            generated_tokens_agent.append(n_agent_new)
+            generated_tokens_opp.append(n_opp_new)
 
-            print(f"  Dialogue {i+1}/{len(prompts)} done — {len(conversation)} turns, {n_agent} agent tokens")
+            print(f"  Dialogue {i+1}/{len(prompts)} done — {len(conversation)} turns, "
+                  f"{n_agent_new} new agent tokens (excl. shared prefix)")
 
             if self.debug_prints:
                 print(f"\n[DEBUG] ========= Sample {i+1}/{len(prompts)} =========")
@@ -330,7 +340,7 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
                 total_masked = int(ass_mask.sum().item())
                 total_tokens = int(tok_ids.size(0))
                 print(f"[DEBUG] Mask summary: {total_masked}/{total_tokens} tokens masked "
-                      f"(agent_tokens_generated={n_agent}, opp_tokens_generated={n_opp})")
+                      f"(new_agent_tokens={n_agent_new}, new_opp_tokens={n_opp_new})")
                 print(f"[DEBUG] Decoded masked text (what the loss optimizes):")
                 preview = masked_text[:800].replace("\n", " \\n ")
                 print(f"[DEBUG]   >>> {preview}{'...' if len(masked_text) > 800 else ''}")
@@ -440,12 +450,21 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
         self._metrics[mode]["completion_length"].append(completion_length)
 
         if mode == "train":
-            total_agent = sum(generated_tokens_agent)
-            total_opp = sum(generated_tokens_opp)
+            # True generation cost: shared prefix counted once, suffixes per rollout.
+            # For vanilla GRPO (no prefix), prefix_*_tokens is 0.
+            total_agent = prefix_agent_tokens + sum(generated_tokens_agent)
+            total_opp = prefix_opp_tokens + sum(generated_tokens_opp)
             self._total_train_tokens += total_agent + total_opp
             self._metrics[mode]["train_tokens"].append(self._total_train_tokens)
             self._metrics[mode]["agent_tokens"].append(total_agent)
             self._metrics[mode]["opp_tokens"].append(total_opp)
+            if self.turn_level_sampling:
+                self._metrics[mode]["lagrpo/sampled_h"].append(
+                    float(sampled_h) if sampled_h is not None else 0.0
+                )
+                self._metrics[mode]["lagrpo/prefix_tokens"].append(
+                    prefix_agent_tokens + prefix_opp_tokens
+                )
 
         for i, reward_func in enumerate(self.reward_funcs):
             name = reward_func.__name__ if hasattr(reward_func, "__name__") else f"reward_{i}"
@@ -586,30 +605,37 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
 
         unwrapped = self.accelerator.unwrap_model(self.model)
 
+        # Count ONLY tokens generated in this call (excludes resume_state prefix
+        # which is generated once in _play_prefix and counted there).
+        n_agent_gen = 0
+        n_opp_gen = 0
+
         for round_num in range(start_round, self.max_negotiation_rounds):
             speakers = ["agent", "opponent"] if agent_starts else ["opponent", "agent"]
 
             for speaker in speakers:
                 if speaker == "agent":
                     unwrapped.enable_adapter_layers()
-                    response = self._gen_response(agent_history)
+                    response, n_new = self._gen_response(agent_history)
+                    n_agent_gen += n_new
                     agent_history.append({"role": "assistant", "content": response})
                     opponent_history.append({"role": "user", "content": response})
                     agent_turn_indices.append(len(conversation))
                     conversation.append({"role": "assistant", "content": response})
                 else:
                     if self.opponent_model is not None:
-                        response = self._openai_response(opponent_history)
+                        response, n_new = self._openai_response(opponent_history)
                     else:
                         unwrapped.disable_adapter_layers()
-                        response = self._gen_response(opponent_history)
+                        response, n_new = self._gen_response(opponent_history)
                         unwrapped.enable_adapter_layers()
+                    n_opp_gen += n_new
                     opponent_history.append({"role": "assistant", "content": response})
                     agent_history.append({"role": "user", "content": response})
                     conversation.append({"role": "user", "content": response})
 
         unwrapped.enable_adapter_layers()
-        return conversation, agent_turn_indices
+        return conversation, agent_turn_indices, n_agent_gen, n_opp_gen
 
     @torch.no_grad()
     def _play_prefix(self, prompt_agent, prompt_opponent, agent_starts=True,
@@ -622,6 +648,8 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
         opponent_history = [{"role": "system", "content": prompt_opponent}]
         conversation = []
         agent_turn_indices = []
+        n_agent_gen = 0
+        n_opp_gen = 0
 
         unwrapped = self.accelerator.unwrap_model(self.model)
 
@@ -631,18 +659,20 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
             for speaker in speakers:
                 if speaker == "agent":
                     unwrapped.enable_adapter_layers()
-                    response = self._gen_response(agent_history)
+                    response, n_new = self._gen_response(agent_history)
+                    n_agent_gen += n_new
                     agent_history.append({"role": "assistant", "content": response})
                     opponent_history.append({"role": "user", "content": response})
                     agent_turn_indices.append(len(conversation))
                     conversation.append({"role": "assistant", "content": response})
                 else:
                     if self.opponent_model is not None:
-                        response = self._openai_response(opponent_history)
+                        response, n_new = self._openai_response(opponent_history)
                     else:
                         unwrapped.disable_adapter_layers()
-                        response = self._gen_response(opponent_history)
+                        response, n_new = self._gen_response(opponent_history)
                         unwrapped.enable_adapter_layers()
+                    n_opp_gen += n_new
                     opponent_history.append({"role": "assistant", "content": response})
                     agent_history.append({"role": "user", "content": response})
                     conversation.append({"role": "user", "content": response})
@@ -654,11 +684,13 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
             "conversation": conversation,
             "agent_turn_indices": agent_turn_indices,
             "next_round": num_rounds,
+            "n_agent_tokens_generated": n_agent_gen,
+            "n_opp_tokens_generated": n_opp_gen,
         }
 
     @torch.no_grad()
     def _gen_response(self, messages):
-        """Generate a single turn response."""
+        """Generate a single turn response. Returns (text, n_new_tokens)."""
         text = self._tokenizer.apply_chat_template(
             messages, tokenize=False, add_generation_prompt=True
         )
@@ -668,10 +700,11 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
 
         outputs = self.model.generate(**inputs, generation_config=self.multiturn_gen_config)
         new_tokens = outputs[0][inputs["input_ids"].shape[1]:]
-        return self._tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
+        decoded = self._tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
+        return decoded, int(new_tokens.shape[0])
 
     def _openai_response(self, messages):
-        """Generate opponent response via OpenAI API."""
+        """Generate opponent response via OpenAI API. Returns (text, n_tokens)."""
         import openai
 
         client = openai.OpenAI()
@@ -682,10 +715,12 @@ class MultiTurnGRPOTrainer(GRPOTrainer):
                 max_tokens=self.max_tokens_per_turn,
                 temperature=self.temperature if self.temperature else 1.0,
             )
-            return resp.choices[0].message.content.strip()
+            text = resp.choices[0].message.content.strip()
         except Exception as e:
             logger.warning(f"OpenAI error: {e}")
-            return "I accept your offer."
+            text = "I accept your offer."
+        n_tokens = len(self._tokenizer.encode(text, add_special_tokens=False))
+        return text, n_tokens
 
     def _tokenize_conversation(self, system_prompt, conversation, agent_turn_indices,
                                mask_from_agent_turn=None):
