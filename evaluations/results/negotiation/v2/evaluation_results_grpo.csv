@@ -1,0 +1,2 @@
+method,opponent_persona,number,mean_reward,std_reward,agreement_rate,ratio_self_mean,ratio_welfare_mean,ratio_nash_mean,ratio_rcoop_mean
+checkpoint-760,cooperative,760,52.8,38.206132265823086,0.715,0.528,0.6665833333333333,0.5467625,0.5467625
