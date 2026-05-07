@@ -1,0 +1,2 @@
+method,opponent_persona,number,mean_reward,std_reward,agreement_rate,ratio_self_mean,ratio_welfare_mean,ratio_nash_mean,ratio_rcoop_mean
+none,stubborn,0,16.214285714285715,32.860460532265826,0.22142857142857142,0.16214285714285714,0.20174242424242425,0.14836309523809524,0.16214285714285714

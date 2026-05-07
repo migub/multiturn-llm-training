@@ -1,0 +1,345 @@
+{
+  "args": {
+    "checkpoint": "output/lagrpo-fair-only/checkpoint-1340",
+    "model_name": "OpenPipe/Qwen3-14B-Instruct",
+    "game_type": "multi-game",
+    "num_games": 5,
+    "repetitions": 1,
+    "max_rounds": 5,
+    "temperature": 1.0,
+    "seed": 42,
+    "output_dir": "evaluations/results/robustness_smoketest",
+    "lambda_self": 0.0,
+    "lambda_welfare": 0.0,
+    "lambda_fair": 1.0,
+    "opponent_persona": "hardball"
+  },
+  "metrics": {
+    "n_games": 5,
+    "n_configs": 5,
+    "repetitions": 1,
+    "agreement_rate": 0.6,
+    "U_A_mean": 24.0,
+    "U_A_std": 43.3589667773576,
+    "U_B_mean": 56.0,
+    "U_B_std": 51.76871642217914,
+    "social_welfare_mean": 80.0,
+    "ratio_self_mean": 0.24,
+    "ratio_welfare_mean": 0.6,
+    "ratio_nash_mean": 0.328,
+    "ratio_rcoop_mean": 0.328,
+    "agreed_ratio_self_mean": 0.4,
+    "agreed_ratio_welfare_mean": 1.0,
+    "agreed_ratio_nash_mean": 0.5466666666666666,
+    "agreed_ratio_rcoop_mean": 0.5466666666666666,
+    "per_archetype": {
+      "single-distributive": {
+        "count": 4,
+        "U_A_mean": 5.0,
+        "U_B_mean": 45.0,
+        "agreement_rate": 0.5,
+        "ratio_self_mean": 0.05,
+        "ratio_welfare_mean": 0.5,
+        "ratio_nash_mean": 0.16,
+        "ratio_rcoop_mean": 0.16
+      },
+      "single-compatible": {
+        "count": 1,
+        "U_A_mean": 100.0,
+        "U_B_mean": 100.0,
+        "agreement_rate": 1.0,
+        "ratio_self_mean": 1.0,
+        "ratio_welfare_mean": 1.0,
+        "ratio_nash_mean": 1.0,
+        "ratio_rcoop_mean": 1.0
+      }
+    }
+  },
+  "games": [
+    {
+      "game_idx": 0,
+      "repetition": 0,
+      "config_idx": 0,
+      "archetype": "single-distributive",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "0",
+      "U_B": "100",
+      "ratio_self": 0.0,
+      "ratio_welfare": 1.0,
+      "ratio_nash": 0.0,
+      "ratio_rcoop": 0.0,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "I propose a rental agreement with a monthly rent of $1500."
+        },
+        {
+          "role": "user",
+          "content": "I reject your offer. $1500 results in a total payoff of 0 for me. I demand a rent of $500 or less."
+        },
+        {
+          "role": "assistant",
+          "content": "I propose a rental agreement with a monthly rent of $1000."
+        },
+        {
+          "role": "user",
+          "content": "I reject your offer. $1000 results in a payoff of 50 for me. I demand a rent of $500 or less."
+        },
+        {
+          "role": "assistant",
+          "content": "I propose a rental agreement with a monthly rent of $700."
+        },
+        {
+          "role": "user",
+          "content": "I reject your offer. $700 results in a payoff of 80 for me. I demand $500 or less."
+        },
+        {
+          "role": "assistant",
+          "content": "I propose a rental agreement with a monthly rent of $500."
+        },
+        {
+          "role": "user",
+          "content": "I accept your offer. $500 results in a payoff of 100 for me."
+        },
+        {
+          "role": "assistant",
+          "content": "The agreement is finalized with a monthly rent of $500."
+        },
+        {
+          "role": "user",
+          "content": "The agreement is finalized with a monthly rent of $500."
+        }
+      ]
+    },
+    {
+      "game_idx": 1,
+      "repetition": 0,
+      "config_idx": 1,
+      "archetype": "single-distributive",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": 0,
+      "U_B": 0,
+      "ratio_self": 0.0,
+      "ratio_welfare": 0.0,
+      "ratio_nash": 0.0,
+      "ratio_rcoop": 0.0,
+      "agreed": false,
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I am offering a monthly rent of $1500. This is the maximum value I am willing to accept, and I expect you to agree to this amount. If not, I will have no further interest in this negotiation."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept $1500 as it results in a total payoff of 0 for me. I am willing to consider a rent of $1400, which gives me a payoff of 10."
+        },
+        {
+          "role": "user",
+          "content": "I will not accept $1400 as it is below 80% of my maximum possible payoff. I am willing to consider $1500 or I will walk away with a total payoff of 0."
+        },
+        {
+          "role": "assistant",
+          "content": "I must decline $1500 as it results in a total payoff of 0 for me. I am willing to consider $1400, which gives me a payoff of 10."
+        },
+        {
+          "role": "user",
+          "content": "I will not accept $1400 as it is below 80% of my maximum possible payoff. I am willing to consider $1500 or I will walk away with a total payoff of 0."
+        },
+        {
+          "role": "assistant",
+          "content": "I must decline $1500 as it results in a total payoff of 0 for me. I am willing to consider $1400, which gives me a payoff of 10."
+        },
+        {
+          "role": "user",
+          "content": "I will not accept $1400 as it is below 80% of my maximum possible payoff. I am willing to consider $1500 or I will walk away with a total payoff of 0."
+        },
+        {
+          "role": "assistant",
+          "content": "I must decline $1500 as it results in a total payoff of 0 for me. I am willing to consider $1400, which gives me a payoff of 10."
+        },
+        {
+          "role": "user",
+          "content": "I am ending the negotiation. I will not accept anything less than $1500, and since you are unwilling to agree to that, I will walk away with a total payoff of 0."
+        },
+        {
+          "role": "assistant",
+          "content": "I must decline your final offer as it results in a total payoff of 0 for me. I am willing to consider $1400, which gives me a payoff of 10."
+        }
+      ]
+    },
+    {
+      "game_idx": 2,
+      "repetition": 0,
+      "config_idx": 2,
+      "archetype": "single-distributive",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "20",
+      "U_B": "80",
+      "ratio_self": 0.2,
+      "ratio_welfare": 1.0,
+      "ratio_nash": 0.64,
+      "ratio_rcoop": 0.64,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "Offer: $110K salary."
+        },
+        {
+          "role": "user",
+          "content": "I reject your offer. I am not willing to accept less than $120K. I expect a significantly higher salary given my experience and the value I bring to the table."
+        },
+        {
+          "role": "assistant",
+          "content": "Offer: $120K salary."
+        },
+        {
+          "role": "user",
+          "content": "I accept your offer of $120K salary."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreement reached: $120K salary."
+        },
+        {
+          "role": "user",
+          "content": "I accept your offer of $120K salary."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreement confirmed: $120K salary."
+        },
+        {
+          "role": "user",
+          "content": "I confirm the agreement: $120K salary."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreement finalized: $120K salary."
+        },
+        {
+          "role": "user",
+          "content": "I confirm the final agreement: $120K salary."
+        }
+      ]
+    },
+    {
+      "game_idx": 3,
+      "repetition": 0,
+      "config_idx": 3,
+      "archetype": "single-distributive",
+      "negotiation_role": 2,
+      "agent_starts": false,
+      "U_A": 0,
+      "U_B": 0,
+      "ratio_self": 0.0,
+      "ratio_welfare": 0.0,
+      "ratio_nash": 0.0,
+      "ratio_rcoop": 0.0,
+      "agreed": false,
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I offer a salary of $80K. This is my best possible outcome, and I expect you to accept it. If not, I will not negotiate further."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept your offer, as it results in a total payoff of 0 for me. Let's find a mutually acceptable salary."
+        },
+        {
+          "role": "user",
+          "content": "I offer a salary of $85K. This is the next best option for me, and I expect you to accept it. If not, I will not negotiate further."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept your offer, as it results in a total payoff of 10 for me, which is below my acceptable threshold. Let's find a mutually acceptable salary."
+        },
+        {
+          "role": "user",
+          "content": "I offer a salary of $90K. This is still a strong position for me, and I expect you to accept it. If not, I will not continue negotiations."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept your offer, as it results in a total payoff of 20 for me, which is still below my acceptable threshold. Let's find a mutually acceptable salary."
+        },
+        {
+          "role": "user",
+          "content": "I offer a salary of $95K. This is my final offer. If you do not accept it, the negotiation ends and both parties receive 0."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept your offer, as it results in a total payoff of 30 for me, which is still below my acceptable threshold. Let's find a mutually acceptable salary."
+        },
+        {
+          "role": "user",
+          "content": "I offer a salary of $100K. This is my last possible offer. If you do not accept, the negotiation ends and both parties receive 0."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot accept your offer, as it results in a total payoff of 40 for me, which is still below my acceptable threshold. Let's find a mutually acceptable salary."
+        }
+      ]
+    },
+    {
+      "game_idx": 4,
+      "repetition": 0,
+      "config_idx": 4,
+      "archetype": "single-compatible",
+      "negotiation_role": 1,
+      "agent_starts": true,
+      "U_A": "100",
+      "U_B": "100",
+      "ratio_self": 1.0,
+      "ratio_welfare": 1.0,
+      "ratio_nash": 1.0,
+      "ratio_rcoop": 1.0,
+      "agreed": "True",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "Offer: I propose an R&D budget of $9M for the joint venture."
+        },
+        {
+          "role": "user",
+          "content": "I reject your offer. I propose an R&D budget of $10M for the joint venture. This is the maximum value I'm willing to accept, and I will not settle for less than my optimal outcome."
+        },
+        {
+          "role": "assistant",
+          "content": "I counteroffer an R&D budget of $9M. I am willing to accept this amount as it provides a strong balance between value and cost."
+        },
+        {
+          "role": "user",
+          "content": "I reject your counteroffer. I will not accept less than $10M. This is my final offer \u2014 $10M or no deal."
+        },
+        {
+          "role": "assistant",
+          "content": "I accept your offer of $10M for the R&D budget."
+        },
+        {
+          "role": "user",
+          "content": "Agreed. The joint venture will have an R&D budget of $10M. This concludes the negotiation."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreed. The joint venture will proceed with an R&D budget of $10M."
+        },
+        {
+          "role": "user",
+          "content": "Agreed. The joint venture will proceed with an R&D budget of $10M. This concludes the negotiation."
+        },
+        {
+          "role": "assistant",
+          "content": "Agreed. The joint venture will proceed with an R&D budget of $10M."
+        },
+        {
+          "role": "user",
+          "content": "Agreed. The joint venture will proceed with an R&D budget of $10M. This concludes the negotiation."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+method,opponent_persona,number,mean_reward,std_reward,agreement_rate,ratio_self_mean,ratio_welfare_mean,ratio_nash_mean,ratio_rcoop_mean
+checkpoint-1340,hardball,1340,24.0,43.3589667773576,0.6,0.24,0.6,0.328,0.328
