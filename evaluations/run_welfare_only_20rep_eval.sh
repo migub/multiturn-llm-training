@@ -1,19 +1,22 @@
 #!/bin/bash
-# 20-rep multi-game eval for GRPO welfare-only @ checkpoint-560.
-# Mirrors run_v2_20rep_eval.sh but only for the welfare-only model.
+# 20-rep multi-game eval for GRPO welfare-only @ checkpoint-1000.
+# Matches the protocol used in evaluations/results/negotiation/20repetitions/
+# (e.g. all_equal_620.json): num-games=28, reps=20, seed=42, temp=1.0,
+# max-rounds=5, lambdas=(1.0, 0.0, 0.0).
 set -e
 
 cd /workspace/multiturn-llm-training
 
 OUTPUT_DIR="output"
-RESULTS_DIR="evaluations/results/negotiation/v2"
+RESULTS_DIR="evaluations/results/negotiation/20repetitions"
 mkdir -p "$RESULTS_DIR"
 
 REPS=20
+NUM_GAMES=28
 GAME_TYPE="multi-game"
 
 REPO="grpo-multigame-welfare-only"
-CKPT="checkpoint-560"
+CKPT="checkpoint-1000"
 TARGET_DIR="${OUTPUT_DIR}/${REPO}/${CKPT}"
 
 echo "============================================"
@@ -32,17 +35,18 @@ echo "============================================"
 echo "Step 2: Run 20-rep multi-game eval"
 echo "============================================"
 
-OUT_NAME="grpo_welfare_only_560"
+OUT_NAME="welfare_only_1000"
 CKPT_PATH="${TARGET_DIR}"
 
 echo ">>> Evaluating: ${OUT_NAME} (${CKPT_PATH})"
 python evaluations/run_negotiation_eval.py \
     --checkpoint "${CKPT_PATH}" \
+    --num-games ${NUM_GAMES} \
     --repetitions ${REPS} \
     --game-type ${GAME_TYPE} \
     --output-dir "$RESULTS_DIR" \
-    --lambda-self 0.0 \
-    --lambda-welfare 1.0 \
+    --lambda-self 1.0 \
+    --lambda-welfare 0.0 \
     --lambda-fair 0.0
 
 BASE=$(basename "${CKPT_PATH%/}")
